@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.6.33723.286
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BakaMangaAPI", "BakaMangaAPI\BakaMangaAPI.csproj", "{69C3D943-9857-45F3-8D52-9832B94BA973}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BakaMangaAPITest", "BakaMangaAPITest\BakaMangaAPITest.csproj", "{AAF36EB1-9D5F-445B-9973-1D07C711A5C4}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{69C3D943-9857-45F3-8D52-9832B94BA973}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{69C3D943-9857-45F3-8D52-9832B94BA973}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{69C3D943-9857-45F3-8D52-9832B94BA973}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{69C3D943-9857-45F3-8D52-9832B94BA973}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AAF36EB1-9D5F-445B-9973-1D07C711A5C4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AAF36EB1-9D5F-445B-9973-1D07C711A5C4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AAF36EB1-9D5F-445B-9973-1D07C711A5C4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AAF36EB1-9D5F-445B-9973-1D07C711A5C4}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {7CDE8C7E-EDB4-4947-8CA7-9A7D76128254}
+	EndGlobalSection
+EndGlobal
