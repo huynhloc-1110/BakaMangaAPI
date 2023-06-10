@@ -6,7 +6,7 @@ using BakaMangaAPI.Models;
 using BakaMangaAPI.Services;
 using AutoMapper;
 
-namespace BakaMangaAPI.Controllers.Admin;
+namespace BakaMangaAPI.Controllers;
 
 [Route("admin/manga")]
 [ApiController]
@@ -70,7 +70,8 @@ public class AdminMangaController : ControllerBase
         var manga = _mapper.Map<Manga>(mangaDTO);
         if (coverImage != null)
         {
-            manga.CoverPath = await _mediaManager.UploadImage(coverImage, manga.Id);
+            manga.CoverPath = mangaDTO.CoverPath =
+                await _mediaManager.UploadImage(coverImage, manga.Id);
             await _context.SaveChangesAsync();
         }
         _context.Mangas.Add(manga);

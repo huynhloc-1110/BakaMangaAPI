@@ -4,7 +4,7 @@ using BakaMangaAPI.Data;
 using BakaMangaAPI.DTOs;
 using AutoMapper;
 
-namespace BakaMangaAPI.Controllers.User;
+namespace BakaMangaAPI.Controllers;
 
 [Route("user/[controller]")]
 [ApiController]
