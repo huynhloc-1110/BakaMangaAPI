@@ -238,7 +238,7 @@ public class SeedData : IDisposable
         Author fuyuAmakura = new()
         {
             Name = "Fuyu Amakura",
-            Biography = "Fuyu Amakura is the author of Heroine hajimemashita. You can find more about the author on their Twitter account: [Fuyu Amakura on Twitter](https://twitter.com/amakura_fuyu)"
+            Biography = "You can find more about the author on their Twitter account: [Fuyu Amakura on Twitter](https://twitter.com/amakura_fuyu)"
         };
 
         Author yomoyamaTakashi = new()
@@ -250,7 +250,7 @@ public class SeedData : IDisposable
         Author hanatsukaShiori = new()
         {
             Name = "Hanatsuka Shiori",
-            Biography = "Hanatsuka Shiori is the author of Yaiteru futari. You can find more about the author on their Twitter account: [Hanatsuka Shiori on Twitter](https://twitter.com/hntkchan)"
+            Biography = "You can find more about the author on their Twitter account: [Hanatsuka Shiori on Twitter](https://twitter.com/hntkchan)"
         };
 
         // MANGA SEED DATA
@@ -264,9 +264,9 @@ public class SeedData : IDisposable
             Categories = new List<Category>() {
                 adventure,
                 comedy,
+                fantasy,
                 sciFi,
                 sliceOfLife ,
-                fantasy,
             },
             Authors = new List<Author>() {
                 fujikoFujio
@@ -287,11 +287,11 @@ public class SeedData : IDisposable
             PublishYear = 1999,
             Categories = new List<Category>() {
                 action,
-                comedy,
-                shounen,
                 adventure,
+                comedy,
                 drama,
                 fantasy,
+                shounen,
             },
             Authors = new List<Author>(){
                 kishimotoMasashi
@@ -312,8 +312,8 @@ public class SeedData : IDisposable
             PublishYear = 2016,
             Categories = new List<Category>() {
                 comedy,
-                schoolLife,
                 romance,
+                schoolLife,
                 shoujo,
             },
             Authors = new List<Author>() {
@@ -334,13 +334,13 @@ public class SeedData : IDisposable
             Description = "The man forsaken by the world, the man a slave to money, and the man known as the legendary God of War in the highly popular MMORPG Continent of Magic. With the coming of age, he decides to say goodbye, but the feeble attempt to earn a little something for his time and effort ripples into an effect none could ever have imagined. Through a series of coincidences, his legendary avatar is sold for 3 billion 90 million won ($2.7 million), bringing great joy to him, only to plunge him into despair at losing almost all of it to vicious loan sharks. With the revelation of money through gaming, he rises from the abyss with newfound resolve and steps forward into the new age of games led by the first-ever Virtual Reality MMORPG, Royal Road. [This is the legend of Lee Hyun on his path to becoming Emperor with only his family-loving heart, his boundless desire for money, his unexpected mind, his diligently forged body, and the talent of hard work backing him. This is the legend of the lowest becoming the strongest. This is the legend of WEED.]",
             PublishYear = 2015,
             Categories = new List<Category>() {
+                action,
                 adventure,
+                fantasy,
+                game,
                 martialArts,
-                game ,
                 sciFi,
                 seinen,
-                fantasy,
-                action,
             },
             Authors = new List<Author>() {
                 heesungNam
@@ -362,13 +362,13 @@ public class SeedData : IDisposable
             PublishYear = 1989,
             Categories = new List<Category>()
             {
-                new Category { Name = "Psychological" },
-                new Category { Name = "Horror" },
-                new Category { Name = "Comedy" },
-                new Category { Name = "Drama" },
-                new Category { Name = "Supernatural" },
-                new Category { Name = "Mystery" },
-                new Category { Name = "Tragedy"}
+                comedy,
+                drama,
+                horror,
+                mystery,
+                supernatural,
+                tragedy,
+                psychological,
             },
             Authors = new List<Author>()
             {
@@ -391,10 +391,10 @@ public class SeedData : IDisposable
             PublishYear = 2018,
             Categories = new List<Category>()
             {
-                new Category { Name = "Romance" },
-                new Category { Name = "School Life" },
-                new Category { Name = "Comedy" },
-                new Category { Name = "Shoujo"}
+                comedy,
+                romance,
+                schoolLife,
+                shoujo,
             },
             Authors = new List<Author>()
             {
@@ -417,12 +417,12 @@ public class SeedData : IDisposable
             PublishYear = 2019,
             Categories = new List<Category>()
             {
-                new Category { Name = "Action" },
-                new Category { Name = "Drama" },
-                new Category { Name = "Mystery" },
-                new Category { Name = "Shounen" },
-                new Category { Name = "Supernatural" },
-                new Category { Name = "Mature"}
+                action,
+                drama,
+                mature,
+                mystery,
+                shounen,
+                supernatural,
             },
             Authors = new List<Author>()
             {
@@ -445,13 +445,13 @@ public class SeedData : IDisposable
             PublishYear = 1994,
             Categories = new List<Category>()
             {
-                new Category { Name = "Adventure" },
-                new Category { Name = "Mystery" },
-                new Category { Name = "Shounen" },
-                new Category { Name = "Comedy" },
-                new Category { Name = "Drama" },
-                new Category { Name = "Action" },
-                new Category { Name = "Detective"}
+                action,
+                adventure,
+                comedy,
+                detective,
+                drama,
+                mystery,
+                shounen,
             },
             Authors = new List<Author>()
             {
@@ -474,9 +474,9 @@ public class SeedData : IDisposable
             PublishYear = 2020,
             Categories = new List<Category>()
             {
-                new Category { Name = "Romance" },
-                new Category { Name = "Slice of Life" },
-                new Category { Name = "Cooking" }
+                cooking,
+                romance,
+                sliceOfLife,
             },
             Authors = new List<Author>()
             {
