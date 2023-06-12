@@ -7,6 +7,7 @@ public partial class SeedData
     private void SeedMangas(Dictionary<string, Category> categories,
         Dictionary<string, Author> authors)
     {
+        var serverUrl = _configuration["JWT:ValidIssuer"] + "/img/";
         List<Manga> mangas = new();
 
         mangas.Add(new()
@@ -33,7 +34,8 @@ public partial class SeedData
                 new Chapter() { Name = "Chapter 1: All the Way From a Future World", Language = Language.English },
                 new Chapter() { Name = "Chapter 2: The Prophecy of Doraemon", Language = Language.English },
                 new Chapter() { Name = "Chapter 3: Transforming Biscuits", Language = Language.English },
-            }
+            },
+            CoverPath = serverUrl + "doraemon.png",
         });
 
         mangas.Add(new()
@@ -61,7 +63,8 @@ public partial class SeedData
                 new Chapter() { Name = "Chapter 1: Naruto Uzumaki!!" },
                 new Chapter() { Name = "Chapter 2: Konohamaru!!" },
                 new Chapter() { Name = "Chapter 3: Sasuke Uchiha!!" },
-            }
+            },
+            CoverPath = serverUrl + "naruto.png",
         });
 
         mangas.Add(new()
@@ -87,7 +90,8 @@ public partial class SeedData
                 new Chapter() { Name = "Chapter 1: A normal person" },
                 new Chapter() { Name = "Chapter 2: Peaceful" },
                 new Chapter() { Name = "Chapter 3: Spectre" },
-            }
+            },
+            CoverPath = serverUrl + "komi.png",
         });
 
         mangas.Add(new()
@@ -116,7 +120,8 @@ public partial class SeedData
                 new Chapter() { Name = "Chapter 1: Introduction: The Legendary Moonlight Sculptor" },
                 new Chapter() { Name = "Chapter 2: The Man with a Mask" },
                 new Chapter() { Name = "Chapter 3: The Master and Disciple" },
-            }
+            },
+            CoverPath = serverUrl + "the.png",
         });
 
         mangas.Add(new()
@@ -145,7 +150,8 @@ public partial class SeedData
                 new Chapter { Name = "Chapter 1: Tomie" },
                 new Chapter { Name = "Chapter 2: Photograph" },
                 new Chapter { Name = "Chapter 3: Kiss" },
-            }
+            },
+            CoverPath = serverUrl + "itou.png",
         });
 
         mangas.Add(new()
@@ -171,7 +177,8 @@ public partial class SeedData
                 new Chapter { Name = "Chapter 1: Encounter With A High School Student" },
                 new Chapter { Name = "Chapter 2: A great success!!" },
                 new Chapter { Name = "Chapter 3: I became his bodyguard" },
-            }
+            },
+            CoverPath = serverUrl + "heroine.png",
         });
 
         mangas.Add(new()
@@ -199,7 +206,8 @@ public partial class SeedData
                 new Chapter { Name = "Chapter 1: August eight" },
                 new Chapter { Name = "Chapter 2: Con air" },
                 new Chapter { Name = "Chapter 3: Eastern Promises" },
-            }
+            },
+            CoverPath = serverUrl + "tsui.jpg",
         });
 
         mangas.Add(new()
@@ -228,7 +236,8 @@ public partial class SeedData
                 new Chapter { Name = "Chapter 1: The Heisei Holmes" },
                 new Chapter { Name = "Chapter 2: The shrunken detective" },
                 new Chapter { Name = "Chapter 3: The left out detective" },
-            }
+            },
+            CoverPath = serverUrl + "conan.png",
         });
 
         mangas.Add(new()
@@ -253,7 +262,8 @@ public partial class SeedData
                 new Chapter { Name = "Chapter 1: You apply just the right amount of heat" },
                 new Chapter { Name = "Chapter 2: First breakfast together" },
                 new Chapter { Name = "Chapter 3: A Toast with Beer and lamp chops" },
-            }
+            },
+            CoverPath = serverUrl + "yaiteru.png",
         });
 
         _context.AddRange(mangas);
