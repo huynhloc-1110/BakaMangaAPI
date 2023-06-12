@@ -35,8 +35,7 @@ public class AdminMangaControllerTests : IClassFixture<MangaFixture>
         var result = await _controller.PostManga(mangaDTO, GetMockFile());
 
         // Check the return type
-        var actionResult = Assert.IsType<ActionResult<Manga>>(result);
-        var createdAtActionResult = Assert.IsType<CreatedAtActionResult>(actionResult.Result);
+        var createdAtActionResult = Assert.IsType<CreatedAtActionResult>(result);
         var mangaDetailDTO = Assert.IsType<MangaDetailDTO>(createdAtActionResult.Value);
 
         // Check the return value
