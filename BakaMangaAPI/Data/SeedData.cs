@@ -1,13 +1,16 @@
 ﻿using BakaMangaAPI.Models;
+using Microsoft.AspNetCore.Authorization.Infrastructure;
 
 namespace BakaMangaAPI.Data;
 
-public class SeedData : IDisposable
+public partial class SeedData : IDisposable
 {
     private readonly ApplicationDbContext _context;
+    private readonly IConfiguration _configuration;
     public SeedData(IServiceProvider serviceProvider)
     {
         _context = serviceProvider.GetRequiredService<ApplicationDbContext>();
+        _configuration = serviceProvider.GetRequiredService<IConfiguration>();
     }
 
     public void Initialize()
@@ -17,35 +20,9 @@ public class SeedData : IDisposable
             return;
         }
 
-        Manga doraemon = new()
-        {
-            Description = "A cat robot manga",
-            OriginalTitle = "Doraemon",
-            PublishYear = 1969,
-        };
-
-        Manga naruto = new()
-        {
-            Description = "An edgy ninja story",
-            OriginalTitle = "Naruto",
-            PublishYear = 1999,
-        };
-
-        Chapter chapter = new()
-        {
-            Id = Guid.NewGuid().ToString(),
-            Manga = doraemon,
-            Name = "Ch.01 - Meet Doraemon",
-        };
-
-        Image image = new()
-        {
-            Id = Guid.NewGuid().ToString(),
-            Path = "doraemon.png",
-            Chapter = chapter
-        };
-
-        _context.AddRange(doraemon, naruto, chapter, image);
+        var categories = SeedCategories();
+        var authors = SeedAuthors();
+        SeedMangas(categories, authors);
         _context.SaveChanges();
     }
 
