@@ -6,19 +6,19 @@ using AutoMapper;
 
 namespace BakaMangaAPITest.Controllers;
 
-public class AdminMangaControllerTests : IClassFixture<MangaFixture>
+public class ManageMangaControllerTests : IClassFixture<MangaFixture>
 {
     private readonly ApplicationDbContext _context;
     private readonly IMapper _mapper;
-    private readonly AdminMangaController _controller;
+    private readonly ManageMangaController _controller;
 
-    public AdminMangaControllerTests(MangaFixture fixture)
+    public ManageMangaControllerTests(MangaFixture fixture)
     {
         _context = fixture.CreateContext();
         var mapperConfig = new MapperConfiguration(cfg => cfg.AddProfile(new AppMapper()));
         _mapper = mapperConfig.CreateMapper();
         var mediaManager = new MockMediaManager();
-        _controller = new AdminMangaController(_context, _mapper, mediaManager);
+        _controller = new ManageMangaController(_context, _mapper, mediaManager);
     }
 
     [Fact]

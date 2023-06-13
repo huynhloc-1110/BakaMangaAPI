@@ -7,14 +7,15 @@ using BakaMangaAPI.DTOs;
 
 namespace BakaMangaAPI.Controllers;
 
-[Route("admin/[controller]")]
+[Route("manage/author")]
 [ApiController]
-public class AuthorController : ControllerBase
+//[Authorize(Roles = "Admin")]
+public class ManageAuthorController : ControllerBase
 {
     private readonly ApplicationDbContext _context;
     private readonly IMapper _mapper;
 
-    public AuthorController(ApplicationDbContext context, IMapper mapper)
+    public ManageAuthorController(ApplicationDbContext context, IMapper mapper)
     {
         _context = context;
         _mapper = mapper;
@@ -30,6 +31,11 @@ public class AuthorController : ControllerBase
             query = query.Where(a => a.DeletedAt == null);
         }
 
+        if (!string.IsNullOrEmpty(filter.Search))
+        {
+            query = query.Where(m => m.Name.ToLower().Contains(filter.Search.ToLower()));
+        }
+
         var authors = await query
             .OrderBy(a => a.Name)
             .Skip((filter.Page - 1) * filter.PageSize)
@@ -42,7 +48,7 @@ public class AuthorController : ControllerBase
 
     // GET: api/Author/5
     [HttpGet("{id}")]
-    public async Task<ActionResult<Author>> GetAuthor(string id)
+    public async Task<IActionResult> GetAuthor(string id)
     {
         var author = await _context.Authors.FindAsync(id);
 
@@ -94,7 +100,7 @@ public class AuthorController : ControllerBase
     // POST: api/Author
     // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
     [HttpPost]
-    public async Task<ActionResult<Author>> PostAuthor(AuthorDetailDTO authorDTO)
+    public async Task<IActionResult> PostAuthor(AuthorDetailDTO authorDTO)
     {
         var author = _mapper.Map<Author>(authorDTO);
         _context.Authors.Add(author);

@@ -9,16 +9,16 @@ using AutoMapper;
 
 namespace BakaMangaAPI.Controllers;
 
-[Route("admin/manga")]
+[Route("manage/manga")]
 [ApiController]
 //[Authorize(Roles = "Admin")]
-public class AdminMangaController : ControllerBase
+public class ManageMangaController : ControllerBase
 {
     private readonly ApplicationDbContext _context;
     private readonly IMapper _mapper;
     private readonly IMediaManager _mediaManager;
 
-    public AdminMangaController(ApplicationDbContext context, IMapper mapper, IMediaManager mediaManager)
+    public ManageMangaController(ApplicationDbContext context, IMapper mapper, IMediaManager mediaManager)
     {
         _context = context;
         _mapper = mapper;
