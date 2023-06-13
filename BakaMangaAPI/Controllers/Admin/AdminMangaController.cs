@@ -28,7 +28,7 @@ public class AdminMangaController : ControllerBase
     // GET: api/Manga?Search=&Page=1&PageSize=12
     [HttpGet]
     public async Task<IActionResult> GetMangas
-        ([FromQuery] MangaFilterDTO filter)
+        ([FromQuery] FilterDTO filter)
     {
         var query = _context.Mangas.AsQueryable();
         if (!string.IsNullOrEmpty(filter.Search))
@@ -108,7 +108,6 @@ public class AdminMangaController : ControllerBase
         {
             manga.CoverPath = mangaDTO.CoverPath =
                 await _mediaManager.UploadImage(coverImage, manga.Id);
-            await _context.SaveChangesAsync();
         }
         _context.Mangas.Add(manga);
         try
@@ -126,7 +125,7 @@ public class AdminMangaController : ControllerBase
                 throw;
             }
         }
-        return CreatedAtAction("GetManga", new { id = manga.Id }, mangaDTO);
+        return CreatedAtAction("GetManga", new { id = mangaDTO.Id }, mangaDTO);
     }
 
     // DELETE: api/Manga/5

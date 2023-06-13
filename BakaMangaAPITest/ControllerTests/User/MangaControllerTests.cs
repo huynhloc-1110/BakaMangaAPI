@@ -30,7 +30,7 @@ public class MangaControllerTests : IClassFixture<MangaFixture>
     [InlineData(0, null, null, "Slam Dunk")]
     public async Task GetMangas_ReturnsListOfMangaBasicDTOs(int expected, int? page = null, int? pageSize = null, string? search = null)
     {
-        MangaAdvancedFilterDTO filter = new();
+        MangaFilterDTO filter = new();
         filter.Page = page ?? filter.Page;
         filter.PageSize = pageSize ?? filter.PageSize;
         filter.Search = search ?? filter.Search;

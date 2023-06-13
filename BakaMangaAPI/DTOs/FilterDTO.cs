@@ -1,6 +1,6 @@
 ﻿namespace BakaMangaAPI.DTOs;
 
-public class MangaFilterDTO
+public class FilterDTO
 {
     public string Search { get; set; } = string.Empty;
 
@@ -9,7 +9,12 @@ public class MangaFilterDTO
     public int PageSize { get; set; } = 12;
 }
 
-public class MangaAdvancedFilterDTO : MangaFilterDTO
+public class ManageFilterDTO : FilterDTO
+{
+    public bool IncludeDeleted { get; set; }
+}
+
+public class MangaFilterDTO : FilterDTO
 {
     public SortOption SortOption { get; set; }
 }

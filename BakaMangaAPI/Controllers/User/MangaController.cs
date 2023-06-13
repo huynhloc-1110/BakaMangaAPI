@@ -23,7 +23,7 @@ public class MangaController : ControllerBase
     // GET: api/Manga
     [HttpGet]
     public async Task<IActionResult> GetMangas
-        ([FromQuery] MangaAdvancedFilterDTO filter)
+        ([FromQuery] MangaFilterDTO filter)
     {
         var query = _context.Mangas.Where(m => m.DeletedAt == null);
 
