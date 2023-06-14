@@ -104,6 +104,21 @@ public class ManageMangaController : ControllerBase
         ([FromForm] MangaDetailDTO mangaDTO, [FromForm] IFormFile? coverImage)
     {
         var manga = _mapper.Map<Manga>(mangaDTO);
+
+        // process categories
+        var categoryNames = mangaDTO.CategoryNames.Split(',');
+        foreach(var categoryName in categoryNames)
+        {
+            var category = await _context.Categories
+                .Where(m => m.Name == categoryName)
+                .SingleOrDefaultAsync();
+            if (category != null)
+            {
+                manga.Categories.Add(category);
+            }
+        }
+
+        // process image
         if (coverImage != null)
         {
             manga.CoverPath = mangaDTO.CoverPath =
