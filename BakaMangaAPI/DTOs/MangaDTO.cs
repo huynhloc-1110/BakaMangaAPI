@@ -14,6 +14,8 @@ public class MangaBasicDTO
     public Language OriginalLanguage { get; set; }
 
     public string? Description { get; set; }
+
+    public DateTime CreatedAt { get; set; }
 }
 
 public class MangaDetailDTO
@@ -38,5 +40,5 @@ public class MangaDetailDTO
 
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
-    public string CategoryNames { get; set; } = string.Empty;
+    public string CategoryIds { get; set; } = string.Empty;
 }
