@@ -28,31 +28,42 @@ public class ManageCategoryController : ControllerBase
 
     // GET: api/ManageCategory
     [HttpGet]
-    public async Task<IActionResult> GetCategories([FromQuery] ManageFilterDTO filter)
-    {
-        var query = _context.Categories.AsQueryable();
-        if (!filter.IncludeDeleted)
-        {
-            query = query.Where(a => a.DeletedAt == null);
-        }
+	[HttpGet]
+	public async Task<IActionResult> GetCategories([FromQuery] ManageFilterDTO filter)
+	{
+		var query = _context.Categories.AsQueryable();
+		if (!filter.IncludeDeleted)
+		{
+			query = query.Where(a => a.DeletedAt == null);
+		}
 
-        if (!string.IsNullOrEmpty(filter.Search))
-        {
-            query = query.Where(m => m.Name.ToLower().Contains(filter.Search.ToLower()));
-        }
+		if (!string.IsNullOrEmpty(filter.Search))
+		{
+			query = query.Where(m => m.Name.ToLower().Contains(filter.Search.ToLower()));
+		}
 
-        var categories = await query
-            .OrderBy(a => a.Name)
-            .Skip((filter.Page - 1) * filter.PageSize)
-            .Take(filter.PageSize)
-            .AsNoTracking()
-            .ToListAsync();
+		// Get the total count of categories matching the filter criteria
+		int totalCategories = await query.CountAsync();
 
-        return Ok(_mapper.Map<List<CategoryBasicDTO>>(categories));
-    }
+		var categories = await query
+			.OrderBy(a => a.Name)
+			.Skip((filter.Page - 1) * filter.PageSize)
+			.Take(filter.PageSize)
+			.AsNoTracking()
+			.ToListAsync();
 
-    // GET: api/ManageCategory/5
-    [HttpGet("{id}")]
+		var response = new
+		{
+			TotalCount = totalCategories,
+			Categories = _mapper.Map<List<CategoryBasicDTO>>(categories)
+		};
+
+		return Ok(response);
+	}
+
+
+	// GET: api/ManageCategory/5
+	[HttpGet("{id}")]
     public async Task<IActionResult> GetCategory(string id)
     {
         var category = await _context.Categories.FindAsync(id);

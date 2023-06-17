@@ -37,4 +37,6 @@ public class MangaDetailDTO
     public int PublishYear { get; set; }
 
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+
+    public string CategoryIds { get; set; } = string.Empty;
 }

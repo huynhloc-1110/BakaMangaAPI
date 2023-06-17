@@ -25,4 +25,16 @@
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.2.3" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Include="wwwroot\img\conan.png" />
+    <None Include="wwwroot\img\doraemon.png" />
+    <None Include="wwwroot\img\heroine.png" />
+    <None Include="wwwroot\img\itou.png" />
+    <None Include="wwwroot\img\komi.png" />
+    <None Include="wwwroot\img\naruto.png" />
+    <None Include="wwwroot\img\the.png" />
+    <None Include="wwwroot\img\tsui.jpg" />
+    <None Include="wwwroot\img\yaiteru.png" />
+  </ItemGroup>
+
 </Project>

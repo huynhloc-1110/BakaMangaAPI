@@ -104,7 +104,21 @@ public class ManageMangaController : ControllerBase
         ([FromForm] MangaDetailDTO mangaDTO, [FromForm] IFormFile? coverImage)
     {
         var manga = _mapper.Map<Manga>(mangaDTO);
-        if (coverImage != null)
+
+		// process categories
+		var categoryIds = mangaDTO.CategoryIds.Split(',');
+		foreach (var categoryId in categoryIds)
+		{
+			var category = await _context.Categories
+				.Where(m => m.Id == categoryId)
+				.SingleOrDefaultAsync();
+			if (category != null)
+			{
+				manga.Categories.Add(category);
+			}
+		}
+
+		if (coverImage != null)
         {
             manga.CoverPath = mangaDTO.CoverPath =
                 await _mediaManager.UploadImage(coverImage, manga.Id);

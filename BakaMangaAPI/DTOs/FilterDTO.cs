@@ -2,7 +2,7 @@
 
 public class FilterDTO
 {
-    public string Search { get; set; } = string.Empty;
+    public string? Search { get; set; }
 
     public int Page { get; set; } = 1;
 
@@ -11,7 +11,7 @@ public class FilterDTO
 
 public class ManageFilterDTO : FilterDTO
 {
-    public bool IncludeDeleted { get; set; }
+    public bool IncludeDeleted { get; set; } = true;
 }
 
 public class MangaFilterDTO : FilterDTO

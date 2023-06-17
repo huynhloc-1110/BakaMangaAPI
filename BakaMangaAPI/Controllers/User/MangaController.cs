@@ -80,4 +80,21 @@ public class MangaController : ControllerBase
             .Where(m => m.DeletedAt == null)
             .CountAsync();
     }
+
+	[HttpGet("countSearch")]
+	public async Task<ActionResult<int>> GetMangaCountBySearch([FromQuery] string search)
+	{
+		var query = _context.Mangas.Where(m => m.DeletedAt == null);
+
+		if (!string.IsNullOrEmpty(search))
+		{
+			query = query.Where(m => m.OriginalTitle.ToLower().Contains(search.ToLower()) ||
+									 m.AlternativeTitles!.Contains(search));
+		}
+
+		var count = await query.CountAsync();
+
+		return count;
+	}
+
 }
