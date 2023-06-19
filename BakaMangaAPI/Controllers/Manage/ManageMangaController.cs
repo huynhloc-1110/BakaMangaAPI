@@ -79,9 +79,9 @@ public class ManageMangaController : ControllerBase
     // PUT: manage/manga/5
     [HttpPut("{id}")]
     public async Task<IActionResult> PutManga([FromQuery] string id,
-        [FromForm] MangaEditDTO mangaDTO, [FromForm] IFormFile? coverImage)
+        [FromForm] MangaEditDTO mangaEditDTO, [FromForm] IFormFile? coverImage)
     {
-        if (id != mangaDTO.Id)
+        if (id != mangaEditDTO.Id)
         {
             return BadRequest();
         }
@@ -93,13 +93,12 @@ public class ManageMangaController : ControllerBase
             return NotFound();
         }
 
-        manga = _mapper.Map(mangaDTO, manga);
+        manga = _mapper.Map(mangaEditDTO, manga);
 
         // process image
         if (coverImage != null)
         {
-            manga.CoverPath = mangaDTO.CoverPath =
-                await _mediaManager.UploadImage(coverImage, manga.Id);
+            manga.CoverPath = await _mediaManager.UploadImage(coverImage, manga.Id);
         }
 
         try
@@ -124,12 +123,12 @@ public class ManageMangaController : ControllerBase
     // POST: manage/manga
     [HttpPost]
     public async Task<IActionResult> PostManga
-        ([FromForm] MangaEditDTO mangaDTO, [FromForm] IFormFile? coverImage)
+        ([FromForm] MangaEditDTO mangaEditDTO, [FromForm] IFormFile? coverImage)
     {
-        var manga = _mapper.Map<Manga>(mangaDTO);
+        var manga = _mapper.Map<Manga>(mangaEditDTO);
 
         // process categories
-        var categoryIds = mangaDTO.CategoryIds.Split(',');
+        var categoryIds = mangaEditDTO.CategoryIds.Split(',');
         foreach (var categoryId in categoryIds)
         {
             var category = await _context.Categories
@@ -143,10 +142,10 @@ public class ManageMangaController : ControllerBase
         // process image
         if (coverImage != null)
         {
-            manga.CoverPath = mangaDTO.CoverPath =
-                await _mediaManager.UploadImage(coverImage, manga.Id);
+            manga.CoverPath = await _mediaManager.UploadImage(coverImage, manga.Id);
         }
         _context.Mangas.Add(manga);
+
         try
         {
             await _context.SaveChangesAsync();
@@ -162,7 +161,9 @@ public class ManageMangaController : ControllerBase
                 throw;
             }
         }
-        return CreatedAtAction("GetManga", new { id = mangaDTO.Id }, mangaDTO);
+
+        var mangaDetailDTO = _mapper.Map<MangaDetailDTO>(manga);
+        return CreatedAtAction("GetManga", new { id = mangaDetailDTO.Id }, mangaDetailDTO);
     }
 
     // DELETE: manage/manga/5?undelete=false
