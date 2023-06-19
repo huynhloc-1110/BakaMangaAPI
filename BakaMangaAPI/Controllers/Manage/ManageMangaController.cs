@@ -25,12 +25,13 @@ public class ManageMangaController : ControllerBase
         _mediaManager = mediaManager;
     }
 
-    // GET: api/Manga?Search=&Page=1&PageSize=12
+    // GET: manage/manga?Search=&Page=1&PageSize=12
     [HttpGet]
     public async Task<IActionResult> GetMangas
         ([FromQuery] FilterDTO filter)
     {
         var query = _context.Mangas.AsQueryable();
+
         if (!string.IsNullOrEmpty(filter.Search))
         {
             query = query.Where(m => m.OriginalTitle.ToLower().Contains(filter.Search.ToLower()) ||
@@ -42,14 +43,24 @@ public class ManageMangaController : ControllerBase
             .Take(filter.PageSize)
             .AsNoTracking()
             .ToListAsync();
-        return Ok(_mapper.Map<List<MangaBasicDTO>>(mangas));
+        if (mangas.Count == 0)
+        {
+            return NotFound();
+        }
+
+        var mangasCount = await query.CountAsync();
+        var mangaList = _mapper.Map<List<MangaBasicDTO>>(mangas);
+        var paginatedMangaList = new PaginatedListDTO<MangaBasicDTO>
+            (mangaList, mangasCount, filter.Page, filter.PageSize);
+        return Ok(paginatedMangaList);
     }
 
-    // GET: api/Manga/5
+    // GET: manage/manga/5
     [HttpGet("{id}")]
     public async Task<IActionResult> GetManga(string id)
     {
         var manga = await _context.Mangas
+            .Include(m => m.Categories)
             .AsNoTracking()
             .SingleOrDefaultAsync(m => m.Id == id);
 
@@ -61,10 +72,10 @@ public class ManageMangaController : ControllerBase
         return Ok(_mapper.Map<MangaDetailDTO>(manga));
     }
 
-    // PUT: api/Manga/5
+    // PUT: manage/manga/5
     [HttpPut("{id}")]
     public async Task<IActionResult> PutManga([FromQuery] string id,
-        [FromForm] MangaDetailDTO mangaDTO, [FromForm] IFormFile? coverImage)
+        [FromForm] MangaEditDTO mangaDTO, [FromForm] IFormFile? coverImage)
     {
         if (id != mangaDTO.Id)
         {
@@ -106,16 +117,16 @@ public class ManageMangaController : ControllerBase
         return NoContent();
     }
 
-    // POST: api/Manga
+    // POST: manage/manga
     [HttpPost]
     public async Task<IActionResult> PostManga
-        ([FromForm] MangaDetailDTO mangaDTO, [FromForm] IFormFile? coverImage)
+        ([FromForm] MangaEditDTO mangaDTO, [FromForm] IFormFile? coverImage)
     {
         var manga = _mapper.Map<Manga>(mangaDTO);
 
         // process categories
         var categoryIds = mangaDTO.CategoryIds.Split(',');
-        foreach(var categoryId in categoryIds)
+        foreach (var categoryId in categoryIds)
         {
             var category = await _context.Categories
                 .FindAsync(categoryId);
@@ -150,21 +161,25 @@ public class ManageMangaController : ControllerBase
         return CreatedAtAction("GetManga", new { id = mangaDTO.Id }, mangaDTO);
     }
 
-    // DELETE: api/Manga/5
+    // DELETE: manage/manga/5
     [HttpDelete("{id}")]
-    public async Task<IActionResult> DeleteManga(string id)
+    public async Task<IActionResult> DeleteManga(string id, [FromQuery] bool undelete)
     {
-        if (_context.Mangas == null)
-        {
-            return NotFound();
-        }
         var manga = await _context.Mangas.FindAsync(id);
         if (manga == null)
         {
             return NotFound();
         }
 
-        manga.DeletedAt = DateTime.UtcNow;
+        if (undelete)
+        {
+            manga.DeletedAt = null;
+        }
+        else
+        {
+            manga.DeletedAt = DateTime.UtcNow;
+        }
+
         await _context.SaveChangesAsync();
 
         return NoContent();

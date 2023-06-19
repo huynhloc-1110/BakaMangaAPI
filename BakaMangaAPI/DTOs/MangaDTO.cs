@@ -18,7 +18,7 @@ public class MangaBasicDTO
     public DateTime CreatedAt { get; set; }
 }
 
-public class MangaDetailDTO
+public class MangaEditDTO
 {
     public string Id { get; set; } = Guid.NewGuid().ToString();
 
@@ -41,4 +41,25 @@ public class MangaDetailDTO
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
     public string CategoryIds { get; set; } = string.Empty;
+}
+
+public class MangaDetailDTO
+{
+    public string Id { get; set; } = Guid.NewGuid().ToString();
+
+    public string? CoverPath { get; set; }
+
+    public string OriginalTitle { get; set; } = string.Empty;
+
+    public string AlternativeTitles { get; set; } = string.Empty;
+
+    public Language OriginalLanguage { get; set; }
+
+    public string? Description { get; set; }
+
+    public int PublishYear { get; set; }
+
+    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+
+    public List<CategoryBasicDTO> Categories = new();
 }

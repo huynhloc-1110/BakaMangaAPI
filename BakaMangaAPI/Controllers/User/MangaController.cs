@@ -27,6 +27,14 @@ public class MangaController : ControllerBase
     {
         var query = _context.Mangas.Where(m => m.DeletedAt == null);
 
+        // search
+        if (!string.IsNullOrEmpty(filter.Search))
+        {
+            query = query.Where(m => m.OriginalTitle.ToLower().Contains(filter.Search.ToLower()) ||
+                m.AlternativeTitles!.Contains(filter.Search));
+        }
+        var mangasCount = await query.CountAsync();
+
         // sort options
         query = filter.SortOption switch
         {
@@ -38,22 +46,21 @@ public class MangaController : ControllerBase
             _ => throw new NotImplementedException()
         };
 
-        // search
-        if (!string.IsNullOrEmpty(filter.Search))
-        {
-            query = query.Where(m => m.OriginalTitle.ToLower().Contains(filter.Search.ToLower()) ||
-                m.AlternativeTitles!.Contains(filter.Search));
-        }
-
         // page
         var mangas = await query
             .Skip((filter.Page - 1) * filter.PageSize)
             .Take(filter.PageSize)
             .AsNoTracking()
             .ToListAsync();
+        if (mangas.Count == 0)
+        {
+            return NotFound();
+        }
 
-        // map to DTO list
-        return Ok(_mapper.Map<List<MangaBasicDTO>>(mangas));
+        var mangaList = _mapper.Map<List<MangaBasicDTO>>(mangas);
+        var paginatedMangaList = new PaginatedListDTO<MangaBasicDTO>
+            (mangaList, mangasCount, filter.Page, filter.PageSize);
+        return Ok(paginatedMangaList);
     }
 
     // GET: api/Manga/5
