@@ -28,15 +28,19 @@ public class ManageMangaController : ControllerBase
     // GET: manage/manga?Search=&Page=1&PageSize=12
     [HttpGet]
     public async Task<IActionResult> GetMangas
-        ([FromQuery] FilterDTO filter)
+        ([FromQuery] ManageFilterDTO filter)
     {
         var query = _context.Mangas.AsQueryable();
-
+        if (filter.ExcludeDeleted)
+        {
+            query = query.Where(m => m.DeletedAt == null);
+        }
         if (!string.IsNullOrEmpty(filter.Search))
         {
             query = query.Where(m => m.OriginalTitle.ToLower().Contains(filter.Search.ToLower()) ||
                 m.AlternativeTitles!.Contains(filter.Search));
         }
+
         var mangas = await query
             .OrderBy(m => m.CreatedAt)
             .Skip((filter.Page - 1) * filter.PageSize)
@@ -48,10 +52,10 @@ public class ManageMangaController : ControllerBase
             return NotFound();
         }
 
-        var mangasCount = await query.CountAsync();
+        var mangaCount = await query.CountAsync();
         var mangaList = _mapper.Map<List<MangaBasicDTO>>(mangas);
         var paginatedMangaList = new PaginatedListDTO<MangaBasicDTO>
-            (mangaList, mangasCount, filter.Page, filter.PageSize);
+            (mangaList, mangaCount, filter.Page, filter.PageSize);
         return Ok(paginatedMangaList);
     }
 
@@ -161,7 +165,7 @@ public class ManageMangaController : ControllerBase
         return CreatedAtAction("GetManga", new { id = mangaDTO.Id }, mangaDTO);
     }
 
-    // DELETE: manage/manga/5
+    // DELETE: manage/manga/5?undelete=false
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteManga(string id, [FromQuery] bool undelete)
     {
@@ -181,7 +185,6 @@ public class ManageMangaController : ControllerBase
         }
 
         await _context.SaveChangesAsync();
-
         return NoContent();
     }
 

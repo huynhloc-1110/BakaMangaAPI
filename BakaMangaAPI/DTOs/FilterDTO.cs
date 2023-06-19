@@ -11,7 +11,7 @@ public class FilterDTO
 
 public class ManageFilterDTO : FilterDTO
 {
-    public bool IncludeDeleted { get; set; } = true;
+    public bool ExcludeDeleted { get; set; }
 }
 
 public class MangaFilterDTO : FilterDTO

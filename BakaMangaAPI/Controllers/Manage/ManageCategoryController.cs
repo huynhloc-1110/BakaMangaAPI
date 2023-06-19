@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using BakaMangaAPI.Data;
 using BakaMangaAPI.Models;
@@ -26,16 +21,15 @@ public class ManageCategoryController : ControllerBase
         _mapper = mapper;
     }
 
-    // GET: api/ManageCategory
+    // GET: manage/category?Search=&Page=1&PageSize=12
     [HttpGet]
     public async Task<IActionResult> GetCategories([FromQuery] ManageFilterDTO filter)
     {
         var query = _context.Categories.AsQueryable();
-        if (!filter.IncludeDeleted)
+        if (filter.ExcludeDeleted)
         {
             query = query.Where(a => a.DeletedAt == null);
         }
-
         if (!string.IsNullOrEmpty(filter.Search))
         {
             query = query.Where(m => m.Name.ToLower().Contains(filter.Search.ToLower()));
@@ -47,11 +41,19 @@ public class ManageCategoryController : ControllerBase
             .Take(filter.PageSize)
             .AsNoTracking()
             .ToListAsync();
+        if (categories.Count == 0)
+        {
+            return NotFound();
+        }
 
-        return Ok(_mapper.Map<List<CategoryBasicDTO>>(categories));
+        var categoryCount = await query.CountAsync();
+        var categoryList = _mapper.Map<List<CategoryBasicDTO>>(categories);
+        var paginatedCategoryList = new PaginatedListDTO<CategoryBasicDTO>
+            (categoryList, categoryCount, filter.Page, filter.PageSize);
+        return Ok(paginatedCategoryList);
     }
 
-    // GET: api/ManageCategory/5
+    // GET: manage/category/5
     [HttpGet("{id}")]
     public async Task<IActionResult> GetCategory(string id)
     {
@@ -65,7 +67,7 @@ public class ManageCategoryController : ControllerBase
         return Ok(_mapper.Map<CategoryDetailDTO>(category));
     }
 
-    // PUT: api/ManageCategory/5
+    // PUT: manage/category/5
     // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
     [HttpPut("{id}")]
     public async Task<IActionResult> PutCategory(string id, CategoryDetailDTO categoryDTO)
@@ -103,7 +105,7 @@ public class ManageCategoryController : ControllerBase
         return NoContent();
     }
 
-    // POST: api/ManageCategory
+    // POST: manage/category
     // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
     [HttpPost]
     public async Task<IActionResult> PostCategory(CategoryDetailDTO categoryDTO)
@@ -129,23 +131,26 @@ public class ManageCategoryController : ControllerBase
         return CreatedAtAction("GetCategory", new { id = categoryDTO.Id }, categoryDTO);
     }
 
-    // DELETE: api/ManageCategory/5
+    // DELETE: manage/category/5?undelete=false
     [HttpDelete("{id}")]
-    public async Task<IActionResult> DeleteCategory(string id)
+    public async Task<IActionResult> DeleteCategory(string id, [FromQuery] bool undelete)
     {
-        if (_context.Categories == null)
-        {
-            return NotFound();
-        }
         var category = await _context.Categories.FindAsync(id);
         if (category == null)
         {
             return NotFound();
         }
 
-        category.DeletedAt = DateTime.UtcNow;
-        await _context.SaveChangesAsync();
+        if (undelete)
+        {
+            category.DeletedAt = null;
+        }
+        else
+        {
+            category.DeletedAt = DateTime.UtcNow;
+        }
 
+        await _context.SaveChangesAsync();
         return NoContent();
     }
 

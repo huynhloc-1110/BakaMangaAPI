@@ -364,3 +364,6 @@ FodyWeavers.xsd
 
 # Environment variables
 .env
+
+# vscode assets
+.vscode
