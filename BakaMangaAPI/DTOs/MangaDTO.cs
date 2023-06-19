@@ -9,7 +9,7 @@ public class MangaBasicDTO
 
     public string? CoverPath { get; set; }
 
-    public string OriginalTitle { get; set; } = string.Empty;
+    public string OriginalTitle { get; set; } = default!;
 
     public Language OriginalLanguage { get; set; }
 
@@ -45,13 +45,13 @@ public class MangaEditDTO
 
 public class MangaDetailDTO
 {
-    public string Id { get; set; } = Guid.NewGuid().ToString();
+    public string Id { get; set; } = default!;
 
     public string? CoverPath { get; set; }
 
-    public string OriginalTitle { get; set; } = string.Empty;
+    public string OriginalTitle { get; set; } = default!;
 
-    public string AlternativeTitles { get; set; } = string.Empty;
+    public string AlternativeTitles { get; set; } = default!;
 
     public Language OriginalLanguage { get; set; }
 
@@ -59,7 +59,7 @@ public class MangaDetailDTO
 
     public int PublishYear { get; set; }
 
-    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+    public DateTime CreatedAt { get; set; } = default!;
 
     public List<CategoryBasicDTO> Categories = new();
 }

@@ -9,7 +9,8 @@ public class AppMapper : Profile
     public AppMapper()
     {
         CreateMap<Manga, MangaBasicDTO>();
-        CreateMap<Manga, MangaDetailDTO>().ReverseMap();
+        CreateMap<Manga, MangaDetailDTO>();
+        CreateMap<MangaEditDTO, Manga>();
 
         CreateMap<Chapter, ChapterBasicDTO>();
 
