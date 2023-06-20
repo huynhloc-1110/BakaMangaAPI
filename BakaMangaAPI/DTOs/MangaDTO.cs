@@ -61,5 +61,5 @@ public class MangaDetailDTO
 
     public DateTime CreatedAt { get; set; } = default!;
 
-    public List<CategoryBasicDTO> Categories = new();
+    public List<CategoryBasicDTO> Categories { get; set; } = new();
 }
