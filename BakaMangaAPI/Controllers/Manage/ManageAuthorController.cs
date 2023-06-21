@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using BakaMangaAPI.Data;
 using BakaMangaAPI.Models;
@@ -9,7 +10,7 @@ namespace BakaMangaAPI.Controllers;
 
 [Route("manage/author")]
 [ApiController]
-//[Authorize(Roles = "Admin")]
+[Authorize(Roles = "Admin")]
 public class ManageAuthorController : ControllerBase
 {
     private readonly ApplicationDbContext _context;
