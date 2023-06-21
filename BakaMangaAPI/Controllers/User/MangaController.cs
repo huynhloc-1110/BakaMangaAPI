@@ -68,6 +68,7 @@ public class MangaController : ControllerBase
     public async Task<IActionResult> GetManga(string id)
     {
         var manga = await _context.Mangas
+            .Include(m => m.Categories)
             .Where(m => m.DeletedAt == null)
             .AsNoTracking()
             .SingleOrDefaultAsync(m => m.Id == id);
@@ -78,13 +79,5 @@ public class MangaController : ControllerBase
         }
 
         return Ok(_mapper.Map<MangaDetailDTO>(manga));
-    }
-
-    [HttpGet("count")]
-    public async Task<ActionResult<int>> GetMangaCount()
-    {
-        return await _context.Mangas
-            .Where(m => m.DeletedAt == null)
-            .CountAsync();
     }
 }

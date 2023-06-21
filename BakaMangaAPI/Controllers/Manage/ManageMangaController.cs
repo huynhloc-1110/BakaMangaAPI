@@ -78,7 +78,7 @@ public class ManageMangaController : ControllerBase
 
     // PUT: manage/manga/5
     [HttpPut("{id}")]
-    public async Task<IActionResult> PutManga([FromQuery] string id,
+    public async Task<IActionResult> PutManga([FromRoute] string id,
         [FromForm] MangaEditDTO mangaEditDTO, [FromForm] IFormFile? coverImage)
     {
         if (id != mangaEditDTO.Id)
@@ -87,6 +87,7 @@ public class ManageMangaController : ControllerBase
         }
 
         var manga = await _context.Mangas
+            .Include(m => m.Categories)
             .FirstOrDefaultAsync(m => m.Id == id);
         if (manga == null)
         {
@@ -94,6 +95,19 @@ public class ManageMangaController : ControllerBase
         }
 
         manga = _mapper.Map(mangaEditDTO, manga);
+
+        // process categories
+        manga.Categories = new();
+        var categoryIds = mangaEditDTO.CategoryIds.Split(',');
+        foreach (var categoryId in categoryIds)
+        {
+            var category = await _context.Categories
+                .FindAsync(categoryId);
+            if (category != null)
+            {
+                manga.Categories.Add(category);
+            }
+        }
 
         // process image
         if (coverImage != null)
