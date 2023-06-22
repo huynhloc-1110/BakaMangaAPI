@@ -2,20 +2,20 @@
 
 namespace BakaMangaAPI.DTOs;
 
-public class AuthorBasicDTO
+public class AuthorDTO
 {
     public string Id { get; set; } = default!;
 
     public string Name { get; set; } = default!;
 
     public string Biography { get; set; } = default!;
-}
-
-public class AuthorDetailDTO
-{
-    public string Id { get; set; } = Guid.NewGuid().ToString();
 
     public DateTime? DeletedAt { get; set; }
+}
+
+public class AuthorEditDTO
+{
+    public string Id { get; set; } = Guid.NewGuid().ToString();
 
     [MaxLength(100)]
     public string Name { get; set; } = string.Empty;

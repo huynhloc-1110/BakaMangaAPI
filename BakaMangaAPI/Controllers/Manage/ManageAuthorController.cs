@@ -48,8 +48,8 @@ public class ManageAuthorController : ControllerBase
         }
 
         var authorCount = await query.CountAsync();
-        var authorList = _mapper.Map<List<AuthorBasicDTO>>(authors);
-        var paginatedAuthorList = new PaginatedListDTO<AuthorBasicDTO>
+        var authorList = _mapper.Map<List<AuthorDTO>>(authors);
+        var paginatedAuthorList = new PaginatedListDTO<AuthorDTO>
             (authorList, authorCount, filter.Page, filter.PageSize);
         return Ok(paginatedAuthorList);
     }
@@ -65,14 +65,14 @@ public class ManageAuthorController : ControllerBase
             return NotFound();
         }
 
-        return Ok(_mapper.Map<AuthorDetailDTO>(author));
+        return Ok(_mapper.Map<AuthorDTO>(author));
     }
 
     // PUT: manage/author/5
     [HttpPut("{id}")]
-    public async Task<IActionResult> PutAuthor(string id, AuthorDetailDTO authorDTO)
+    public async Task<IActionResult> PutAuthor(string id, AuthorEditDTO authorEditDTO)
     {
-        if (id != authorDTO.Id)
+        if (id != authorEditDTO.Id)
         {
             return BadRequest();
         }
@@ -84,7 +84,7 @@ public class ManageAuthorController : ControllerBase
             return NotFound();
         }
 
-        author = _mapper.Map(authorDTO, author);
+        author = _mapper.Map(authorEditDTO, author);
 
         try
         {
@@ -108,9 +108,9 @@ public class ManageAuthorController : ControllerBase
     // POST: manage/author
     // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
     [HttpPost]
-    public async Task<IActionResult> PostAuthor(AuthorDetailDTO authorDTO)
+    public async Task<IActionResult> PostAuthor(AuthorEditDTO authorEditDTO)
     {
-        var author = _mapper.Map<Author>(authorDTO);
+        var author = _mapper.Map<Author>(authorEditDTO);
         _context.Authors.Add(author);
         try
         {
@@ -128,6 +128,7 @@ public class ManageAuthorController : ControllerBase
             }
         }
 
+        var authorDTO = _mapper.Map<AuthorDTO>(author);
         return CreatedAtAction("GetAuthor", new { id = authorDTO.Id }, authorDTO);
     }
 
