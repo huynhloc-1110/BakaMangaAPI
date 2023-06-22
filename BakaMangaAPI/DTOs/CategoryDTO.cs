@@ -3,20 +3,19 @@ using System.ComponentModel.DataAnnotations;
 
 namespace BakaMangaAPI.DTOs;
 
-public class CategoryBasicDTO
+public class CategoryDTO
 {
     public string Id { get; set; } = default!;
 
     public string Name { get; set; } = default!;
 
     public string Description { get; set; } = default!;
+	public DateTime? DeletedAt { get; set; }
 }
 
-public class CategoryDetailDTO
+public class CategoryEditDTO
 {
     public string Id { get; set; } = Guid.NewGuid().ToString();
-
-    public DateTime? DeletedAt { get; set; }
 
     [MaxLength(100)]
     public string Name { get; set; } = string.Empty;

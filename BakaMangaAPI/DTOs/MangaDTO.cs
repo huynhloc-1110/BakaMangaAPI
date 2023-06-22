@@ -38,8 +38,6 @@ public class MangaEditDTO
     [Range(1000, 2100)]
     public int PublishYear { get; set; }
 
-    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
-
     public string CategoryIds { get; set; } = string.Empty;
 }
 
@@ -61,5 +59,5 @@ public class MangaDetailDTO
 
     public DateTime CreatedAt { get; set; } = default!;
 
-    public List<CategoryBasicDTO> Categories { get; set; } = new();
+    public List<CategoryDTO> Categories { get; set; } = new();
 }

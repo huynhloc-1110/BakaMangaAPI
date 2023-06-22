@@ -48,8 +48,8 @@ public class ManageCategoryController : ControllerBase
         }
 
         var categoryCount = await query.CountAsync();
-        var categoryList = _mapper.Map<List<CategoryBasicDTO>>(categories);
-        var paginatedCategoryList = new PaginatedListDTO<CategoryBasicDTO>
+        var categoryList = _mapper.Map<List<CategoryDTO>>(categories);
+        var paginatedCategoryList = new PaginatedListDTO<CategoryDTO>
             (categoryList, categoryCount, filter.Page, filter.PageSize);
         return Ok(paginatedCategoryList);
     }
@@ -65,15 +65,15 @@ public class ManageCategoryController : ControllerBase
             return NotFound();
         }
 
-        return Ok(_mapper.Map<CategoryDetailDTO>(category));
+        return Ok(_mapper.Map<CategoryDTO>(category));
     }
 
     // PUT: manage/category/5
     // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
     [HttpPut("{id}")]
-    public async Task<IActionResult> PutCategory(string id, CategoryDetailDTO categoryDTO)
+    public async Task<IActionResult> PutCategory(string id, CategoryEditDTO categoryEditDTO)
     {
-        if (id != categoryDTO.Id)
+        if (id != categoryEditDTO.Id)
         {
             return BadRequest();
         }
@@ -85,7 +85,7 @@ public class ManageCategoryController : ControllerBase
             return NotFound();
         }
 
-        category = _mapper.Map(categoryDTO, category);
+        category = _mapper.Map(categoryEditDTO, category);
 
         try
         {
@@ -109,9 +109,9 @@ public class ManageCategoryController : ControllerBase
     // POST: manage/category
     // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
     [HttpPost]
-    public async Task<IActionResult> PostCategory(CategoryDetailDTO categoryDTO)
+    public async Task<IActionResult> PostCategory(CategoryEditDTO categoryEditDTO)
     {
-        var category = _mapper.Map<Category>(categoryDTO);
+        var category = _mapper.Map<Category>(categoryEditDTO);
         _context.Categories.Add(category);
         try
         {
@@ -127,9 +127,10 @@ public class ManageCategoryController : ControllerBase
             {
                 throw;
             }
-        }
+		}
 
-        return CreatedAtAction("GetCategory", new { id = categoryDTO.Id }, categoryDTO);
+		var categoryDTO = _mapper.Map<CategoryDTO>(category);
+		return CreatedAtAction("GetCategory", new { id = categoryDTO.Id }, categoryDTO);
     }
 
     // DELETE: manage/category/5?undelete=false

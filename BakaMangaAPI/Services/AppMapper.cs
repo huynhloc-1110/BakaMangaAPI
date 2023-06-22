@@ -19,8 +19,8 @@ public class AppMapper : Profile
         CreateMap<Author, AuthorBasicDTO>();
         CreateMap<Author, AuthorDetailDTO>().ReverseMap();
 
-        CreateMap<Category, CategoryBasicDTO>();
-        CreateMap<Category, CategoryDetailDTO>().ReverseMap();
+        CreateMap<Category, CategoryDTO>();
+        CreateMap<CategoryEditDTO, Category>();
 
     }
 }
