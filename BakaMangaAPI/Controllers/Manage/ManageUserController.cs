@@ -26,11 +26,10 @@ public class ManageUserController : ControllerBase
     public async Task<IActionResult> GetUsers
         ([FromQuery] ManageUserFilterDTO filter)
     {
-        var query = filter.RoleOption switch
-        {
-            RoleOption.All => _context.ApplicationUsers.AsQueryable(),
-            _ => GetUsersByRoleQuery(filter.RoleOption.ToString())
-        };
+        var query = _context.ApplicationUsers
+            .Include(u => u.UserRoles)
+                .ThenInclude(ur => ur.Role)
+            .AsQueryable();
         if (filter.ExcludeDeleted)
         {
             query = query.Where(u => u.DeletedAt == null);
@@ -41,6 +40,13 @@ public class ManageUserController : ControllerBase
                 .Where(u => u.Name.ToLower().Contains(filter.Search.ToLower())
                     || u.Email.ToLower().Contains(filter.Search.ToLower()));
         }
+        query = filter.RoleOption switch
+        {
+            RoleOption.All => query,
+            _ => query.Where(u => u.UserRoles.Select(ur => ur.Role.Name)
+                .Contains(filter.RoleOption.ToString()))
+        };
+
         var users = await query
             .OrderBy(u => u.Name)
             .Skip((filter.Page - 1) * filter.PageSize)
@@ -57,16 +63,5 @@ public class ManageUserController : ControllerBase
         var paginatedUserList = new PaginatedListDTO<UserBasicDTO>
             (userList, userCount, filter.Page, filter.PageSize);
         return Ok(paginatedUserList);
-    }
-
-    private IQueryable<ApplicationUser> GetUsersByRoleQuery(string roleName)
-    {
-        return from userrole in _context.UserRoles
-               join user in _context.ApplicationUsers
-                   on userrole.UserId equals user.Id
-               join role in _context.Roles
-                   on userrole.RoleId equals role.Id
-               where role.Name.Equals(roleName)
-               select user;
     }
 }

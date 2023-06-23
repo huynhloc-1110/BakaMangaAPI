@@ -14,7 +14,9 @@ public class AppMapper : Profile
 
         CreateMap<Chapter, ChapterBasicDTO>();
 
-        CreateMap<ApplicationUser, UserBasicDTO>();
+        CreateMap<ApplicationUser, UserBasicDTO>()
+            .ForMember(dest => dest.Roles, opt => opt
+                .MapFrom(src => src.UserRoles.Select(ur => ur.Role.Name)));
 
         CreateMap<Author, AuthorDTO>();
         CreateMap<AuthorEditDTO, Author>();
