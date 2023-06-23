@@ -39,6 +39,8 @@ public class MangaEditDTO
     public int PublishYear { get; set; }
 
     public string CategoryIds { get; set; } = string.Empty;
+
+    public string AuthorIds { get; set; } = string.Empty;
 }
 
 public class MangaDetailDTO
@@ -60,4 +62,6 @@ public class MangaDetailDTO
     public DateTime CreatedAt { get; set; } = default!;
 
     public List<CategoryDTO> Categories { get; set; } = new();
+
+    public List<AuthorDTO> Authors { get; set; } = new();
 }

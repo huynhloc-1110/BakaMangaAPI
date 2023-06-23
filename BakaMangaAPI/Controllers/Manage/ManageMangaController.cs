@@ -65,6 +65,7 @@ public class ManageMangaController : ControllerBase
     {
         var manga = await _context.Mangas
             .Include(m => m.Categories)
+            .Include(m => m.Authors)
             .AsNoTracking()
             .SingleOrDefaultAsync(m => m.Id == id);
 
@@ -150,6 +151,18 @@ public class ManageMangaController : ControllerBase
             if (category != null)
             {
                 manga.Categories.Add(category);
+            }
+        }
+
+        // process authors
+        var authorIds = mangaEditDTO.AuthorIds.Split(',');
+        foreach (var authorId in authorIds)
+        {
+            var author = await _context.Authors
+                .FindAsync(authorId);
+            if (author != null)
+            {
+                manga.Authors.Add(author);
             }
         }
 
