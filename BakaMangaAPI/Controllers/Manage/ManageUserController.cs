@@ -5,6 +5,7 @@ using BakaMangaAPI.Data;
 using BakaMangaAPI.Models;
 using AutoMapper;
 using BakaMangaAPI.DTOs;
+using Microsoft.AspNetCore.Identity;
 
 namespace BakaMangaAPI.Controllers;
 
@@ -15,11 +16,14 @@ public class ManageUserController : ControllerBase
 {
     private readonly ApplicationDbContext _context;
     private readonly IMapper _mapper;
+    private readonly UserManager<ApplicationUser> _userManager;
 
-    public ManageUserController(ApplicationDbContext context, IMapper mapper)
+    public ManageUserController(ApplicationDbContext context, IMapper mapper,
+        UserManager<ApplicationUser> userManager)
     {
         _context = context;
         _mapper = mapper;
+        _userManager = userManager;
     }
 
     [HttpGet]
@@ -63,5 +67,30 @@ public class ManageUserController : ControllerBase
         var paginatedUserList = new PaginatedListDTO<UserBasicDTO>
             (userList, userCount, filter.Page, filter.PageSize);
         return Ok(paginatedUserList);
+    }
+
+    [HttpPut("{id}")]
+    public async Task<IActionResult> UpdateRoles([FromRoute] string id,
+        [FromBody] string[] roles)
+    {
+        var user = _context.ApplicationUsers
+            .Include(u => u.UserRoles)
+                .ThenInclude(ur => ur.Role)
+            .SingleOrDefault(u => u.Id == id);
+        if (user == null)
+        {
+            return BadRequest();
+        }
+
+        user.UserRoles = new();
+        foreach (var role in roles)
+        {
+            user.UserRoles.Add(new()
+            {
+                // TODO
+            });
+        }
+        await _context.SaveChangesAsync();
+        return NoContent();
     }
 }
