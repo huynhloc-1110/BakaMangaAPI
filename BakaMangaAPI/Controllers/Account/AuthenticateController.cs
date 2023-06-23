@@ -14,10 +14,10 @@ namespace BakaMangaAPI.Controllers;
 public class AuthenticateController : ControllerBase
 {
     private readonly UserManager<ApplicationUser> _userManager;
-    private readonly RoleManager<IdentityRole> _roleManager;
+    private readonly RoleManager<ApplicationRole> _roleManager;
     private readonly IConfiguration _configuration;
 
-    public AuthenticateController(RoleManager<IdentityRole> roleManager,
+    public AuthenticateController(RoleManager<ApplicationRole> roleManager,
         UserManager<ApplicationUser> userManager, IConfiguration configuration)
     {
         _userManager = userManager;
@@ -35,7 +35,7 @@ public class AuthenticateController : ControllerBase
             UserName = dto.Email,
             CreatedAt = dto.CreatedAt
         };
-        await _roleManager.CreateAsync(new IdentityRole("Admin"));
+        await _roleManager.CreateAsync(new ApplicationRole("Admin"));
 
         await _userManager.CreateAsync(user, dto.Password);
         await _userManager.AddToRoleAsync(user, "Admin");
