@@ -14,6 +14,16 @@ public class ManageFilterDTO : FilterDTO
     public bool ExcludeDeleted { get; set; }
 }
 
+public class ManageUserFilterDTO : ManageFilterDTO
+{
+    public RoleOption RoleOption { get; set; }
+}
+
+public enum RoleOption
+{
+    All, User, Uploader, Manager, Admin
+}
+
 public class MangaFilterDTO : FilterDTO
 {
     public SortOption SortOption { get; set; }
