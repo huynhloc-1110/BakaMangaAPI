@@ -33,12 +33,9 @@ public class AuthenticateController : ControllerBase
             Name = dto.Name,
             Email = dto.Email,
             UserName = dto.Email,
-            CreatedAt = dto.CreatedAt
         };
-        await _roleManager.CreateAsync(new ApplicationRole("Admin"));
-
         await _userManager.CreateAsync(user, dto.Password);
-        await _userManager.AddToRoleAsync(user, "Admin");
+        await _userManager.AddToRoleAsync(user, "User");
 
         // Generate JWT token
         var userRoles = await _userManager.GetRolesAsync(user);
