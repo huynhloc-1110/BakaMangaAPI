@@ -17,6 +17,8 @@ public class ApplicationDbContext : IdentityDbContext<
 
     #region DbSets
     public DbSet<ApplicationUser> ApplicationUsers { get; set; } = default!;
+    public DbSet<ApplicationRole> ApplicationRoles { get; set; } = default!;
+    public DbSet<ApplicationUserRole> ApplicationUserRoles { get; set; } = default!;
     public DbSet<Author> Authors { get; set; } = default!;
     public DbSet<Category> Categories { get; set; } = default!;
     public DbSet<Chapter> Chapters { get; set; } = default!;

@@ -16,14 +16,11 @@ public class ManageUserController : ControllerBase
 {
     private readonly ApplicationDbContext _context;
     private readonly IMapper _mapper;
-    private readonly UserManager<ApplicationUser> _userManager;
 
-    public ManageUserController(ApplicationDbContext context, IMapper mapper,
-        UserManager<ApplicationUser> userManager)
+    public ManageUserController(ApplicationDbContext context, IMapper mapper)
     {
         _context = context;
         _mapper = mapper;
-        _userManager = userManager;
     }
 
     [HttpGet]
@@ -87,7 +84,7 @@ public class ManageUserController : ControllerBase
         {
             user.UserRoles.Add(new()
             {
-                // TODO
+                Role = _context.ApplicationRoles.SingleOrDefault(r => r.Name == role)!
             });
         }
         await _context.SaveChangesAsync();
