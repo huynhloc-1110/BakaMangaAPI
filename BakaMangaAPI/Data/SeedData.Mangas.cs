@@ -267,5 +267,6 @@ public partial class SeedData
         });
 
         _context.AddRange(mangas);
+        _context.SaveChanges();
     }
 }

@@ -1,5 +1,6 @@
 ﻿using BakaMangaAPI.Models;
 using Microsoft.AspNetCore.Authorization.Infrastructure;
+using Microsoft.AspNetCore.Identity;
 
 namespace BakaMangaAPI.Data;
 
@@ -7,23 +8,29 @@ public partial class SeedData : IDisposable
 {
     private readonly ApplicationDbContext _context;
     private readonly IConfiguration _configuration;
+    private readonly UserManager<ApplicationUser> _userManager;
+    private readonly RoleManager<ApplicationRole> _roleManager;
+
     public SeedData(IServiceProvider serviceProvider)
     {
         _context = serviceProvider.GetRequiredService<ApplicationDbContext>();
         _configuration = serviceProvider.GetRequiredService<IConfiguration>();
+        _userManager = serviceProvider.GetRequiredService<UserManager<ApplicationUser>>();
+        _roleManager = serviceProvider.GetRequiredService<RoleManager<ApplicationRole>>();
     }
 
     public void Initialize()
     {
-        if (_context.Mangas.Any())
+        if (!_context.Mangas.Any())
         {
-            return;
+            var categories = SeedCategories();
+            var authors = SeedAuthors();
+            SeedMangas(categories, authors);
         }
-
-        var categories = SeedCategories();
-        var authors = SeedAuthors();
-        SeedMangas(categories, authors);
-        _context.SaveChanges();
+        if (!_context.ApplicationUsers.Any())
+        {
+            SeedUsersAsync().Wait();
+        }
     }
 
     public void Dispose()
