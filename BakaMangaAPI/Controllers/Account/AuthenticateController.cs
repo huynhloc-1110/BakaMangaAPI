@@ -9,7 +9,7 @@ using System.Text;
 
 namespace BakaMangaAPI.Controllers;
 
-[Route("account/auth")]
+[Route("account")]
 [ApiController]
 public class AuthenticateController : ControllerBase
 {
