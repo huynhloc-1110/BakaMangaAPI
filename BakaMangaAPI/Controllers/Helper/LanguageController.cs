@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace BakaMangaAPI.Controllers;
 
-[Route("[controller]")]
+[Route("helper/language")]
 [ApiController]
 public class LanguageController : ControllerBase
 {
