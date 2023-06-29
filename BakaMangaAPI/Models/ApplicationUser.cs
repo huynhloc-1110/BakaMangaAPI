@@ -14,7 +14,7 @@ public class ApplicationUser : IdentityUser
     [MaxLength(100)]
     public string Name { get; set; } = string.Empty;
 
-    public List<ApplicationUserRole> UserRoles { get; set; } = new();
+	public List<ApplicationUserRole> UserRoles { get; set; } = new();
 
     public List<ApplicationUser> Followers { get; set; } = new();
 
