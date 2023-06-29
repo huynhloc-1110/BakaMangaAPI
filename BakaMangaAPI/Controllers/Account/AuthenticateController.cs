@@ -64,8 +64,8 @@ public class AuthenticateController : ControllerBase
         await _userManager.CreateAsync(user, dto.Password);
         await _userManager.AddToRoleAsync(user, "User");
 
-        var expiredDate = DateTime.UtcNow.AddDays(1);
         var userRoles = await _userManager.GetRolesAsync(user);
+        var expiredDate = DateTime.UtcNow.AddDays(1);
         var tokenString = CreateToken(user, userRoles, expiredDate);
 
         return Ok(new
@@ -81,9 +81,8 @@ public class AuthenticateController : ControllerBase
         var user = await _userManager.FindByEmailAsync(dto.Email);
         if (user != null && await _userManager.CheckPasswordAsync(user, dto.Password))
         {
-
-            var expiredDate = DateTime.UtcNow.AddDays(1);
             var userRoles = await _userManager.GetRolesAsync(user);
+            var expiredDate = DateTime.UtcNow.AddDays(1);
             var tokenString = CreateToken(user, userRoles, expiredDate);
 
             return Ok(new
@@ -104,12 +103,11 @@ public class AuthenticateController : ControllerBase
         var userRoles = await _userManager.GetRolesAsync(currentUser);
         var expiredDate = DateTime.UtcNow.AddDays(1);
         var tokenString = CreateToken(currentUser, userRoles, expiredDate);
+
         return Ok(new
         {
             token = tokenString,
             expiration = expiredDate
         });
-
     }
-
 }
