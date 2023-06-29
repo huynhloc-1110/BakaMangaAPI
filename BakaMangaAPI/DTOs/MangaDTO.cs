@@ -28,7 +28,7 @@ public class MangaEditDTO
     public string OriginalTitle { get; set; } = string.Empty;
 
     [RegularExpression(@"^[^;]+(?:; [^;]+)*$")]
-    public string AlternativeTitles { get; set; } = string.Empty;
+    public string? AlternativeTitles { get; set; }
 
     public Language OriginalLanguage { get; set; }
 
@@ -51,7 +51,7 @@ public class MangaDetailDTO
 
     public string OriginalTitle { get; set; } = default!;
 
-    public string AlternativeTitles { get; set; } = default!;
+    public string? AlternativeTitles { get; set; }
 
     public Language OriginalLanguage { get; set; }
 
