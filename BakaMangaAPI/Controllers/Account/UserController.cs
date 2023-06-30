@@ -7,7 +7,7 @@ using BakaMangaAPI.DTOs;
 
 namespace BakaMangaAPI.Controllers;
 
-[Route("api/[controller]")]
+[Route("account/user")]
 [ApiController]
 [Authorize]
 public class UserController : ControllerBase
@@ -23,12 +23,12 @@ public class UserController : ControllerBase
     [HttpGet]
     public async Task<UserBasicDTO> GetCurrentUserBasicInfo()
     {
-		var currentUser = await _userManager.GetUserAsync(User);
-		var userRoles = await _userManager.GetRolesAsync(currentUser);
+        var currentUser = await _userManager.GetUserAsync(User);
+        var userRoles = await _userManager.GetRolesAsync(currentUser);
 
-		var userBasicDto = _mapper.Map<UserBasicDTO>(currentUser);
-		userBasicDto.Roles = userRoles.ToList();
+        var userBasicDto = _mapper.Map<UserBasicDTO>(currentUser);
+        userBasicDto.Roles = userRoles.ToList();
 
-		return userBasicDto;
-	}
+        return userBasicDto;
+    }
 }

@@ -1,10 +1,14 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using BakaMangaAPI.Models;
+using Microsoft.AspNetCore.Identity;
 
 namespace BakaMangaAPI.Data;
 
-public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
+public class ApplicationDbContext : IdentityDbContext<
+    ApplicationUser, ApplicationRole, string,
+    IdentityUserClaim<string>, ApplicationUserRole, IdentityUserLogin<string>,
+    IdentityRoleClaim<string>, IdentityUserToken<string>>
 {
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
         : base(options)
@@ -13,6 +17,8 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
 
     #region DbSets
     public DbSet<ApplicationUser> ApplicationUsers { get; set; } = default!;
+    public DbSet<ApplicationRole> ApplicationRoles { get; set; } = default!;
+    public DbSet<ApplicationUserRole> ApplicationUserRoles { get; set; } = default!;
     public DbSet<Author> Authors { get; set; } = default!;
     public DbSet<Category> Categories { get; set; } = default!;
     public DbSet<Chapter> Chapters { get; set; } = default!;
@@ -50,6 +56,18 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
 
         modelBuilder.Entity<PromotionRequest>().HasBaseType<Request>();
         #endregion
+
+        // set up application user, role, userrole
+        modelBuilder.Entity<ApplicationUserRole>(userRole =>
+        {
+            userRole.HasKey(ur => new { ur.UserId, ur.RoleId });
+            userRole.HasOne(ur => ur.Role)
+                .WithMany(r => r.UserRoles)
+                .HasForeignKey(ur => ur.RoleId);
+            userRole.HasOne(ur => ur.User)
+                .WithMany(u => u.UserRoles)
+                .HasForeignKey(ur => ur.UserId);
+        });
 
         // set default delete behaviors to restrict
         foreach (var relationship in modelBuilder.Model.GetEntityTypes().SelectMany(e => e.GetForeignKeys()))

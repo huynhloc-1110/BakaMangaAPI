@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using BakaMangaAPI.Data;
 using BakaMangaAPI.DTOs;
 using AutoMapper;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace BakaMangaAPI.Controllers;
 
@@ -20,47 +21,57 @@ public class MangaController : ControllerBase
     }
 
     // GET: api/Manga
-    [HttpGet("{option=latest-chapter}/{page=1}/{itemPerPage=4}")]
-    public async Task<ActionResult<IEnumerable<MangaBasicDTO>>> GetMangas
-        (string option, int page, int itemPerPage)
+    [HttpGet]
+    public async Task<IActionResult> GetMangas
+        ([FromQuery] MangaFilterDTO filter)
     {
-        // validate param
-        string[] options = { "latest-chapter", "latest-manga", "popular" };
-        if (!options.Contains(option) || page <= 0 || itemPerPage <= 0)
-        {
-            return BadRequest();
-        }
+        var query = _context.Mangas.Where(m => m.DeletedAt == null);
 
-        // construct and call query
-        var mangaQuery = _context.Mangas.Where(m => m.DeletedAt == null);
-        mangaQuery = option switch
+        // search
+        if (!string.IsNullOrEmpty(filter.Search))
         {
-            "latest-chapter" => mangaQuery
+            query = query.Where(m => m.OriginalTitle.ToLower().Contains(filter.Search.ToLower()) ||
+                m.AlternativeTitles!.Contains(filter.Search));
+        }
+        var mangasCount = await query.CountAsync();
+
+        // sort options
+        query = filter.SortOption switch
+        {
+            SortOption.LatestChapter => query
                 .Include(m => m.Chapters)
                 .OrderByDescending(m => m.Chapters.Max(c => c.CreatedAt)),
-            "latest-manga" => mangaQuery
+            SortOption.LatestManga => query
                 .OrderByDescending(m => m.CreatedAt),
             _ => throw new NotImplementedException()
         };
-        var mangas = await mangaQuery
-            .Skip((page - 1) * itemPerPage)
-            .Take(itemPerPage)
+
+        // page
+        var mangas = await query
+            .Skip((filter.Page - 1) * filter.PageSize)
+            .Take(filter.PageSize)
             .AsNoTracking()
             .ToListAsync();
+        if (mangas.Count == 0)
+        {
+            return NotFound();
+        }
 
-        // map to DTO list
-        return _mapper.Map<List<MangaBasicDTO>>(mangas);
+        var mangaList = _mapper.Map<List<MangaBasicDTO>>(mangas);
+        var paginatedMangaList = new PaginatedListDTO<MangaBasicDTO>
+            (mangaList, mangasCount, filter.Page, filter.PageSize);
+        return Ok(paginatedMangaList);
     }
 
     // GET: api/Manga/5
     [HttpGet("{id}")]
-    public async Task<ActionResult<MangaDetailDTO>> GetManga(string id)
+    public async Task<IActionResult> GetManga(string id)
     {
         var manga = await _context.Mangas
+            .Include(m => m.Authors)
+            .Include(m => m.Categories)
             .Where(m => m.DeletedAt == null)
-            .Include(m => m.Chapters)
             .AsNoTracking()
-            .AsSplitQuery()
             .SingleOrDefaultAsync(m => m.Id == id);
 
         if (manga == null || manga.DeletedAt != null)
@@ -68,14 +79,6 @@ public class MangaController : ControllerBase
             return NotFound();
         }
 
-        return _mapper.Map<MangaDetailDTO>(manga);
-    }
-
-    [HttpGet("count")]
-    public async Task<ActionResult<int>> GetMangaCount()
-    {
-        return await _context.Mangas
-            .Where(m => m.DeletedAt == null)
-            .CountAsync();
+        return Ok(_mapper.Map<MangaDetailDTO>(manga));
     }
 }

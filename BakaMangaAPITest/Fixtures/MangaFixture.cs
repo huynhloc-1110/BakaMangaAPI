@@ -14,7 +14,8 @@ public class MangaFixture : BaseFixture
             new Manga { Id = Guid.NewGuid().ToString(), OriginalTitle = "Happiness Rides a Broomstick" },
             new Manga { Id = Guid.NewGuid().ToString(), OriginalTitle = "Please Don't Come to the Villainess' Stationery Store!" },
             new Manga { Id = Guid.NewGuid().ToString(), OriginalTitle = "Giant Ojou-sama" },
-            new Manga { Id = Guid.NewGuid().ToString(), OriginalTitle = "Ouji to Himegoto" }
+            new Manga { Id = Guid.NewGuid().ToString(), OriginalTitle = "Ouji to Himegoto" },
+            new Manga { Id = Guid.NewGuid().ToString(), OriginalTitle = "Deleted Manga", DeletedAt = DateTime.UtcNow }
         );
         context.SaveChanges();
     }

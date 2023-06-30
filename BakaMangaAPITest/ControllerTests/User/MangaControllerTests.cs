@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 
 namespace BakaMangaAPITest.Controllers;
 
@@ -19,22 +20,25 @@ public class MangaControllerTests : IClassFixture<MangaFixture>
     }
 
     [Theory]
-    [InlineData(1, 4)]
-    [InlineData(2, 4)]
-    [InlineData(3, 4)]
-    [InlineData(4, 4)]
-    [InlineData(1, 12)]
-    public async Task GetMangas_ReturnsListOfMangaBasicDTOs(int page, int itemPerPage)
+    [InlineData(4, 1, 4)]
+    [InlineData(4, 2, 4)]
+    [InlineData(2, 3, 4)]
+    [InlineData(0, 4, 4)]
+    [InlineData(10, 1, 12)]
+    [InlineData(1, null, null, "Naruto")]
+    [InlineData(1, null, null, "naruto")]
+    [InlineData(0, null, null, "Slam Dunk")]
+    public async Task GetMangas_ReturnsListOfMangaBasicDTOs(int expected, int? page = null, int? pageSize = null, string? search = null)
     {
-        var result = await _controller.GetMangas("latest-manga", page, itemPerPage);
+        MangaFilterDTO filter = new();
+        filter.Page = page ?? filter.Page;
+        filter.PageSize = pageSize ?? filter.PageSize;
+        filter.Search = search ?? filter.Search;
 
-        var count = _context.Mangas.Count();
-        var itemLeft = count - (page - 1) * itemPerPage;
-        var expected = itemLeft < 0 ? 0 : (itemLeft < itemPerPage ? itemLeft : itemPerPage);
-
+        var result = await _controller.GetMangas(filter);
 
         // Assert
-        var okResult = Assert.IsType<ActionResult<IEnumerable<MangaBasicDTO>>>(result);
+        var okResult = Assert.IsType<OkObjectResult>(result);
         var dtoList = Assert.IsAssignableFrom<IEnumerable<MangaBasicDTO>>(okResult.Value);
         Assert.Equal(expected, dtoList.Count());
     }
@@ -49,17 +53,23 @@ public class MangaControllerTests : IClassFixture<MangaFixture>
         var testId = expected!.Id;
 
         _context.ChangeTracker.Clear();
-        var actual = await _controller.GetManga(testId);
+        var result = await _controller.GetManga(testId);
 
-        Assert.Equal(expected!.OriginalTitle, actual.Value!.OriginalTitle);
+        // Assert
+        var okResult = Assert.IsType<OkObjectResult>(result);
+        var actual = Assert.IsAssignableFrom<MangaDetailDTO>(okResult.Value);
+        Assert.Equal(expected!.OriginalTitle, actual!.OriginalTitle);
     }
 
     [Fact]
-    public void GetMangaCount_ReturnsNumberOfMangas()
+    public async Task GetMangaCount_ReturnsNumberOfMangas()
     {
-        var expect = _controller.GetMangaCount().Result.Value;
-        var actual = _context.Mangas.Count();
+        var expect =  (await _controller.GetMangaCount()).Value;
 
+        _context.ChangeTracker.Clear();
+        var actual = await _context.Mangas.CountAsync(m => m.DeletedAt == null);
+
+        // Assert
         Assert.Equal(actual, expect);
     }
 }

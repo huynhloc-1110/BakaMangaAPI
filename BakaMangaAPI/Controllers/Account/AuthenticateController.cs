@@ -1,5 +1,6 @@
 ﻿using BakaMangaAPI.DTOs;
 using BakaMangaAPI.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
@@ -9,15 +10,15 @@ using System.Text;
 
 namespace BakaMangaAPI.Controllers;
 
-[Route("api/[controller]")]
+[Route("account")]
 [ApiController]
 public class AuthenticateController : ControllerBase
 {
     private readonly UserManager<ApplicationUser> _userManager;
-    private readonly RoleManager<IdentityRole> _roleManager;
+    private readonly RoleManager<ApplicationRole> _roleManager;
     private readonly IConfiguration _configuration;
 
-    public AuthenticateController(RoleManager<IdentityRole> roleManager,
+    public AuthenticateController(RoleManager<ApplicationRole> roleManager,
         UserManager<ApplicationUser> userManager, IConfiguration configuration)
     {
         _userManager = userManager;
@@ -25,24 +26,8 @@ public class AuthenticateController : ControllerBase
         _roleManager = roleManager;
     }
 
-    [HttpPost("SignUp")]
-    public async Task<IActionResult> SignUpAsync(SignUpDTO dto)
+    private string CreateToken(ApplicationUser user, IEnumerable<string> userRoles, DateTime expiredDate)
     {
-        var user = new ApplicationUser
-        {
-            Name = dto.Name,
-            Email = dto.Email,
-            UserName = dto.Email,
-            CreatedAt = dto.CreatedAt
-        };
-        await _roleManager.CreateAsync(new IdentityRole("Admin"));
-
-        await _userManager.CreateAsync(user, dto.Password);
-        await _userManager.AddToRoleAsync(user, "Admin");
-
-        // Generate JWT token
-        var userRoles = await _userManager.GetRolesAsync(user);
-
         var authClaims = new List<Claim>
         {
             new Claim(ClaimTypes.NameIdentifier, user.Id),
@@ -59,17 +44,34 @@ public class AuthenticateController : ControllerBase
         var token = new JwtSecurityToken(
             issuer: _configuration["JWT:ValidIssuer"],
             audience: _configuration["JWT:ValidAudience"],
-            expires: DateTime.Now.AddMinutes(20),
+            expires: expiredDate,
             claims: authClaims,
             signingCredentials: new SigningCredentials(authenKey, SecurityAlgorithms.HmacSha512)
         );
 
-        var tokenString = new JwtSecurityTokenHandler().WriteToken(token);
+        return new JwtSecurityTokenHandler().WriteToken(token);
+    }
+
+    [HttpPost("SignUp")]
+    public async Task<IActionResult> SignUpAsync(SignUpDTO dto)
+    {
+        var user = new ApplicationUser
+        {
+            Name = dto.Name,
+            Email = dto.Email,
+            UserName = dto.Email,
+        };
+        await _userManager.CreateAsync(user, dto.Password);
+        await _userManager.AddToRoleAsync(user, "User");
+
+        var userRoles = await _userManager.GetRolesAsync(user);
+        var expiredDate = DateTime.UtcNow.AddDays(1);
+        var tokenString = CreateToken(user, userRoles, expiredDate);
 
         return Ok(new
         {
             token = tokenString,
-            expiration = token.ValidTo
+            expiration = expiredDate
         });
     }
 
@@ -80,34 +82,32 @@ public class AuthenticateController : ControllerBase
         if (user != null && await _userManager.CheckPasswordAsync(user, dto.Password))
         {
             var userRoles = await _userManager.GetRolesAsync(user);
-
-            var authClaims = new List<Claim>
-                {
-                    new Claim(ClaimTypes.NameIdentifier, user.Id),
-                    new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
-                };
-
-            foreach (var userRole in userRoles)
-            {
-                authClaims.Add(new Claim(ClaimTypes.Role, userRole));
-            }
-
-            var authenKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JWT:Secret"]));
-
-            var token = new JwtSecurityToken(
-                issuer: _configuration["JWT:ValidIssuer"],
-                audience: _configuration["JWT:ValidAudience"],
-                expires: DateTime.Now.AddMinutes(20),
-                claims: authClaims,
-                signingCredentials: new SigningCredentials(authenKey, SecurityAlgorithms.HmacSha512)
-            );
+            var expiredDate = DateTime.UtcNow.AddDays(1);
+            var tokenString = CreateToken(user, userRoles, expiredDate);
 
             return Ok(new
             {
-                token = new JwtSecurityTokenHandler().WriteToken(token),
-                expiration = token.ValidTo
+                token = tokenString,
+                expiration = expiredDate
+
             });
         }
         return Unauthorized();
+    }
+
+    [Authorize]
+    [HttpPost("Extend")]
+    public async Task<IActionResult> ExtendAsync()
+    {
+        var currentUser = await _userManager.GetUserAsync(User);
+        var userRoles = await _userManager.GetRolesAsync(currentUser);
+        var expiredDate = DateTime.UtcNow.AddDays(1);
+        var tokenString = CreateToken(currentUser, userRoles, expiredDate);
+
+        return Ok(new
+        {
+            token = tokenString,
+            expiration = expiredDate
+        });
     }
 }

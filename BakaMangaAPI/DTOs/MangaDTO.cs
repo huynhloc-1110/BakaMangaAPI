@@ -9,24 +9,26 @@ public class MangaBasicDTO
 
     public string? CoverPath { get; set; }
 
-    public string OriginalTitle { get; set; } = string.Empty;
+    public string OriginalTitle { get; set; } = default!;
 
     public Language OriginalLanguage { get; set; }
 
     public string? Description { get; set; }
+
+    public DateTime CreatedAt { get; set; }
+
+    public DateTime? DeletedAt { get; set; }
 }
 
-public class MangaDetailDTO
+public class MangaEditDTO
 {
     public string Id { get; set; } = Guid.NewGuid().ToString();
-
-    public string? CoverPath { get; set; }
 
     [MaxLength(250)]
     public string OriginalTitle { get; set; } = string.Empty;
 
     [RegularExpression(@"^[^;]+(?:; [^;]+)*$")]
-    public string AlternativeTitles { get; set; } = string.Empty;
+    public string? AlternativeTitles { get; set; }
 
     public Language OriginalLanguage { get; set; }
 
@@ -36,5 +38,30 @@ public class MangaDetailDTO
     [Range(1000, 2100)]
     public int PublishYear { get; set; }
 
-    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+    public string CategoryIds { get; set; } = string.Empty;
+
+    public string AuthorIds { get; set; } = string.Empty;
+}
+
+public class MangaDetailDTO
+{
+    public string Id { get; set; } = default!;
+
+    public string? CoverPath { get; set; }
+
+    public string OriginalTitle { get; set; } = default!;
+
+    public string? AlternativeTitles { get; set; }
+
+    public Language OriginalLanguage { get; set; }
+
+    public string? Description { get; set; }
+
+    public int PublishYear { get; set; }
+
+    public DateTime CreatedAt { get; set; } = default!;
+
+    public List<CategoryDTO> Categories { get; set; } = new();
+
+    public List<AuthorDTO> Authors { get; set; } = new();
 }
