@@ -68,6 +68,7 @@ public class MangaController : ControllerBase
     public async Task<IActionResult> GetManga(string id)
     {
         var manga = await _context.Mangas
+            .Include(m => m.Authors)
             .Include(m => m.Categories)
             .Where(m => m.DeletedAt == null)
             .AsNoTracking()
