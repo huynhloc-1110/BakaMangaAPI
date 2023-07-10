@@ -14,3 +14,10 @@ public class UserBasicDTO
 
     public List<string> Roles { get; set; } = new();
 }
+
+public class UserSimpleDTO
+{
+    public string Id { get; set; } = default!;
+
+    public string Name { get; set; } = default!;
+}

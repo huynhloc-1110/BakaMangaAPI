@@ -64,4 +64,16 @@ public class MangaDetailDTO
     public List<CategoryDTO> Categories { get; set; } = new();
 
     public List<AuthorDTO> Authors { get; set; } = new();
+
+    public int FollowCount { get; set; }
+
+    public int ViewCount { get; set; }
+
+    public int AverageRating { get; set; }
+
+    public int CurrentUserRating { get; set; }
+
+    public List<ChapterBasicDTO> Chapters { get; set; } = new();
+
+    public List<CommentDTO> Comments { get; set; } = new();
 }
