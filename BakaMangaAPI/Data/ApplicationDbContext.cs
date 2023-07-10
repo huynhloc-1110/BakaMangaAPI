@@ -51,7 +51,6 @@ public class ApplicationDbContext : IdentityDbContext<
         modelBuilder.Entity<UserReport>().HasBaseType<Report>();
 
         modelBuilder.Entity<ChapterView>().HasBaseType<View>();
-        modelBuilder.Entity<CommentView>().HasBaseType<View>();
         modelBuilder.Entity<PostView>().HasBaseType<View>();
 
         modelBuilder.Entity<PromotionRequest>().HasBaseType<Request>();

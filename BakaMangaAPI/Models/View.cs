@@ -15,11 +15,6 @@ public class ChapterView : View
     public Chapter Chapter { get; set; } = default!;
 }
 
-public class CommentView : View
-{
-    public Comment Comment { get; set; } = default!;
-}
-
 public class PostView : View
 {
     public Post Post { get; set; } = default!;

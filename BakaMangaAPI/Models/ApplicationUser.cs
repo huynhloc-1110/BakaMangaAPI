@@ -26,5 +26,11 @@ public class ApplicationUser : IdentityUser
 
     public List<Report> Reports { get; set; } = new();
 
-    public List<View> Views { get; set; } = new();
+    public List<ChapterView> ChapterViews { get; set; } = new();
+
+    public List<Manga> FollowedMangas { get; set; } = new();
+
+    public List<Chapter> UploadedChapters { get; set; } = new();
+
+    public List<Rating> Ratings { get; set; } = new();
 }

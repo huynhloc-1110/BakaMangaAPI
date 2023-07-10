@@ -29,4 +29,8 @@ public class Manga : BaseModelWithCreatedAt
     public List<Chapter> Chapters { get; set; } = new();
 
     public List<MangaComment> Comments { get; set; } = new();
+
+    public List<ApplicationUser> Followers { get; set; } = new();
+
+    public List<Rating> Ratings { get; set; } = new();
 }

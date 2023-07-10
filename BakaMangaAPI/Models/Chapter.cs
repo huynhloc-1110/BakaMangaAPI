@@ -17,7 +17,9 @@ public class Chapter : BaseModelWithCreatedAt
 
     public List<ChapterReport> Reports { get; set; } = new();
 
-    // uploader
+    public List<ChapterView> ChapterViews { get; set; } = new();
+
+    public ApplicationUser Uploader { get; set; } = new();
 
     // upload group
 }
