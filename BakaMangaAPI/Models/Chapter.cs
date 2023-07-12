@@ -4,6 +4,9 @@ namespace BakaMangaAPI.Models;
 
 public class Chapter : BaseModelWithCreatedAt
 {
+    [Range(0, float.MaxValue)]
+    public float Number { get; set; }
+
     [MaxLength(100)]
     public string Name { get; set; } = string.Empty;
 
@@ -19,7 +22,7 @@ public class Chapter : BaseModelWithCreatedAt
 
     public List<ChapterView> ChapterViews { get; set; } = new();
 
-    public ApplicationUser Uploader { get; set; } = new();
+    public ApplicationUser Uploader { get; set; } = default!;
 
     // upload group
 }

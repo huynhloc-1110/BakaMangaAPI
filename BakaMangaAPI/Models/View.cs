@@ -8,6 +8,8 @@ public class View : BaseModelWithCreatedAt
     public int Count { get; set; }
 
     public ApplicationUser User { get; set; } = default!;
+
+    public string UserId { get; set; } = default!;
 }
 
 public class ChapterView : View

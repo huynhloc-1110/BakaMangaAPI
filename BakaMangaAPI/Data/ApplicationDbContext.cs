@@ -68,6 +68,11 @@ public class ApplicationDbContext : IdentityDbContext<
                 .HasForeignKey(ur => ur.UserId);
         });
 
+        modelBuilder.Entity<ChapterView>()
+            .HasOne(cv => cv.User)
+            .WithMany(u => u.ChapterViews)
+            .HasForeignKey(cv => cv.UserId);
+
         // set default delete behaviors to restrict
         foreach (var relationship in modelBuilder.Model.GetEntityTypes().SelectMany(e => e.GetForeignKeys()))
         {
