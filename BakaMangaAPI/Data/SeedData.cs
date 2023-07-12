@@ -21,15 +21,15 @@ public partial class SeedData : IDisposable
 
     public void Initialize()
     {
+        if (!_context.ApplicationUsers.Any())
+        {
+            SeedUsersAsync().Wait();
+        }
         if (!_context.Mangas.Any())
         {
             var categories = SeedCategories();
             var authors = SeedAuthors();
             SeedMangas(categories, authors);
-        }
-        if (!_context.ApplicationUsers.Any())
-        {
-            SeedUsersAsync().Wait();
         }
     }
 
