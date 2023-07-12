@@ -70,13 +70,21 @@ public class MangaController : ControllerBase
         var manga = await _context.Mangas
             .Include(m => m.Authors)
             .Include(m => m.Categories)
+            .Include(m => m.Chapters)
+                .ThenInclude(c => c.Uploader)
             .Where(m => m.DeletedAt == null)
+            .AsSplitQuery()
             .AsNoTracking()
             .SingleOrDefaultAsync(m => m.Id == id);
 
         if (manga == null || manga.DeletedAt != null)
         {
             return NotFound();
+        }
+
+        if (manga.Chapters.Count > 0)
+        {
+            manga.Chapters = manga.Chapters.OrderBy(c => c.Number).ToList();
         }
 
         return Ok(_mapper.Map<MangaDetailDTO>(manga));

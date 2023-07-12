@@ -275,6 +275,30 @@ namespace BakaMangaAPI.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "ApplicationUserManga",
+                columns: table => new
+                {
+                    FollowedMangasId = table.Column<string>(type: "text", nullable: false),
+                    FollowersId = table.Column<string>(type: "text", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ApplicationUserManga", x => new { x.FollowedMangasId, x.FollowersId });
+                    table.ForeignKey(
+                        name: "FK_ApplicationUserManga_AspNetUsers_FollowersId",
+                        column: x => x.FollowersId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_ApplicationUserManga_Mangas_FollowedMangasId",
+                        column: x => x.FollowedMangasId,
+                        principalTable: "Mangas",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "AuthorManga",
                 columns: table => new
                 {
@@ -327,9 +351,11 @@ namespace BakaMangaAPI.Data.Migrations
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "text", nullable: false),
+                    Number = table.Column<float>(type: "real", nullable: false),
                     Name = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
                     Language = table.Column<int>(type: "integer", nullable: false),
                     MangaId = table.Column<string>(type: "text", nullable: true),
+                    UploaderId = table.Column<string>(type: "text", nullable: false),
                     DeletedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
@@ -337,7 +363,40 @@ namespace BakaMangaAPI.Data.Migrations
                 {
                     table.PrimaryKey("PK_Chapters", x => x.Id);
                     table.ForeignKey(
+                        name: "FK_Chapters_AspNetUsers_UploaderId",
+                        column: x => x.UploaderId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
                         name: "FK_Chapters_Mangas_MangaId",
+                        column: x => x.MangaId,
+                        principalTable: "Mangas",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Rating",
+                columns: table => new
+                {
+                    Id = table.Column<string>(type: "text", nullable: false),
+                    Value = table.Column<int>(type: "integer", nullable: false),
+                    UserId = table.Column<string>(type: "text", nullable: false),
+                    MangaId = table.Column<string>(type: "text", nullable: false),
+                    DeletedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Rating", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Rating_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Rating_Mangas_MangaId",
                         column: x => x.MangaId,
                         principalTable: "Mangas",
                         principalColumn: "Id",
@@ -410,6 +469,42 @@ namespace BakaMangaAPI.Data.Migrations
                         name: "FK_Images_Chapters_ChapterId",
                         column: x => x.ChapterId,
                         principalTable: "Chapters",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Views",
+                columns: table => new
+                {
+                    Id = table.Column<string>(type: "text", nullable: false),
+                    Count = table.Column<int>(type: "integer", nullable: false),
+                    UserId = table.Column<string>(type: "text", nullable: false),
+                    Discriminator = table.Column<string>(type: "text", nullable: false),
+                    ChapterId = table.Column<string>(type: "text", nullable: true),
+                    PostId = table.Column<string>(type: "text", nullable: true),
+                    DeletedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Views", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Views_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Views_Chapters_ChapterId",
+                        column: x => x.ChapterId,
+                        principalTable: "Chapters",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Views_Posts_PostId",
+                        column: x => x.PostId,
+                        principalTable: "Posts",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
@@ -501,52 +596,14 @@ namespace BakaMangaAPI.Data.Migrations
                         onDelete: ReferentialAction.Restrict);
                 });
 
-            migrationBuilder.CreateTable(
-                name: "Views",
-                columns: table => new
-                {
-                    Id = table.Column<string>(type: "text", nullable: false),
-                    Count = table.Column<int>(type: "integer", nullable: false),
-                    UserId = table.Column<string>(type: "text", nullable: false),
-                    Discriminator = table.Column<string>(type: "text", nullable: false),
-                    ChapterId = table.Column<string>(type: "text", nullable: true),
-                    CommentId = table.Column<string>(type: "text", nullable: true),
-                    PostId = table.Column<string>(type: "text", nullable: true),
-                    DeletedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Views", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Views_AspNetUsers_UserId",
-                        column: x => x.UserId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_Views_Chapters_ChapterId",
-                        column: x => x.ChapterId,
-                        principalTable: "Chapters",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_Views_Comments_CommentId",
-                        column: x => x.CommentId,
-                        principalTable: "Comments",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_Views_Posts_PostId",
-                        column: x => x.PostId,
-                        principalTable: "Posts",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
             migrationBuilder.CreateIndex(
                 name: "IX_ApplicationUserApplicationUser_FollowersId",
                 table: "ApplicationUserApplicationUser",
+                column: "FollowersId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ApplicationUserManga_FollowersId",
+                table: "ApplicationUserManga",
                 column: "FollowersId");
 
             migrationBuilder.CreateIndex(
@@ -602,6 +659,11 @@ namespace BakaMangaAPI.Data.Migrations
                 column: "MangaId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Chapters_UploaderId",
+                table: "Chapters",
+                column: "UploaderId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Comments_ChapterId",
                 table: "Comments",
                 column: "ChapterId");
@@ -634,6 +696,16 @@ namespace BakaMangaAPI.Data.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_Posts_UserId",
                 table: "Posts",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Rating_MangaId",
+                table: "Rating",
+                column: "MangaId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Rating_UserId",
+                table: "Rating",
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
@@ -687,11 +759,6 @@ namespace BakaMangaAPI.Data.Migrations
                 column: "ChapterId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Views_CommentId",
-                table: "Views",
-                column: "CommentId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Views_PostId",
                 table: "Views",
                 column: "PostId");
@@ -706,6 +773,9 @@ namespace BakaMangaAPI.Data.Migrations
         {
             migrationBuilder.DropTable(
                 name: "ApplicationUserApplicationUser");
+
+            migrationBuilder.DropTable(
+                name: "ApplicationUserManga");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoleClaims");
@@ -730,6 +800,9 @@ namespace BakaMangaAPI.Data.Migrations
 
             migrationBuilder.DropTable(
                 name: "Images");
+
+            migrationBuilder.DropTable(
+                name: "Rating");
 
             migrationBuilder.DropTable(
                 name: "Reacts");

@@ -17,12 +17,12 @@ public class AppMapper : Profile
         CreateMap<ApplicationUser, UserBasicDTO>()
             .ForMember(dest => dest.Roles, opt => opt
                 .MapFrom(src => src.UserRoles.Select(ur => ur.Role.Name)));
+        CreateMap<ApplicationUser, UserSimpleDTO>();
 
         CreateMap<Author, AuthorDTO>();
         CreateMap<AuthorEditDTO, Author>();
 
         CreateMap<Category, CategoryDTO>();
         CreateMap<CategoryEditDTO, Category>();
-
     }
 }

@@ -5,7 +5,9 @@ namespace BakaMangaAPI.DTOs;
 
 public class ChapterBasicDTO
 {
-    public string Id { get; set; } = Guid.NewGuid().ToString();
+    public string Id { get; set; } = default!;
+
+    public float Number { get; set; }
 
     public string Name { get; set; } = default!;
 
