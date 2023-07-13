@@ -70,8 +70,6 @@ public class MangaController : ControllerBase
         var manga = await _context.Mangas
             .Include(m => m.Authors)
             .Include(m => m.Categories)
-            .Include(m => m.Chapters)
-                .ThenInclude(c => c.Uploader)
             .Where(m => m.DeletedAt == null)
             .AsSplitQuery()
             .AsNoTracking()
@@ -82,11 +80,21 @@ public class MangaController : ControllerBase
             return NotFound();
         }
 
-        if (manga.Chapters.Count > 0)
-        {
-            manga.Chapters = manga.Chapters.OrderBy(c => c.Number).ToList();
-        }
-
         return Ok(_mapper.Map<MangaDetailDTO>(manga));
+    }
+
+    [HttpGet("{id}/chapters")]
+    public async Task<IActionResult> GetMangaChapters(string id)
+    {
+        var manga = await _context.Mangas.FindAsync(id);
+        var chapters = await _context.Chapters
+            .Include(c => c.Manga)
+            .Include(c => c.Uploader)
+            .Where(c => c.Manga == manga)
+            .OrderBy(c => c.Number)
+            .AsNoTracking()
+            .ToListAsync();
+
+        return Ok(_mapper.Map<List<ChapterBasicDTO>>(chapters));
     }
 }

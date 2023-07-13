@@ -72,8 +72,4 @@ public class MangaDetailDTO
     public int AverageRating { get; set; }
 
     public int CurrentUserRating { get; set; }
-
-    public List<ChapterBasicDTO> Chapters { get; set; } = new();
-
-    public List<CommentDTO> Comments { get; set; } = new();
 }
