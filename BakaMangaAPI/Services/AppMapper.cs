@@ -12,7 +12,9 @@ public class AppMapper : Profile
         CreateMap<Manga, MangaDetailDTO>();
         CreateMap<MangaEditDTO, Manga>();
 
-        CreateMap<Chapter, ChapterBasicDTO>();
+        CreateMap<Chapter, ChapterBasicDTO>()
+            .ForMember(dest => dest.ViewCount, opt => opt
+                .MapFrom(src => src.ChapterViews.Count()));
 
         CreateMap<ApplicationUser, UserBasicDTO>()
             .ForMember(dest => dest.Roles, opt => opt

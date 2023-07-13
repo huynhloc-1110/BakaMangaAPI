@@ -42,6 +42,12 @@ public partial class SeedData
                         Name = "All the Way From a Future World",
                         Language = Language.English,
                         Uploader = uploader1,
+                        ChapterViews = new()
+                        {
+                            new() { User = uploader1 },
+                            new() { User = uploader2 },
+                            new() { User = uploader3 },
+                        },
                     },
                     new Chapter()
                     {
@@ -220,19 +226,19 @@ public partial class SeedData
                          Language = Language.English,
                          Uploader = uploader1
                      },
-                     new Chapter() 
-                     { 
-                         Number = 2, 
-                         Name = "Peaceful", 
-                         Language = Language.English, 
-                         Uploader = uploader2 
+                     new Chapter()
+                     {
+                         Number = 2,
+                         Name = "Peaceful",
+                         Language = Language.English,
+                         Uploader = uploader2
                      },
-                     new Chapter() 
-                     { 
-                         Number = 3, 
-                         Name = "Spectre", 
-                         Language = Language.English, 
-                         Uploader = uploader3 
+                     new Chapter()
+                     {
+                         Number = 3,
+                         Name = "Spectre",
+                         Language = Language.English,
+                         Uploader = uploader3
                      },
                 },
                 CoverPath = serverUrl + "komi.png",
@@ -262,26 +268,26 @@ public partial class SeedData
                 Authors = new List<Author>() { authors["Heesung NAM"], },
                 Chapters = new List<Chapter>
                 {
-                     new Chapter() 
-                     { 
-                         Number = 1, 
-                         Name = "Introduction: The Legendary Moonlight Sculptor", 
-                         Language = Language.English, 
+                     new Chapter()
+                     {
+                         Number = 1,
+                         Name = "Introduction: The Legendary Moonlight Sculptor",
+                         Language = Language.English,
                          Uploader = uploader1
                      },
-                     new Chapter() 
-                     { 
-                         Number = 2, 
-                         Name = "The Man with a Mask", 
-                         Language = Language.English, 
-                         Uploader = uploader2 
+                     new Chapter()
+                     {
+                         Number = 2,
+                         Name = "The Man with a Mask",
+                         Language = Language.English,
+                         Uploader = uploader2
                      },
-                     new Chapter() 
-                     { 
-                         Number = 3, 
-                         Name = "The Master and Disciple", 
-                         Language = Language.English, 
-                         Uploader = uploader3 
+                     new Chapter()
+                     {
+                         Number = 3,
+                         Name = "The Master and Disciple",
+                         Language = Language.English,
+                         Uploader = uploader3
                      },
                 },
                 CoverPath = serverUrl + "the.png",
@@ -310,26 +316,26 @@ public partial class SeedData
                 Authors = new List<Author>() { authors["Itou Junji"], },
                 Chapters = new List<Chapter>()
                 {
-                     new Chapter 
-                     { 
-                         Number = 1, 
-                         Name = "Tomie", 
-                         Language = Language.English, 
-                         Uploader = uploader1 
+                     new Chapter
+                     {
+                         Number = 1,
+                         Name = "Tomie",
+                         Language = Language.English,
+                         Uploader = uploader1
                      },
-                     new Chapter 
-                     { 
-                         Number = 2, 
-                         Name = "Photograph", 
-                         Language = Language.English, 
-                         Uploader = uploader2 
+                     new Chapter
+                     {
+                         Number = 2,
+                         Name = "Photograph",
+                         Language = Language.English,
+                         Uploader = uploader2
                      },
-                     new Chapter 
-                     { 
-                         Number = 3, 
-                         Name = "Kiss", 
-                         Language = Language.English, 
-                         Uploader = uploader3 
+                     new Chapter
+                     {
+                         Number = 3,
+                         Name = "Kiss",
+                         Language = Language.English,
+                         Uploader = uploader3
                      },
                 },
                 CoverPath = serverUrl + "itou.png",
@@ -355,26 +361,26 @@ public partial class SeedData
                 Authors = new List<Author>() { authors["Fuyu Amakura"], },
                 Chapters = new List<Chapter>()
                 {
-                     new Chapter 
-                     { 
-                         Number = 1, 
+                     new Chapter
+                     {
+                         Number = 1,
                          Name = "Encounter With A High School Student",
-                         Language = Language.English, 
-                         Uploader = uploader1 
+                         Language = Language.English,
+                         Uploader = uploader1
                      },
-                     new Chapter 
-                     { 
-                         Number = 2, 
-                         Name = "A great success!!", 
-                         Language = Language.English, 
-                         Uploader = uploader2 
+                     new Chapter
+                     {
+                         Number = 2,
+                         Name = "A great success!!",
+                         Language = Language.English,
+                         Uploader = uploader2
                      },
-                     new Chapter 
-                     { 
-                         Number = 3, 
-                         Name = "I became his bodyguard", 
-                         Language = Language.English, 
-                         Uploader = uploader3 
+                     new Chapter
+                     {
+                         Number = 3,
+                         Name = "I became his bodyguard",
+                         Language = Language.English,
+                         Uploader = uploader3
                      },
                 },
                 CoverPath = serverUrl + "heroine.png",
@@ -402,26 +408,26 @@ public partial class SeedData
                 Authors = new List<Author>() { authors["YOMOYAMA Takashi"], },
                 Chapters = new List<Chapter>()
                 {
-                     new Chapter 
-                     { 
-                         Number = 1, 
-                         Name = "August eight", 
-                         Language = Language.English, 
-                         Uploader = uploader1 
+                     new Chapter
+                     {
+                         Number = 1,
+                         Name = "August eight",
+                         Language = Language.English,
+                         Uploader = uploader1
                      },
-                     new Chapter 
-                     { 
-                         Number = 2, 
-                         Name = "Con air", 
-                         Language = Language.English, 
-                         Uploader = uploader2 
+                     new Chapter
+                     {
+                         Number = 2,
+                         Name = "Con air",
+                         Language = Language.English,
+                         Uploader = uploader2
                      },
-                     new Chapter 
-                     { 
-                         Number = 3, 
-                         Name = "Eastern Promises", 
-                         Language = Language.English, 
-                         Uploader = uploader3 
+                     new Chapter
+                     {
+                         Number = 3,
+                         Name = "Eastern Promises",
+                         Language = Language.English,
+                         Uploader = uploader3
                      },
                 },
                 CoverPath = serverUrl + "tsui.jpg",
@@ -450,26 +456,26 @@ public partial class SeedData
                 Authors = new List<Author>() { authors["Gosho Aoyama"], },
                 Chapters = new List<Chapter>()
                 {
-                     new Chapter 
-                     { 
-                         Number = 1, 
-                         Name = "The Heisei Holmes", 
-                         Language = Language.English, 
-                         Uploader = uploader1 
+                     new Chapter
+                     {
+                         Number = 1,
+                         Name = "The Heisei Holmes",
+                         Language = Language.English,
+                         Uploader = uploader1
                      },
-                     new Chapter 
-                     { 
-                         Number = 2, 
-                         Name = "The shrunken detective", 
-                         Language = Language.English, 
-                         Uploader = uploader2 
+                     new Chapter
+                     {
+                         Number = 2,
+                         Name = "The shrunken detective",
+                         Language = Language.English,
+                         Uploader = uploader2
                      },
-                     new Chapter 
-                     { 
-                         Number = 3, 
-                         Name = "The left out detective", 
-                         Language = Language.English, 
-                         Uploader = uploader3 
+                     new Chapter
+                     {
+                         Number = 3,
+                         Name = "The left out detective",
+                         Language = Language.English,
+                         Uploader = uploader3
                      },
                 },
                 CoverPath = serverUrl + "conan.png",
@@ -494,26 +500,26 @@ public partial class SeedData
                 Authors = new List<Author>() { authors["Hanatsuka Shiori"], },
                 Chapters = new List<Chapter>()
                 {
-                     new Chapter 
-                     { 
-                         Number = 1, 
-                         Name = "You apply just the right amount of heat", 
-                         Language = Language.English, 
-                         Uploader = uploader1 
+                     new Chapter
+                     {
+                         Number = 1,
+                         Name = "You apply just the right amount of heat",
+                         Language = Language.English,
+                         Uploader = uploader1
                      },
-                     new Chapter 
-                     { 
-                         Number = 2, 
-                         Name = "First breakfast together", 
-                         Language = Language.English, 
-                         Uploader = uploader2 
+                     new Chapter
+                     {
+                         Number = 2,
+                         Name = "First breakfast together",
+                         Language = Language.English,
+                         Uploader = uploader2
                      },
-                     new Chapter 
-                     { 
-                         Number = 3, 
-                         Name = "A Toast with Beer and lamp chops", 
-                         Language = Language.English, 
-                         Uploader = uploader3 
+                     new Chapter
+                     {
+                         Number = 3,
+                         Name = "A Toast with Beer and lamp chops",
+                         Language = Language.English,
+                         Uploader = uploader3
                      },
                 },
                 CoverPath = serverUrl + "yaiteru.png",

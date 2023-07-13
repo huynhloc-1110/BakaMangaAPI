@@ -478,7 +478,6 @@ namespace BakaMangaAPI.Data.Migrations
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "text", nullable: false),
-                    Count = table.Column<int>(type: "integer", nullable: false),
                     UserId = table.Column<string>(type: "text", nullable: false),
                     Discriminator = table.Column<string>(type: "text", nullable: false),
                     ChapterId = table.Column<string>(type: "text", nullable: true),

@@ -90,8 +90,11 @@ public class MangaController : ControllerBase
         var chapters = await _context.Chapters
             .Include(c => c.Manga)
             .Include(c => c.Uploader)
+            .Include(c => c.ChapterViews)
             .Where(c => c.Manga == manga)
             .OrderBy(c => c.Number)
+            .ThenBy(c => c.Language)
+            .ThenByDescending(c => c.CreatedAt)
             .AsNoTracking()
             .ToListAsync();
 
