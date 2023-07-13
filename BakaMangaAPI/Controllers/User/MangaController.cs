@@ -70,6 +70,8 @@ public class MangaController : ControllerBase
         var manga = await _context.Mangas
             .Include(m => m.Authors)
             .Include(m => m.Categories)
+            .Include(m => m.Ratings)
+            .Include(m => m.Followers)
             .Where(m => m.DeletedAt == null)
             .AsSplitQuery()
             .AsNoTracking()

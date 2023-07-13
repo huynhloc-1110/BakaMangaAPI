@@ -9,7 +9,11 @@ public class AppMapper : Profile
     public AppMapper()
     {
         CreateMap<Manga, MangaBasicDTO>();
-        CreateMap<Manga, MangaDetailDTO>();
+        CreateMap<Manga, MangaDetailDTO>()
+            .ForMember(dest => dest.AverageRating, opt => opt
+                .MapFrom(src => src.Ratings.Any() ? src.Ratings.Average(r => r.Value) : 3))
+            .ForMember(dest => dest.FollowCount, opt => opt
+                .MapFrom(src => src.Followers.Count));
         CreateMap<MangaEditDTO, Manga>();
 
         CreateMap<Chapter, ChapterBasicDTO>()

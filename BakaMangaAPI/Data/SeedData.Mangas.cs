@@ -149,6 +149,13 @@ public partial class SeedData
                     },
                 },
                 CoverPath = serverUrl + "doraemon.png",
+                Ratings = new()
+                {
+                    new() { Value = 5, User = uploader1 },
+                    new() { Value = 4, User = uploader2 },
+                    new() { Value = 4, User = uploader3 },
+                },
+                Followers = new() { uploader1, uploader2, uploader3 },
             }
         );
 

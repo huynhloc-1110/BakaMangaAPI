@@ -67,9 +67,5 @@ public class MangaDetailDTO
 
     public int FollowCount { get; set; }
 
-    public int ViewCount { get; set; }
-
-    public int AverageRating { get; set; }
-
-    public int CurrentUserRating { get; set; }
+    public float AverageRating { get; set; }
 }
