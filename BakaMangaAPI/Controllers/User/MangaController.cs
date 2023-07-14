@@ -82,7 +82,14 @@ public class MangaController : ControllerBase
             return NotFound();
         }
 
-        return Ok(_mapper.Map<MangaDetailDTO>(manga));
+        var result = _mapper.Map<MangaDetailDTO>(manga);
+
+        // get total views of chapters in manga
+        result.ViewCount = await _context.Chapters
+            .Where(c => c.Manga == manga)
+            .Include(c => c.ChapterViews)
+            .SumAsync(c => c.ChapterViews.Count);
+        return Ok(result);
     }
 
     [HttpGet("{id}/chapters")]

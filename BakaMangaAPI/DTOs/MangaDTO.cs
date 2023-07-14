@@ -65,6 +65,8 @@ public class MangaDetailDTO
 
     public List<AuthorDTO> Authors { get; set; } = new();
 
+    public int ViewCount { get; set; }
+
     public int FollowCount { get; set; }
 
     public float AverageRating { get; set; }
