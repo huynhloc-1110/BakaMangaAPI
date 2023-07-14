@@ -86,20 +86,61 @@ public class MangaController : ControllerBase
     }
 
     [HttpGet("{id}/chapters")]
-    public async Task<IActionResult> GetMangaChapters(string id)
+    public async Task<IActionResult> GetMangaChapters(string id, [FromQuery]
+        FilterDTO filter)
     {
+        // filter search
+        var query = _context.Chapters.Where(c => c.DeletedAt == null);
+        if (!string.IsNullOrEmpty(filter.Search))
+        {
+            if (int.TryParse(filter.Search, out int searchNum))
+            {
+                query = query.Where(c => c.Number == searchNum ||
+                    c.Name.Contains(filter.Search));
+            }
+            else
+            {
+                query = query.Where(c => c.Name.ToLower()
+                    .Contains(filter.Search.ToLower()));
+            }
+        }
+
+        // filter manga
         var manga = await _context.Mangas.FindAsync(id);
-        var chapters = await _context.Chapters
+        query = query
             .Include(c => c.Manga)
+            .Where(c => c.Manga == manga);
+
+        // count total chapter numbers
+        var chapterNumberCount = await query
+            .Select(c => c.Number)
+            .Distinct()
+            .CountAsync();
+
+        // get chapters based on filter.Page and PageSize
+        var chapterNumberFilter = query
+            .Select(c => c.Number)
+            .Distinct().OrderBy(cn => cn)
+            .Skip((filter.Page - 1) * filter.PageSize)
+            .Take(filter.PageSize);
+        var chapters = await query
+            .Where(c => chapterNumberFilter.Contains(c.Number))
             .Include(c => c.Uploader)
             .Include(c => c.ChapterViews)
-            .Where(c => c.Manga == manga)
             .OrderBy(c => c.Number)
             .ThenBy(c => c.Language)
             .ThenByDescending(c => c.CreatedAt)
             .AsNoTracking()
             .ToListAsync();
 
-        return Ok(_mapper.Map<List<ChapterBasicDTO>>(chapters));
+        if (chapters.Count == 0)
+        {
+            return NotFound();
+        }
+
+        var chapterList = _mapper.Map<List<ChapterBasicDTO>>(chapters);
+        var paginatedChapterList = new PaginatedListDTO<ChapterBasicDTO>
+            (chapterList, chapterNumberCount, filter.Page, filter.PageSize);
+        return Ok(paginatedChapterList);
     }
 }
