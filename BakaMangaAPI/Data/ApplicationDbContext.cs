@@ -26,6 +26,7 @@ public class ApplicationDbContext : IdentityDbContext<
     public DbSet<Image> Images { get; set; } = default!;
     public DbSet<Manga> Mangas { get; set; } = default!;
     public DbSet<Post> Posts { get; set; } = default!;
+    public DbSet<Rating> Ratings { get; set; } = default!;
     public DbSet<React> Reacts { get; set; } = default!;
     public DbSet<Report> Reports { get; set; } = default!;
     public DbSet<Request> Requests { get; set; } = default!;
