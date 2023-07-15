@@ -22,6 +22,15 @@ public class RatingController : ControllerBase
         _userManager = userManager;
     }
 
+    private async Task<Rating?> LoadRatingAsync(ApplicationUser user, Manga manga)
+    {
+        var rating = await _context.Ratings
+            .Include(r => r.User)
+            .Include(r => r.Manga)
+            .SingleOrDefaultAsync(r => r.User == user && r.Manga == manga);
+        return rating;
+    }
+
     [HttpGet("{id}")]
     public async Task<IActionResult> GetUserRatingForManga(string id)
     {
@@ -31,13 +40,7 @@ public class RatingController : ControllerBase
         {
             return BadRequest();
         }
-
-        var rating = await _context.Ratings
-            .Include(r => r.User)
-            .Include(r => r.Manga)
-            .SingleOrDefaultAsync(r => r.User == currentUser && r.Manga == manga);
-
-        return Ok(rating?.Value);
+        return Ok((await LoadRatingAsync(currentUser, manga))?.Value);
     }
 
     [HttpPost("{id}")]
@@ -58,6 +61,48 @@ public class RatingController : ControllerBase
             Manga = manga
         };
         _context.Ratings.Add(rating);
+        await _context.SaveChangesAsync();
+
+        return CreatedAtAction("GetUserRatingForManga", new { id }, inputRating);
+    }
+
+    [HttpPut("{id}")]
+    public async Task<IActionResult> PutRatingForManga(string id, [FromBody]
+        int inputRating)
+    {
+        var currentUser = await _userManager.GetUserAsync(User);
+        var manga = await _context.Mangas.FindAsync(id);
+        if (manga == null)
+        {
+            return BadRequest();
+        }
+        var rating = await LoadRatingAsync(currentUser, manga);
+        if (rating == null)
+        {
+            return BadRequest();
+        }
+
+        rating.Value = inputRating;
+        await _context.SaveChangesAsync();
+
+        return NoContent();
+    }
+
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> DeleteRatingForManga(string id)
+    {
+        var currentUser = await _userManager.GetUserAsync(User);
+        var manga = await _context.Mangas.FindAsync(id);
+        if (manga == null)
+        {
+            return BadRequest();
+        }
+        var rating = await LoadRatingAsync(currentUser, manga);
+        if (rating == null)
+        {
+            return BadRequest();
+        }
+        _context.Ratings.Remove(rating);
         await _context.SaveChangesAsync();
 
         return NoContent();
