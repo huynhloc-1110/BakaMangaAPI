@@ -44,7 +44,7 @@ public class RatingController : ControllerBase
     }
 
     [HttpPost("{id}")]
-    public async Task<IActionResult> PostRatingForManga(string id, [FromBody]
+    public async Task<IActionResult> PostRatingForManga(string id, [FromForm]
         int inputRating)
     {
         var currentUser = await _userManager.GetUserAsync(User);
@@ -67,7 +67,7 @@ public class RatingController : ControllerBase
     }
 
     [HttpPut("{id}")]
-    public async Task<IActionResult> PutRatingForManga(string id, [FromBody]
+    public async Task<IActionResult> PutRatingForManga(string id, [FromForm]
         int inputRating)
     {
         var currentUser = await _userManager.GetUserAsync(User);
