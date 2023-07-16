@@ -87,8 +87,8 @@ public class MangaController : ControllerBase
         // get total views of chapters in manga
         result.ViewCount = await _context.Chapters
             .Where(c => c.Manga == manga)
-            .Include(c => c.ChapterViews)
             .SumAsync(c => c.ChapterViews.Count);
+
         return Ok(result);
     }
 

@@ -22,13 +22,13 @@ public class RatingController : ControllerBase
         _userManager = userManager;
     }
 
-    private async Task<Rating?> LoadRatingAsync(ApplicationUser user, Manga manga)
+    private async Task<Rating?> LoadRatingAsync(ApplicationUser user,
+        Manga manga)
     {
-        var rating = await _context.Ratings
+        return await _context.Ratings
             .Include(r => r.User)
             .Include(r => r.Manga)
             .SingleOrDefaultAsync(r => r.User == user && r.Manga == manga);
-        return rating;
     }
 
     [HttpGet("{id}")]
@@ -49,9 +49,15 @@ public class RatingController : ControllerBase
     {
         var currentUser = await _userManager.GetUserAsync(User);
         var manga = await _context.Mangas.FindAsync(id);
-        if (manga == null)
+        if (manga == null || inputRating < 1 || inputRating > 5)
         {
-            return BadRequest();
+            return BadRequest("Invalid manga id or rating value.");
+        }
+
+        var existingRating = await LoadRatingAsync(currentUser, manga);
+        if (existingRating != null)
+        {
+            return BadRequest("Rating already exists. Use PUT instead.");
         }
 
         var rating = new Rating()
@@ -63,7 +69,8 @@ public class RatingController : ControllerBase
         _context.Ratings.Add(rating);
         await _context.SaveChangesAsync();
 
-        return CreatedAtAction("GetUserRatingForManga", new { id }, inputRating);
+        return CreatedAtAction(nameof(GetUserRatingForManga), new { id },
+            inputRating);
     }
 
     [HttpPut("{id}")]
@@ -72,14 +79,15 @@ public class RatingController : ControllerBase
     {
         var currentUser = await _userManager.GetUserAsync(User);
         var manga = await _context.Mangas.FindAsync(id);
-        if (manga == null)
+        if (manga == null || inputRating < 1 || inputRating > 5)
         {
-            return BadRequest();
+            return BadRequest("Invalid manga id or rating value.");
         }
+
         var rating = await LoadRatingAsync(currentUser, manga);
         if (rating == null)
         {
-            return BadRequest();
+            return NotFound("Rating not found.");
         }
 
         rating.Value = inputRating;
@@ -95,13 +103,15 @@ public class RatingController : ControllerBase
         var manga = await _context.Mangas.FindAsync(id);
         if (manga == null)
         {
-            return BadRequest();
+            return BadRequest("Invalid manga id.");
         }
+
         var rating = await LoadRatingAsync(currentUser, manga);
         if (rating == null)
         {
             return BadRequest();
         }
+
         _context.Ratings.Remove(rating);
         await _context.SaveChangesAsync();
 
