@@ -36,7 +36,7 @@ public class MangaCommentController : ControllerBase
             .Where(c => c.ParentComment!.Id == id)
             .Include(c => c.User)
             .Include(c => c.ChildComments)
-            .OrderByDescending(c => c.CreatedAt)
+            .OrderBy(c => c.CreatedAt)
             .Skip((filter.Page - 1) * filter.PageSize)
             .Take(filter.PageSize)
             .ToListAsync();

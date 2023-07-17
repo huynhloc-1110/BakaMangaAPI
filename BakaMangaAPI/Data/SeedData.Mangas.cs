@@ -174,7 +174,9 @@ public partial class SeedData
                                     new() { Content = "Sssh, Let him cook.", User = uploader3 }
                                 }
                             },
-                            new() { Content = "Me too bro :<", User = uploader3 }
+                            new() { Content = "Me too bro :<", User = uploader3 },
+                            new() { Content = "Me three bro :<", User = uploader1 },
+                            new() { Content = "+1 ", User = uploader2 }
                         }
                     },
                     new()
@@ -182,6 +184,17 @@ public partial class SeedData
                         Content =
                             "At least you got married. I may be still a child I have higher chances of being alone ;v; even though I'm practically better than you in every category except being male",
                         User = uploader3
+                    },
+                    new()
+                    {
+                        Content = "Thank you for scanlating this, whichever group you are",
+                        User = uploader2
+                    },
+                    new()
+                    {
+                        Content =
+                            "Doraemon was my first anime I ever watched and has stuck to me. For years to come I will never forget it. I hope your childhood has been great and have a wonderful years to come. Well with that I sign out.",
+                        User = uploader1
                     },
                 },
             }
