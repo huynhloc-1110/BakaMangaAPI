@@ -16,6 +16,7 @@ public class ApplicationUser : IdentityUser
 
     public List<ApplicationUserRole> UserRoles { get; set; } = new();
 
+    #region Have yet used these
     public List<ApplicationUser> Followers { get; set; } = new();
 
     public List<ApplicationUser> Followees { get; set; } = new();
@@ -25,6 +26,7 @@ public class ApplicationUser : IdentityUser
     public List<React> Reacts { get; set; } = new();
 
     public List<Report> Reports { get; set; } = new();
+    #endregion
 
     public List<ChapterView> ChapterViews { get; set; } = new();
 
@@ -33,4 +35,6 @@ public class ApplicationUser : IdentityUser
     public List<Chapter> UploadedChapters { get; set; } = new();
 
     public List<Rating> Ratings { get; set; } = new();
+
+    public List<MangaComment> MangaComments { get; set; } = new();
 }

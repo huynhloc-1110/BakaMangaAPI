@@ -156,6 +156,30 @@ public partial class SeedData
                     new() { Value = 4, User = uploader3 },
                 },
                 Followers = new() { uploader1, uploader2, uploader3 },
+                Comments = new()
+                {
+                    new()
+                    {
+                        Content =
+                            "Everytimes I read this chapter I really want to cry, I wish that I have this good parents.",
+                        User = uploader1,
+                        ChildComments = new()
+                        {
+                            new()
+                            {
+                                Content = "Don't be so deep bro, it's just a manga :))",
+                                User = uploader2
+                            },
+                            new() { Content = "Me too bro :<", User = uploader3 }
+                        }
+                    },
+                    new()
+                    {
+                        Content =
+                            "At least you got married. I may be still a child I have higher chances of being alone ;v; even though I'm practically better than you in every category except being male",
+                        User = uploader3
+                    },
+                },
             }
         );
 
@@ -170,37 +194,37 @@ public partial class SeedData
                 PublishYear = 1999,
                 Categories = new List<Category>()
                 {
-                     categories["Action"],
-                     categories["Adventure"],
-                     categories["Comedy"],
-                     categories["Drama"],
-                     categories["Fantasy"],
-                     categories["Shounen"],
+                    categories["Action"],
+                    categories["Adventure"],
+                    categories["Comedy"],
+                    categories["Drama"],
+                    categories["Fantasy"],
+                    categories["Shounen"],
                 },
                 Authors = new List<Author>() { authors["Masashi Kishimoto"], },
                 Chapters = new List<Chapter>
                 {
-                     new Chapter()
-                     {
-                         Number = 1,
-                         Name = "Naruto Uzumaki!!",
-                         Language = Language.English,
-                         Uploader = uploader1
-                     },
-                     new Chapter()
-                     {
-                         Number = 2,
-                         Name = "Konohamaru!!",
-                         Language = Language.English,
-                         Uploader = uploader2
-                     },
-                     new Chapter()
-                     {
-                         Number = 3,
-                         Name = "Sasuke Uchiha!!",
-                         Language = Language.English,
-                         Uploader = uploader3
-                     },
+                    new Chapter()
+                    {
+                        Number = 1,
+                        Name = "Naruto Uzumaki!!",
+                        Language = Language.English,
+                        Uploader = uploader1
+                    },
+                    new Chapter()
+                    {
+                        Number = 2,
+                        Name = "Konohamaru!!",
+                        Language = Language.English,
+                        Uploader = uploader2
+                    },
+                    new Chapter()
+                    {
+                        Number = 3,
+                        Name = "Sasuke Uchiha!!",
+                        Language = Language.English,
+                        Uploader = uploader3
+                    },
                 },
                 CoverPath = serverUrl + "naruto.png",
             }
@@ -218,35 +242,35 @@ public partial class SeedData
                 PublishYear = 2016,
                 Categories = new List<Category>()
                 {
-                     categories["Comedy"],
-                     categories["Romance"],
-                     categories["School Life"],
-                     categories["Shoujo"],
+                    categories["Comedy"],
+                    categories["Romance"],
+                    categories["School Life"],
+                    categories["Shoujo"],
                 },
                 Authors = new List<Author>() { authors["Oda Tomohito"], },
                 Chapters = new List<Chapter>
                 {
-                     new Chapter()
-                     {
-                         Number = 1,
-                         Name = "A normal person",
-                         Language = Language.English,
-                         Uploader = uploader1
-                     },
-                     new Chapter()
-                     {
-                         Number = 2,
-                         Name = "Peaceful",
-                         Language = Language.English,
-                         Uploader = uploader2
-                     },
-                     new Chapter()
-                     {
-                         Number = 3,
-                         Name = "Spectre",
-                         Language = Language.English,
-                         Uploader = uploader3
-                     },
+                    new Chapter()
+                    {
+                        Number = 1,
+                        Name = "A normal person",
+                        Language = Language.English,
+                        Uploader = uploader1
+                    },
+                    new Chapter()
+                    {
+                        Number = 2,
+                        Name = "Peaceful",
+                        Language = Language.English,
+                        Uploader = uploader2
+                    },
+                    new Chapter()
+                    {
+                        Number = 3,
+                        Name = "Spectre",
+                        Language = Language.English,
+                        Uploader = uploader3
+                    },
                 },
                 CoverPath = serverUrl + "komi.png",
             }
@@ -264,38 +288,38 @@ public partial class SeedData
                 PublishYear = 2015,
                 Categories = new List<Category>()
                 {
-                     categories["Action"],
-                     categories["Adventure"],
-                     categories["Fantasy"],
-                     categories["Game"],
-                     categories["Martial Arts"],
-                     categories["Sci-Fi"],
-                     categories["Seinen"],
+                    categories["Action"],
+                    categories["Adventure"],
+                    categories["Fantasy"],
+                    categories["Game"],
+                    categories["Martial Arts"],
+                    categories["Sci-Fi"],
+                    categories["Seinen"],
                 },
                 Authors = new List<Author>() { authors["Heesung NAM"], },
                 Chapters = new List<Chapter>
                 {
-                     new Chapter()
-                     {
-                         Number = 1,
-                         Name = "Introduction: The Legendary Moonlight Sculptor",
-                         Language = Language.English,
-                         Uploader = uploader1
-                     },
-                     new Chapter()
-                     {
-                         Number = 2,
-                         Name = "The Man with a Mask",
-                         Language = Language.English,
-                         Uploader = uploader2
-                     },
-                     new Chapter()
-                     {
-                         Number = 3,
-                         Name = "The Master and Disciple",
-                         Language = Language.English,
-                         Uploader = uploader3
-                     },
+                    new Chapter()
+                    {
+                        Number = 1,
+                        Name = "Introduction: The Legendary Moonlight Sculptor",
+                        Language = Language.English,
+                        Uploader = uploader1
+                    },
+                    new Chapter()
+                    {
+                        Number = 2,
+                        Name = "The Man with a Mask",
+                        Language = Language.English,
+                        Uploader = uploader2
+                    },
+                    new Chapter()
+                    {
+                        Number = 3,
+                        Name = "The Master and Disciple",
+                        Language = Language.English,
+                        Uploader = uploader3
+                    },
                 },
                 CoverPath = serverUrl + "the.png",
             }
@@ -312,38 +336,38 @@ public partial class SeedData
                 PublishYear = 1989,
                 Categories = new List<Category>()
                 {
-                     categories["Comedy"],
-                     categories["Drama"],
-                     categories["Horror"],
-                     categories["Mystery"],
-                     categories["Supernatural"],
-                     categories["Tragedy"],
-                     categories["Psychological"],
+                    categories["Comedy"],
+                    categories["Drama"],
+                    categories["Horror"],
+                    categories["Mystery"],
+                    categories["Supernatural"],
+                    categories["Tragedy"],
+                    categories["Psychological"],
                 },
                 Authors = new List<Author>() { authors["Itou Junji"], },
                 Chapters = new List<Chapter>()
                 {
-                     new Chapter
-                     {
-                         Number = 1,
-                         Name = "Tomie",
-                         Language = Language.English,
-                         Uploader = uploader1
-                     },
-                     new Chapter
-                     {
-                         Number = 2,
-                         Name = "Photograph",
-                         Language = Language.English,
-                         Uploader = uploader2
-                     },
-                     new Chapter
-                     {
-                         Number = 3,
-                         Name = "Kiss",
-                         Language = Language.English,
-                         Uploader = uploader3
-                     },
+                    new Chapter
+                    {
+                        Number = 1,
+                        Name = "Tomie",
+                        Language = Language.English,
+                        Uploader = uploader1
+                    },
+                    new Chapter
+                    {
+                        Number = 2,
+                        Name = "Photograph",
+                        Language = Language.English,
+                        Uploader = uploader2
+                    },
+                    new Chapter
+                    {
+                        Number = 3,
+                        Name = "Kiss",
+                        Language = Language.English,
+                        Uploader = uploader3
+                    },
                 },
                 CoverPath = serverUrl + "itou.png",
             }
@@ -360,35 +384,35 @@ public partial class SeedData
                 PublishYear = 2018,
                 Categories = new List<Category>()
                 {
-                     categories["Comedy"],
-                     categories["Romance"],
-                     categories["School Life"],
-                     categories["Shoujo"],
+                    categories["Comedy"],
+                    categories["Romance"],
+                    categories["School Life"],
+                    categories["Shoujo"],
                 },
                 Authors = new List<Author>() { authors["Fuyu Amakura"], },
                 Chapters = new List<Chapter>()
                 {
-                     new Chapter
-                     {
-                         Number = 1,
-                         Name = "Encounter With A High School Student",
-                         Language = Language.English,
-                         Uploader = uploader1
-                     },
-                     new Chapter
-                     {
-                         Number = 2,
-                         Name = "A great success!!",
-                         Language = Language.English,
-                         Uploader = uploader2
-                     },
-                     new Chapter
-                     {
-                         Number = 3,
-                         Name = "I became his bodyguard",
-                         Language = Language.English,
-                         Uploader = uploader3
-                     },
+                    new Chapter
+                    {
+                        Number = 1,
+                        Name = "Encounter With A High School Student",
+                        Language = Language.English,
+                        Uploader = uploader1
+                    },
+                    new Chapter
+                    {
+                        Number = 2,
+                        Name = "A great success!!",
+                        Language = Language.English,
+                        Uploader = uploader2
+                    },
+                    new Chapter
+                    {
+                        Number = 3,
+                        Name = "I became his bodyguard",
+                        Language = Language.English,
+                        Uploader = uploader3
+                    },
                 },
                 CoverPath = serverUrl + "heroine.png",
             }
@@ -405,37 +429,37 @@ public partial class SeedData
                 PublishYear = 2019,
                 Categories = new List<Category>()
                 {
-                     categories["Action"],
-                     categories["Drama"],
-                     categories["Mature"],
-                     categories["Mystery"],
-                     categories["Shounen"],
-                     categories["Supernatural"],
+                    categories["Action"],
+                    categories["Drama"],
+                    categories["Mature"],
+                    categories["Mystery"],
+                    categories["Shounen"],
+                    categories["Supernatural"],
                 },
                 Authors = new List<Author>() { authors["YOMOYAMA Takashi"], },
                 Chapters = new List<Chapter>()
                 {
-                     new Chapter
-                     {
-                         Number = 1,
-                         Name = "August eight",
-                         Language = Language.English,
-                         Uploader = uploader1
-                     },
-                     new Chapter
-                     {
-                         Number = 2,
-                         Name = "Con air",
-                         Language = Language.English,
-                         Uploader = uploader2
-                     },
-                     new Chapter
-                     {
-                         Number = 3,
-                         Name = "Eastern Promises",
-                         Language = Language.English,
-                         Uploader = uploader3
-                     },
+                    new Chapter
+                    {
+                        Number = 1,
+                        Name = "August eight",
+                        Language = Language.English,
+                        Uploader = uploader1
+                    },
+                    new Chapter
+                    {
+                        Number = 2,
+                        Name = "Con air",
+                        Language = Language.English,
+                        Uploader = uploader2
+                    },
+                    new Chapter
+                    {
+                        Number = 3,
+                        Name = "Eastern Promises",
+                        Language = Language.English,
+                        Uploader = uploader3
+                    },
                 },
                 CoverPath = serverUrl + "tsui.jpg",
             }
@@ -452,38 +476,38 @@ public partial class SeedData
                 PublishYear = 1994,
                 Categories = new List<Category>()
                 {
-                     categories["Action"],
-                     categories["Adventure"],
-                     categories["Comedy"],
-                     categories["Detective"],
-                     categories["Drama"],
-                     categories["Mystery"],
-                     categories["Shounen"],
+                    categories["Action"],
+                    categories["Adventure"],
+                    categories["Comedy"],
+                    categories["Detective"],
+                    categories["Drama"],
+                    categories["Mystery"],
+                    categories["Shounen"],
                 },
                 Authors = new List<Author>() { authors["Gosho Aoyama"], },
                 Chapters = new List<Chapter>()
                 {
-                     new Chapter
-                     {
-                         Number = 1,
-                         Name = "The Heisei Holmes",
-                         Language = Language.English,
-                         Uploader = uploader1
-                     },
-                     new Chapter
-                     {
-                         Number = 2,
-                         Name = "The shrunken detective",
-                         Language = Language.English,
-                         Uploader = uploader2
-                     },
-                     new Chapter
-                     {
-                         Number = 3,
-                         Name = "The left out detective",
-                         Language = Language.English,
-                         Uploader = uploader3
-                     },
+                    new Chapter
+                    {
+                        Number = 1,
+                        Name = "The Heisei Holmes",
+                        Language = Language.English,
+                        Uploader = uploader1
+                    },
+                    new Chapter
+                    {
+                        Number = 2,
+                        Name = "The shrunken detective",
+                        Language = Language.English,
+                        Uploader = uploader2
+                    },
+                    new Chapter
+                    {
+                        Number = 3,
+                        Name = "The left out detective",
+                        Language = Language.English,
+                        Uploader = uploader3
+                    },
                 },
                 CoverPath = serverUrl + "conan.png",
             }
@@ -500,34 +524,34 @@ public partial class SeedData
                 PublishYear = 2020,
                 Categories = new List<Category>()
                 {
-                     categories["Cooking"],
-                     categories["Romance"],
-                     categories["Slice of Life"],
+                    categories["Cooking"],
+                    categories["Romance"],
+                    categories["Slice of Life"],
                 },
                 Authors = new List<Author>() { authors["Hanatsuka Shiori"], },
                 Chapters = new List<Chapter>()
                 {
-                     new Chapter
-                     {
-                         Number = 1,
-                         Name = "You apply just the right amount of heat",
-                         Language = Language.English,
-                         Uploader = uploader1
-                     },
-                     new Chapter
-                     {
-                         Number = 2,
-                         Name = "First breakfast together",
-                         Language = Language.English,
-                         Uploader = uploader2
-                     },
-                     new Chapter
-                     {
-                         Number = 3,
-                         Name = "A Toast with Beer and lamp chops",
-                         Language = Language.English,
-                         Uploader = uploader3
-                     },
+                    new Chapter
+                    {
+                        Number = 1,
+                        Name = "You apply just the right amount of heat",
+                        Language = Language.English,
+                        Uploader = uploader1
+                    },
+                    new Chapter
+                    {
+                        Number = 2,
+                        Name = "First breakfast together",
+                        Language = Language.English,
+                        Uploader = uploader2
+                    },
+                    new Chapter
+                    {
+                        Number = 3,
+                        Name = "A Toast with Beer and lamp chops",
+                        Language = Language.English,
+                        Uploader = uploader3
+                    },
                 },
                 CoverPath = serverUrl + "yaiteru.png",
             }
