@@ -150,4 +150,27 @@ public class MangaController : ControllerBase
             (chapterList, chapterNumberCount, filter.Page, filter.PageSize);
         return Ok(paginatedChapterList);
     }
+
+    [HttpGet("{id}/comments")]
+    public async Task<IActionResult> GetMangaComments(string id, [FromQuery]
+        FilterDTO filter)
+    {
+        var commentCount = await _context.MangaComments
+            .Where(c => c.Manga.Id == id)
+            .CountAsync();
+        var comments = await _context.MangaComments
+            .Where(c => c.Manga.Id == id)
+            .Include(c => c.User)
+            .Include(c => c.ChildComments)
+            .OrderByDescending(c => c.CreatedAt)
+            .Skip((filter.Page - 1) * filter.PageSize)
+            .Take(filter.PageSize)
+            .AsNoTracking()
+            .ToListAsync();
+
+        var commentList = _mapper.Map<List<CommentDTO>>(comments);
+        var paginatedCommentList = new PaginatedListDTO<CommentDTO>(
+            commentList, commentCount, filter.Page, filter.PageSize);
+        return Ok(paginatedCommentList);
+    }
 }

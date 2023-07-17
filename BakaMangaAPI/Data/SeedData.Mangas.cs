@@ -168,7 +168,11 @@ public partial class SeedData
                             new()
                             {
                                 Content = "Don't be so deep bro, it's just a manga :))",
-                                User = uploader2
+                                User = uploader2,
+                                ChildComments = new()
+                                {
+                                    new() { Content = "Sssh, Let him cook.", User = uploader3 }
+                                }
                             },
                             new() { Content = "Me too bro :<", User = uploader3 }
                         }

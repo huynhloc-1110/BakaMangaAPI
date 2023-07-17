@@ -17,5 +17,5 @@ public class CommentDTO
 
     public DateTime CreatedAt { get; set; }
 
-    public List<CommentDTO> ChildComments { get; set; } = new();
+    public int ChildCommentCount { get; set; }
 }

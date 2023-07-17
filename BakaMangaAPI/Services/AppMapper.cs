@@ -18,7 +18,7 @@ public class AppMapper : Profile
 
         CreateMap<Chapter, ChapterBasicDTO>()
             .ForMember(dest => dest.ViewCount, opt => opt
-                .MapFrom(src => src.ChapterViews.Count()));
+                .MapFrom(src => src.ChapterViews.Count));
 
         CreateMap<ApplicationUser, UserBasicDTO>()
             .ForMember(dest => dest.Roles, opt => opt
@@ -30,5 +30,9 @@ public class AppMapper : Profile
 
         CreateMap<Category, CategoryDTO>();
         CreateMap<CategoryEditDTO, Category>();
+
+        CreateMap<MangaComment, CommentDTO>()
+            .ForMember(dest => dest.ChildCommentCount, opt => opt
+                .MapFrom(src => src.ChildComments.Count));
     }
 }
