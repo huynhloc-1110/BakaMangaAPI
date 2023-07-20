@@ -42,7 +42,7 @@ public class ManageMangaController : ControllerBase
         }
 
         var mangas = await query
-            .OrderBy(m => m.CreatedAt)
+            .OrderByDescending(m => m.CreatedAt)
             .Skip((filter.Page - 1) * filter.PageSize)
             .Take(filter.PageSize)
             .AsNoTracking()

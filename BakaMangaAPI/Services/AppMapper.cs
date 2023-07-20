@@ -10,8 +10,10 @@ public class AppMapper : Profile
     {
         CreateMap<Manga, MangaBasicDTO>();
         CreateMap<Manga, MangaDetailDTO>()
-            .ForMember(dest => dest.AverageRating, opt => opt
-                .MapFrom(src => src.Ratings.Any() ? src.Ratings.Average(r => r.Value) : 3))
+            .ForMember(dest => dest.RatingSum, opt => opt
+                .MapFrom(src => src.Ratings.Sum(r => r.Value)))
+            .ForMember(dest => dest.RatingCount, opt => opt
+                .MapFrom(src => src.Ratings.Count()))
             .ForMember(dest => dest.FollowCount, opt => opt
                 .MapFrom(src => src.Followers.Count));
         CreateMap<MangaEditDTO, Manga>();
