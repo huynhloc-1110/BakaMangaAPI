@@ -11,7 +11,7 @@ public class React : BaseModelWithCreatedAt
 
 public enum ReactFlag
 {
-    Dislike = -1, NoReact, Like
+    Dislike = -1, Like = 1
 }
 
 public class CommentReact : React

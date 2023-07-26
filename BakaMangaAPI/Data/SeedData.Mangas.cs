@@ -172,11 +172,23 @@ public partial class SeedData
                                 ChildComments = new()
                                 {
                                     new() { Content = "Sssh, Let him cook.", User = uploader3 }
+                                },
+                                Reacts = new()
+                                {
+                                    new() { ReactFlag = ReactFlag.Dislike, User = uploader1 },
+                                    new() { ReactFlag = ReactFlag.Like, User = uploader2 },
+                                    new() { ReactFlag = ReactFlag.Dislike, User = uploader3 }
                                 }
                             },
                             new() { Content = "Me too bro :<", User = uploader3 },
                             new() { Content = "Me three bro :<", User = uploader1 },
                             new() { Content = "+1 ", User = uploader2 }
+                        },
+                        Reacts = new()
+                        {
+                            new() { ReactFlag = ReactFlag.Like, User = uploader1 },
+                            new() { ReactFlag = ReactFlag.Like, User = uploader2 },
+                            new() { ReactFlag = ReactFlag.Dislike, User = uploader3 }
                         }
                     },
                     new()
