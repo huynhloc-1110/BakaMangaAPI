@@ -39,7 +39,6 @@ public class MangaController : ControllerBase
         query = filter.SortOption switch
         {
             SortOption.LatestChapter => query
-                .Include(m => m.Chapters)
                 .OrderByDescending(m => m.Chapters.Max(c => c.CreatedAt)),
             SortOption.LatestManga => query
                 .OrderByDescending(m => m.CreatedAt),
@@ -127,7 +126,8 @@ public class MangaController : ControllerBase
         // get chapters based on filter.Page and PageSize
         var chapterNumberFilter = query
             .Select(c => c.Number)
-            .Distinct().OrderBy(cn => cn)
+            .Distinct()
+            .OrderBy(cn => cn)
             .Skip((filter.Page - 1) * filter.PageSize)
             .Take(filter.PageSize);
         var chapters = await query
@@ -135,8 +135,9 @@ public class MangaController : ControllerBase
             .Include(c => c.Uploader)
             .Include(c => c.ChapterViews)
             .OrderBy(c => c.Number)
-            .ThenBy(c => c.Language)
-            .ThenByDescending(c => c.CreatedAt)
+                .ThenBy(c => c.Language)
+                    .ThenByDescending(c => c.CreatedAt)
+            .AsSplitQuery()
             .AsNoTracking()
             .ToListAsync();
 
@@ -162,9 +163,11 @@ public class MangaController : ControllerBase
             .Where(c => c.Manga.Id == id)
             .Include(c => c.User)
             .Include(c => c.ChildComments)
+            .Include(c => c.Reacts)
             .OrderByDescending(c => c.CreatedAt)
             .Skip((filter.Page - 1) * filter.PageSize)
             .Take(filter.PageSize)
+            .AsSplitQuery()
             .AsNoTracking()
             .ToListAsync();
 

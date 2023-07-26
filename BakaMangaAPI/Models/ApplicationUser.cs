@@ -23,8 +23,6 @@ public class ApplicationUser : IdentityUser
 
     public List<Request> Requests { get; set; } = new();
 
-    public List<React> Reacts { get; set; } = new();
-
     public List<Report> Reports { get; set; } = new();
     #endregion
 
@@ -37,4 +35,6 @@ public class ApplicationUser : IdentityUser
     public List<Rating> Ratings { get; set; } = new();
 
     public List<MangaComment> MangaComments { get; set; } = new();
+
+    public List<CommentReact> CommentReacts { get; set; } = new();
 }

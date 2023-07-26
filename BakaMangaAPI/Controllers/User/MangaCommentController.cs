@@ -36,9 +36,12 @@ public class MangaCommentController : ControllerBase
             .Where(c => c.ParentComment!.Id == id)
             .Include(c => c.User)
             .Include(c => c.ChildComments)
+            .Include(c => c.Reacts)
             .OrderBy(c => c.CreatedAt)
             .Skip((filter.Page - 1) * filter.PageSize)
             .Take(filter.PageSize)
+            .AsSplitQuery()
+            .AsNoTracking()
             .ToListAsync();
 
         var commentList = _mapper.Map<List<CommentDTO>>(comments);
