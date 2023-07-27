@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BakaMangaAPI.Controllers;
 
-[Route("user/[controller]")]
+[Route("user/rating/mangas")]
 [ApiController]
 [Authorize]
 public class RatingController : ControllerBase
@@ -31,6 +31,7 @@ public class RatingController : ControllerBase
             .SingleOrDefaultAsync(r => r.User == user && r.Manga == manga);
     }
 
+    // GET: /user/rating/mangas/5
     [HttpGet("{id}")]
     public async Task<IActionResult> GetUserRatingForManga(string id)
     {
@@ -43,6 +44,7 @@ public class RatingController : ControllerBase
         return Ok((await LoadRatingAsync(currentUser, manga))?.Value);
     }
 
+    // POST: /user/rating/mangas/5
     [HttpPost("{id}")]
     public async Task<IActionResult> PostRatingForManga(string id, [FromForm]
         int inputRating)
@@ -73,6 +75,7 @@ public class RatingController : ControllerBase
             inputRating);
     }
 
+    // PUT: /user/rating/mangas/5
     [HttpPut("{id}")]
     public async Task<IActionResult> PutRatingForManga(string id, [FromForm]
         int inputRating)
@@ -96,6 +99,7 @@ public class RatingController : ControllerBase
         return NoContent();
     }
 
+    // DELETE: /user/rating/mangas/5
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteRatingForManga(string id)
     {

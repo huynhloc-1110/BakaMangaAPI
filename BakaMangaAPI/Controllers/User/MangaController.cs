@@ -7,7 +7,7 @@ using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace BakaMangaAPI.Controllers;
 
-[Route("user/[controller]")]
+[Route("mangas")]
 [ApiController]
 public class MangaController : ControllerBase
 {
@@ -20,7 +20,7 @@ public class MangaController : ControllerBase
         _mapper = mapper;
     }
 
-    // GET: api/Manga
+    // GET: /mangas
     [HttpGet]
     public async Task<IActionResult> GetMangas
         ([FromQuery] MangaFilterDTO filter)
@@ -62,7 +62,7 @@ public class MangaController : ControllerBase
         return Ok(paginatedMangaList);
     }
 
-    // GET: api/Manga/5
+    // GET: /mangas/5
     [HttpGet("{id}")]
     public async Task<IActionResult> GetManga(string id)
     {
@@ -91,6 +91,7 @@ public class MangaController : ControllerBase
         return Ok(result);
     }
 
+    // GET: /mangas/5/chapters
     [HttpGet("{id}/chapters")]
     public async Task<IActionResult> GetMangaChapters(string id, [FromQuery]
         FilterDTO filter)
@@ -152,6 +153,7 @@ public class MangaController : ControllerBase
         return Ok(paginatedChapterList);
     }
 
+    // GET: /mangas/5/comments
     [HttpGet("{id}/comments")]
     public async Task<IActionResult> GetMangaComments(string id, [FromQuery]
         FilterDTO filter)

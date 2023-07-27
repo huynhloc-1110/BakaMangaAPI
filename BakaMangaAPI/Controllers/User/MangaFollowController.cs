@@ -5,21 +5,22 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-[Route("user/[controller]")]
+[Route("user/follow/mangas")]
 [ApiController]
 [Authorize]
-public class FollowController : ControllerBase
+public class MangaFollowController : ControllerBase
 {
     private readonly ApplicationDbContext _context;
     private readonly UserManager<ApplicationUser> _userManager;
 
-    public FollowController(ApplicationDbContext context,
+    public MangaFollowController(ApplicationDbContext context,
         UserManager<ApplicationUser> userManager)
     {
         _context = context;
         _userManager = userManager;
     }
 
+    // GET: /user/follow/mangas/5
     [HttpGet("{id}")]
     public async Task<bool> GetUserFollowForManga(string id)
     {
@@ -30,6 +31,7 @@ public class FollowController : ControllerBase
         return result;
     }
 
+    // POST: /user/follow/mangas/5
     [HttpPost("{id}")]
     public async Task<IActionResult> PostUserFollowForManga(string id)
     {
@@ -51,6 +53,7 @@ public class FollowController : ControllerBase
         return CreatedAtAction(nameof(GetUserFollowForManga), new { id }, true);
     }
 
+    // DELETE: /user/follow/mangas/5
     [HttpDelete("{id}")]
     public async Task<IActionResult> RemoveUserFollowForManga(string id)
     {

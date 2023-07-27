@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-[Route("user/[controller]")]
+[Route("manga-comments")]
 [ApiController]
 [Authorize]
 public class MangaCommentController : ControllerBase
@@ -24,8 +24,9 @@ public class MangaCommentController : ControllerBase
         _userManager = userManager;
     }
 
+    // GET: /manga-comments/5/children
     [AllowAnonymous]
-    [HttpGet("{id}")]
+    [HttpGet("{id}/children")]
     public async Task<IActionResult> LoadMangaChildComments(string id,
         [FromQuery] FilterDTO filter)
     {
