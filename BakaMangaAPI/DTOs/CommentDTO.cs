@@ -15,6 +15,8 @@ public class CommentDTO
 
     public int DislikeCount { get; set; }
 
+    public int UserReactFlag { get; set; }
+
     public DateTime CreatedAt { get; set; }
 
     public int ChildCommentCount { get; set; }
