@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using AutoMapper;
 using BakaMangaAPI.Data;
 using BakaMangaAPI.DTOs;
@@ -7,7 +8,6 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-[Route("manga-comments")]
 [ApiController]
 [Authorize]
 public class MangaCommentController : ControllerBase
@@ -26,7 +26,7 @@ public class MangaCommentController : ControllerBase
 
     // GET: /manga-comments/5/children
     [AllowAnonymous]
-    [HttpGet("{id}/children")]
+    [HttpGet("manga-comments/{id}/children")]
     public async Task<IActionResult> LoadMangaChildComments(string id,
         [FromQuery] FilterDTO filter)
     {
@@ -63,5 +63,83 @@ public class MangaCommentController : ControllerBase
         var paginatedCommentList = new PaginatedListDTO<CommentDTO>(
             commentList, commentCount, filter.Page, filter.PageSize);
         return Ok(paginatedCommentList);
+    }
+
+    [HttpPost("mangas/{id}/comments")]
+    [Authorize]
+    public async Task<IActionResult> PostCommentForManga(string id,
+        [FromForm] CommentEditDTO commentDTO)
+    {
+        var comment = _mapper.Map<MangaComment>(commentDTO);
+        comment.UserId = User.FindFirst(ClaimTypes.NameIdentifier)!.Value;
+        var manga = await _context.Mangas.FindAsync(id);
+        if (manga == null)
+        {
+            return NotFound("Manga not found");
+        }
+        comment.Manga = manga;
+
+        _context.MangaComments.Add(comment);
+        await _context.SaveChangesAsync();
+
+        return Ok();
+    }
+
+    [HttpPut("manga-comments/{id}")]
+    [Authorize]
+    public async Task<IActionResult> PutMangaComment(string id,
+        [FromForm] CommentEditDTO commentDTO)
+    {
+        if (id != commentDTO.Id)
+        {
+            return BadRequest("Comment Id not matched");
+        }
+
+        var comment = await _context.Comments.FindAsync(id);
+        if (comment == null)
+        {
+            return NotFound("Comment not found");
+        }
+
+        if (!IsUserComment(User, comment))
+        {
+            return BadRequest("The comment is not owned by the current user");
+        }
+
+        comment = _mapper.Map(commentDTO, comment);
+        await _context.SaveChangesAsync();
+
+        return NoContent();
+    }
+
+    [HttpDelete("manga-comments/{id}")]
+    [Authorize]
+    public async Task<IActionResult> DeleteMangaComment(string id)
+    {
+        var comment = await _context.Comments.FindAsync(id);
+        if (comment == null)
+        {
+            return NotFound("Comment not found");
+        }
+
+        if (!IsUserComment(User, comment))
+        {
+            return BadRequest("The comment is not owned by the current user");
+        }
+
+        comment.DeletedAt = DateTime.UtcNow;
+        await _context.SaveChangesAsync();
+
+        return NoContent();
+    }
+
+    private bool IsUserComment(ClaimsPrincipal principal, Comment comment)
+    {
+        var userId = User.FindFirst(ClaimTypes.NameIdentifier)!.Value;
+        if (comment.UserId == userId)
+        {
+            return true;
+        }
+        return false;
     }
 }

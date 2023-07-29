@@ -21,3 +21,11 @@ public class CommentDTO
 
     public int ChildCommentCount { get; set; }
 }
+
+public class CommentEditDTO
+{
+    public string Id { get; set; } = Guid.NewGuid().ToString();
+
+    [MaxLength(2000)]
+    public string Content { get; set; } = default!;
+}

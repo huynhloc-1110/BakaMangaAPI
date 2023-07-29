@@ -40,5 +40,6 @@ public class AppMapper : Profile
                 .MapFrom(src => src.Reacts.Count(r => r.ReactFlag == ReactFlag.Like)))
             .ForMember(dest => dest.DislikeCount, opt => opt
                 .MapFrom(src => src.Reacts.Count(r => r.ReactFlag == ReactFlag.Dislike)));
+        CreateMap<CommentEditDTO, MangaComment>();
     }
 }
