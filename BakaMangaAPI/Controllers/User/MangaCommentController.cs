@@ -82,7 +82,7 @@ public class MangaCommentController : ControllerBase
         _context.MangaComments.Add(comment);
         await _context.SaveChangesAsync();
 
-        return Ok();
+        return Ok(_mapper.Map<CommentDTO>(comment));
     }
 
     [HttpPut("manga-comments/{id}")]
@@ -109,7 +109,7 @@ public class MangaCommentController : ControllerBase
         comment = _mapper.Map(commentDTO, comment);
         await _context.SaveChangesAsync();
 
-        return NoContent();
+        return Ok(_mapper.Map<CommentDTO>(comment));
     }
 
     [HttpDelete("manga-comments/{id}")]
