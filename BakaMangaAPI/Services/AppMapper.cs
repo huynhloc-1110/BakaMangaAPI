@@ -35,7 +35,7 @@ public class AppMapper : Profile
 
         CreateMap<MangaComment, CommentDTO>()
             .ForMember(dest => dest.ChildCommentCount, opt => opt
-                .MapFrom(src => src.ChildComments.Count))
+                .MapFrom(src => src.ChildComments.Count(c => c.DeletedAt == null)))
             .ForMember(dest => dest.LikeCount, opt => opt
                 .MapFrom(src => src.Reacts.Count(r => r.ReactFlag == ReactFlag.Like)))
             .ForMember(dest => dest.DislikeCount, opt => opt

@@ -163,10 +163,10 @@ public class MangaController : ControllerBase
         FilterDTO filter)
     {
         var commentCount = await _context.MangaComments
-            .Where(c => c.Manga.Id == id)
+            .Where(c => c.Manga.Id == id && c.DeletedAt == null)
             .CountAsync();
         var comments = await _context.MangaComments
-            .Where(c => c.Manga.Id == id)
+            .Where(c => c.Manga.Id == id && c.DeletedAt == null)
             .Include(c => c.User)
             .Include(c => c.ChildComments)
             .Include(c => c.Reacts)

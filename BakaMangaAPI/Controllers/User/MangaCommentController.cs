@@ -31,10 +31,10 @@ public class MangaCommentController : ControllerBase
         [FromQuery] FilterDTO filter)
     {
         var commentCount = await _context.MangaComments
-            .Where(c => c.ParentComment!.Id == id)
+            .Where(c => c.ParentComment!.Id == id && c.DeletedAt == null)
             .CountAsync();
         var comments = await _context.MangaComments
-            .Where(c => c.ParentComment!.Id == id)
+            .Where(c => c.ParentComment!.Id == id && c.DeletedAt == null)
             .Include(c => c.User)
             .Include(c => c.ChildComments)
             .Include(c => c.Reacts)
@@ -109,7 +109,7 @@ public class MangaCommentController : ControllerBase
         comment = _mapper.Map(commentDTO, comment);
         await _context.SaveChangesAsync();
 
-        return Ok(_mapper.Map<CommentDTO>(comment));
+        return NoContent();
     }
 
     [HttpDelete("manga-comments/{id}")]
