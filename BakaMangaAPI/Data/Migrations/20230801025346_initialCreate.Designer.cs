@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace BakaMangaAPI.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20230713015823_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20230801025346_initialCreate")]
+    partial class initialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -422,7 +422,7 @@ namespace BakaMangaAPI.Data.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Rating");
+                    b.ToTable("Ratings");
                 });
 
             modelBuilder.Entity("BakaMangaAPI.Models.React", b =>
@@ -540,6 +540,8 @@ namespace BakaMangaAPI.Data.Migrations
                         .HasColumnType("text");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("Views");
 
@@ -688,8 +690,6 @@ namespace BakaMangaAPI.Data.Migrations
 
                     b.HasIndex("ChapterId");
 
-                    b.HasIndex("UserId");
-
                     b.HasDiscriminator().HasValue("ChapterView");
                 });
 
@@ -698,7 +698,6 @@ namespace BakaMangaAPI.Data.Migrations
                     b.HasBaseType("BakaMangaAPI.Models.React");
 
                     b.Property<string>("CommentId")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.HasIndex("CommentId");
@@ -724,7 +723,6 @@ namespace BakaMangaAPI.Data.Migrations
                     b.HasBaseType("BakaMangaAPI.Models.Comment");
 
                     b.Property<string>("MangaId")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.HasIndex("MangaId");
@@ -780,8 +778,6 @@ namespace BakaMangaAPI.Data.Migrations
                         .HasColumnType("text");
 
                     b.HasIndex("PostId");
-
-                    b.HasIndex("UserId");
 
                     b.HasDiscriminator().HasValue("PostView");
                 });
@@ -905,7 +901,7 @@ namespace BakaMangaAPI.Data.Migrations
                         .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("BakaMangaAPI.Models.ApplicationUser", "User")
-                        .WithMany()
+                        .WithMany("Comments")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
@@ -982,6 +978,17 @@ namespace BakaMangaAPI.Data.Migrations
                 {
                     b.HasOne("BakaMangaAPI.Models.ApplicationUser", "User")
                         .WithMany("Requests")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("BakaMangaAPI.Models.View", b =>
+                {
+                    b.HasOne("BakaMangaAPI.Models.ApplicationUser", "User")
+                        .WithMany("Views")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
@@ -1070,15 +1077,7 @@ namespace BakaMangaAPI.Data.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("BakaMangaAPI.Models.ApplicationUser", "User")
-                        .WithMany("ChapterViews")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
                     b.Navigation("Chapter");
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("BakaMangaAPI.Models.CommentReact", b =>
@@ -1086,8 +1085,7 @@ namespace BakaMangaAPI.Data.Migrations
                     b.HasOne("BakaMangaAPI.Models.Comment", "Comment")
                         .WithMany("Reacts")
                         .HasForeignKey("CommentId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("Comment");
                 });
@@ -1108,8 +1106,7 @@ namespace BakaMangaAPI.Data.Migrations
                     b.HasOne("BakaMangaAPI.Models.Manga", "Manga")
                         .WithMany("Comments")
                         .HasForeignKey("MangaId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("Manga");
                 });
@@ -1155,15 +1152,7 @@ namespace BakaMangaAPI.Data.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("BakaMangaAPI.Models.ApplicationUser", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
                     b.Navigation("Post");
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("BakaMangaAPI.Models.UserReport", b =>
@@ -1184,7 +1173,7 @@ namespace BakaMangaAPI.Data.Migrations
 
             modelBuilder.Entity("BakaMangaAPI.Models.ApplicationUser", b =>
                 {
-                    b.Navigation("ChapterViews");
+                    b.Navigation("Comments");
 
                     b.Navigation("Ratings");
 
@@ -1197,6 +1186,8 @@ namespace BakaMangaAPI.Data.Migrations
                     b.Navigation("UploadedChapters");
 
                     b.Navigation("UserRoles");
+
+                    b.Navigation("Views");
                 });
 
             modelBuilder.Entity("BakaMangaAPI.Models.Chapter", b =>

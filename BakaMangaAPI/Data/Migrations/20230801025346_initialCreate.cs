@@ -6,7 +6,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace BakaMangaAPI.Data.Migrations
 {
-    public partial class InitialCreate : Migration
+    public partial class initialCreate : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -377,7 +377,7 @@ namespace BakaMangaAPI.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Rating",
+                name: "Ratings",
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "text", nullable: false),
@@ -388,15 +388,15 @@ namespace BakaMangaAPI.Data.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Rating", x => x.Id);
+                    table.PrimaryKey("PK_Ratings", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Rating_AspNetUsers_UserId",
+                        name: "FK_Ratings_AspNetUsers_UserId",
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_Rating_Mangas_MangaId",
+                        name: "FK_Ratings_Mangas_MangaId",
                         column: x => x.MangaId,
                         principalTable: "Mangas",
                         principalColumn: "Id",
@@ -698,13 +698,13 @@ namespace BakaMangaAPI.Data.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Rating_MangaId",
-                table: "Rating",
+                name: "IX_Ratings_MangaId",
+                table: "Ratings",
                 column: "MangaId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Rating_UserId",
-                table: "Rating",
+                name: "IX_Ratings_UserId",
+                table: "Ratings",
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
@@ -801,7 +801,7 @@ namespace BakaMangaAPI.Data.Migrations
                 name: "Images");
 
             migrationBuilder.DropTable(
-                name: "Rating");
+                name: "Ratings");
 
             migrationBuilder.DropTable(
                 name: "Reacts");

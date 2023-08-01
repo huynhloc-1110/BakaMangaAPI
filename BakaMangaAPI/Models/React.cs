@@ -5,8 +5,6 @@ public class React : BaseModelWithCreatedAt
     public ReactFlag ReactFlag { get; set; }
 
     public ApplicationUser User { get; set; } = default!;
-
-    public string UserId { get; set; } = default!;
 }
 
 public enum ReactFlag

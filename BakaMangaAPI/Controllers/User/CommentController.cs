@@ -10,13 +10,13 @@ using Microsoft.EntityFrameworkCore;
 
 [ApiController]
 [Authorize]
-public class MangaCommentController : ControllerBase
+public class CommentController : ControllerBase
 {
     private readonly ApplicationDbContext _context;
     private readonly IMapper _mapper;
     private readonly UserManager<ApplicationUser> _userManager;
 
-    public MangaCommentController(ApplicationDbContext context, IMapper mapper,
+    public CommentController(ApplicationDbContext context, IMapper mapper,
         UserManager<ApplicationUser> userManager)
     {
         _context = context;
@@ -24,16 +24,16 @@ public class MangaCommentController : ControllerBase
         _userManager = userManager;
     }
 
-    // GET: /manga-comments/5/children
+    // GET: /comments/5/children
     [AllowAnonymous]
-    [HttpGet("manga-comments/{id}/children")]
-    public async Task<IActionResult> LoadMangaChildComments(string id,
+    [HttpGet("comments/{id}/children")]
+    public async Task<IActionResult> LoadChildComments(string id,
         [FromQuery] FilterDTO filter)
     {
-        var commentCount = await _context.MangaComments
+        var commentCount = await _context.Comments
             .Where(c => c.ParentComment!.Id == id && c.DeletedAt == null)
             .CountAsync();
-        var comments = await _context.MangaComments
+        var comments = await _context.Comments
             .Where(c => c.ParentComment!.Id == id && c.DeletedAt == null)
             .Include(c => c.User)
             .Include(c => c.ChildComments)
@@ -54,7 +54,7 @@ public class MangaCommentController : ControllerBase
             for (int i = 0; i < comments.Count; i++)
             {
                 var currentReact = comments[i].Reacts
-                    .SingleOrDefault(r => r!.UserId == currentUser.Id, null);
+                    .SingleOrDefault(r => r!.User == currentUser, null);
                 commentList[i].UserReactFlag = (currentReact != null) ?
                     (int)currentReact.ReactFlag : 0;
             }
@@ -71,7 +71,7 @@ public class MangaCommentController : ControllerBase
         [FromForm] CommentEditDTO commentDTO)
     {
         var comment = _mapper.Map<MangaComment>(commentDTO);
-        comment.UserId = User.FindFirst(ClaimTypes.NameIdentifier)!.Value;
+        comment.User = await _userManager.GetUserAsync(User);
         var manga = await _context.Mangas.FindAsync(id);
         if (manga == null)
         {
@@ -85,9 +85,9 @@ public class MangaCommentController : ControllerBase
         return Ok(_mapper.Map<CommentDTO>(comment));
     }
 
-    [HttpPut("manga-comments/{id}")]
+    [HttpPut("comments/{id}")]
     [Authorize]
-    public async Task<IActionResult> PutMangaComment(string id,
+    public async Task<IActionResult> PutComment(string id,
         [FromForm] CommentEditDTO commentDTO)
     {
         if (id != commentDTO.Id)
@@ -95,13 +95,15 @@ public class MangaCommentController : ControllerBase
             return BadRequest("Comment Id not matched");
         }
 
-        var comment = await _context.Comments.FindAsync(id);
+        var comment = await _context.Comments
+            .Include(c => c.User)
+            .SingleOrDefaultAsync(c => c.Id == id);
         if (comment == null)
         {
             return NotFound("Comment not found");
         }
 
-        if (!IsUserComment(User, comment))
+        if (!await IsUserComment(User, comment))
         {
             return BadRequest("The comment is not owned by the current user");
         }
@@ -112,17 +114,19 @@ public class MangaCommentController : ControllerBase
         return NoContent();
     }
 
-    [HttpDelete("manga-comments/{id}")]
+    [HttpDelete("comments/{id}")]
     [Authorize]
-    public async Task<IActionResult> DeleteMangaComment(string id)
+    public async Task<IActionResult> DeleteComment(string id)
     {
-        var comment = await _context.Comments.FindAsync(id);
+        var comment = await _context.Comments
+            .Include(c => c.User)
+            .SingleOrDefaultAsync(c => c.Id == id);
         if (comment == null)
         {
             return NotFound("Comment not found");
         }
 
-        if (!IsUserComment(User, comment))
+        if (!await IsUserComment(User, comment))
         {
             return BadRequest("The comment is not owned by the current user");
         }
@@ -133,10 +137,10 @@ public class MangaCommentController : ControllerBase
         return NoContent();
     }
 
-    private bool IsUserComment(ClaimsPrincipal principal, Comment comment)
+    private async Task<bool> IsUserComment(ClaimsPrincipal principal, Comment comment)
     {
-        var userId = User.FindFirst(ClaimTypes.NameIdentifier)!.Value;
-        if (comment.UserId == userId)
+        var user = await _userManager.GetUserAsync(principal);
+        if (comment.User == user)
         {
             return true;
         }

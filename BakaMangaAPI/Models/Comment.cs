@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace BakaMangaAPI.Models;
 
@@ -9,20 +10,18 @@ public class Comment : BaseModelWithCreatedAt
 
     public ApplicationUser User { get; set; } = default!;
 
-    public string UserId { get; set; } = default!;
-
     public List<CommentReact> Reacts { get; set; } = new();
 
     public List<CommentReport> Reports { get; set; } = new();
+
+    public Comment? ParentComment { get; set; }
+
+    public List<Comment> ChildComments { get; set; } = new();
 }
 
 public class MangaComment : Comment
 {
     public Manga Manga { get; set; } = default!;
-
-    public MangaComment? ParentComment { get; set; }
-
-    public List<MangaComment> ChildComments { get; set; } = new();
 }
 
 public class ChapterComment : Comment

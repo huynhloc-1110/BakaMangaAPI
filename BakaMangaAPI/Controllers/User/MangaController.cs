@@ -186,7 +186,7 @@ public class MangaController : ControllerBase
             for (int i = 0; i < comments.Count; i++)
             {
                 var currentReact = comments[i].Reacts
-                    .SingleOrDefault(r => r!.UserId == currentUser.Id, null);
+                    .SingleOrDefault(r => r!.User == currentUser, null);
                 commentList[i].UserReactFlag = (currentReact != null) ?
                     (int)currentReact.ReactFlag : 0;
             }

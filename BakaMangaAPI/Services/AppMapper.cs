@@ -33,7 +33,7 @@ public class AppMapper : Profile
         CreateMap<Category, CategoryDTO>();
         CreateMap<CategoryEditDTO, Category>();
 
-        CreateMap<MangaComment, CommentDTO>()
+        CreateMap<Comment, CommentDTO>()
             .ForMember(dest => dest.ChildCommentCount, opt => opt
                 .MapFrom(src => src.ChildComments.Count(c => c.DeletedAt == null)))
             .ForMember(dest => dest.LikeCount, opt => opt
@@ -41,5 +41,6 @@ public class AppMapper : Profile
             .ForMember(dest => dest.DislikeCount, opt => opt
                 .MapFrom(src => src.Reacts.Count(r => r.ReactFlag == ReactFlag.Dislike)));
         CreateMap<CommentEditDTO, MangaComment>();
+        CreateMap<CommentEditDTO, Comment>();
     }
 }

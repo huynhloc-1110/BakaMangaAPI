@@ -5,8 +5,6 @@ namespace BakaMangaAPI.Models;
 public class View : BaseModelWithCreatedAt
 {
     public ApplicationUser User { get; set; } = default!;
-
-    public string UserId { get; set; } = default!;
 }
 
 public class ChapterView : View
