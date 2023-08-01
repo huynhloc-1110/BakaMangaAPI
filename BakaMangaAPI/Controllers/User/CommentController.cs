@@ -85,6 +85,29 @@ public class CommentController : ControllerBase
         return Ok(_mapper.Map<CommentDTO>(comment));
     }
 
+    [HttpPost("comments/{id}/children")]
+    [Authorize]
+    public async Task<IActionResult> PostChildCommentFor(string id,
+        [FromForm] CommentEditDTO commentDTO)
+    {
+        var parentComment = await _context.Comments
+            .Include(c => c.User)
+            .SingleOrDefaultAsync(c => c.Id == id);
+        if (parentComment == null)
+        {
+            return NotFound("Parent comment not found");
+        }
+
+        var comment = _mapper.Map<Comment>(commentDTO);
+        comment.User = await _userManager.GetUserAsync(User);
+        comment.ParentComment = parentComment;
+
+        _context.Comments.Add(comment);
+        await _context.SaveChangesAsync();
+
+        return Ok(_mapper.Map<CommentDTO>(comment));
+    }
+
     [HttpPut("comments/{id}")]
     [Authorize]
     public async Task<IActionResult> PutComment(string id,
