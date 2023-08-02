@@ -14,6 +14,7 @@ public class Comment : BaseModelWithCreatedAt
 
     public List<CommentReport> Reports { get; set; } = new();
 
+    public string? ParentCommentId { get; set; }
     public Comment? ParentComment { get; set; }
 
     public List<Comment> ChildComments { get; set; } = new();

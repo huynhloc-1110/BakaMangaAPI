@@ -90,9 +90,7 @@ public class CommentController : ControllerBase
     public async Task<IActionResult> PostChildCommentFor(string id,
         [FromForm] CommentEditDTO commentDTO)
     {
-        var parentComment = await _context.Comments
-            .Include(c => c.User)
-            .SingleOrDefaultAsync(c => c.Id == id);
+        var parentComment = await _context.Comments.FindAsync(id);
         if (parentComment == null)
         {
             return NotFound("Parent comment not found");

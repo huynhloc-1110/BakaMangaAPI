@@ -20,6 +20,8 @@ public class CommentDTO
     public DateTime CreatedAt { get; set; }
 
     public int ChildCommentCount { get; set; }
+
+    public string? ParentCommentId { get; set; }
 }
 
 public class CommentEditDTO
