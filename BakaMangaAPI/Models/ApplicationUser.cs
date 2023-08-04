@@ -5,6 +5,10 @@ namespace BakaMangaAPI.Models;
 
 public class ApplicationUser : IdentityUser
 {
+
+    [DataType(DataType.ImageUrl)]
+    public string? AvatarPath { get; set; }
+
     [DataType(DataType.DateTime)]
     public DateTime? DeletedAt { get; set; }
 

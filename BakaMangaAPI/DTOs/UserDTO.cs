@@ -10,6 +10,8 @@ public class UserBasicDTO
 
     public string Name { get; set; } = default!;
 
+    public string? AvatarPath { get; set; }
+
     public string Email { get; set; } = default!;
 
     public List<string> Roles { get; set; } = new();
