@@ -9,7 +9,7 @@ public class CommentDTO
 
     public string Content { get; set; } = default!;
 
-    public UserSimpleDTO User { get; set; } = default!;
+    public UserBasicDTO User { get; set; } = default!;
 
     public int LikeCount { get; set; }
 
