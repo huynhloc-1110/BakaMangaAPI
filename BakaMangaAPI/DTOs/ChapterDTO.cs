@@ -34,3 +34,12 @@ public class ChapterDetailDTO
 
     public MangaBasicDTO Manga { get; set; } = default!;
 }
+
+public class ChapterSimpleDTO
+{
+    public string Id { get; set; } = default!;
+
+    public float Number { get; set; }
+
+    public string Name { get; set; } = default!;
+}

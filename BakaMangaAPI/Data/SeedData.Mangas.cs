@@ -51,9 +51,9 @@ public partial class SeedData
                         },
                         Pages = new()
                         {
-                            new () { PageNumber = 1, Path = pageUrl + "doraemon-chapter-1.1.png" },
-                            new () { PageNumber = 1, Path = pageUrl + "doraemon-chapter-1.2.png" },
-                            new () { PageNumber = 1, Path = pageUrl + "doraemon-chapter-1.3.png" }
+                            new () { Number = 1, Path = pageUrl + "doraemon-chapter-1.1.png" },
+                            new () { Number = 2, Path = pageUrl + "doraemon-chapter-1.2.png" },
+                            new () { Number = 3, Path = pageUrl + "doraemon-chapter-1.3.png" }
                         }
                     },
                     new Chapter()
@@ -78,9 +78,9 @@ public partial class SeedData
                         Uploader = uploader1,
                         Pages = new()
                         {
-                            new () { PageNumber = 2, Path = pageUrl + "doraemon-chapter-2.1.png" },
-                            new () { PageNumber = 2, Path = pageUrl + "doraemon-chapter-2.2.png" },
-                            new () { PageNumber = 2, Path = pageUrl + "doraemon-chapter-2.3.png" }
+                            new () { Number = 1, Path = pageUrl + "doraemon-chapter-2.1.png" },
+                            new () { Number = 2, Path = pageUrl + "doraemon-chapter-2.2.png" },
+                            new () { Number = 3, Path = pageUrl + "doraemon-chapter-2.3.png" }
                         }
                     },
                     new Chapter()
@@ -105,9 +105,9 @@ public partial class SeedData
                         Uploader = uploader1,
                         Pages = new()
                         {
-                            new () { PageNumber = 3, Path = pageUrl + "doraemon-chapter-3.1.png" },
-                            new () { PageNumber = 3, Path = pageUrl + "doraemon-chapter-3.2.png" },
-                            new () { PageNumber = 3, Path = pageUrl + "doraemon-chapter-3.3.png" }
+                            new () { Number = 1, Path = pageUrl + "doraemon-chapter-3.1.png" },
+                            new () { Number = 2, Path = pageUrl + "doraemon-chapter-3.2.png" },
+                            new () { Number = 3, Path = pageUrl + "doraemon-chapter-3.3.png" }
                         }
                     },
                     new Chapter()
@@ -132,9 +132,9 @@ public partial class SeedData
                         Uploader = uploader1,
                         Pages = new()
                         {
-                            new () { PageNumber = 4, Path = pageUrl + "doraemon-chapter-4.1.png" },
-                            new () { PageNumber = 4, Path = pageUrl + "doraemon-chapter-4.2.png" },
-                            new () { PageNumber = 4, Path = pageUrl + "doraemon-chapter-4.3.png" }
+                            new () { Number = 1, Path = pageUrl + "doraemon-chapter-4.1.png" },
+                            new () { Number = 2, Path = pageUrl + "doraemon-chapter-4.2.png" },
+                            new () { Number = 3, Path = pageUrl + "doraemon-chapter-4.3.png" }
                         }
                     },
                     new Chapter()
@@ -159,9 +159,9 @@ public partial class SeedData
                         Uploader = uploader1,
                         Pages = new()
                         {
-                            new () { PageNumber = 5, Path = pageUrl + "doraemon-chapter-5.1.png" },
-                            new () { PageNumber = 5, Path = pageUrl + "doraemon-chapter-5.2.png" },
-                            new () { PageNumber = 5, Path = pageUrl + "doraemon-chapter-5.3.png" }
+                            new () { Number = 1, Path = pageUrl + "doraemon-chapter-5.1.png" },
+                            new () { Number = 2, Path = pageUrl + "doraemon-chapter-5.2.png" },
+                            new () { Number = 3, Path = pageUrl + "doraemon-chapter-5.3.png" }
                         }
                     },
                     new Chapter()

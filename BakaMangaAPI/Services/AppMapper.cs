@@ -23,7 +23,8 @@ public class AppMapper : Profile
                 .MapFrom(src => src.ChapterViews.Count));
         CreateMap<Chapter, ChapterDetailDTO>()
             .ForMember(dest => dest.PageUrls, opt => opt
-                .MapFrom(src => src.Pages.OrderBy(p => p.PageNumber).Select(p => p.Path)));
+                .MapFrom(src => src.Pages.OrderBy(p => p.Number).Select(p => p.Path).ToList()));
+        CreateMap<Chapter, ChapterSimpleDTO>();
 
         CreateMap<ApplicationUser, UserBasicDTO>()
             .ForMember(dest => dest.Roles, opt => opt
