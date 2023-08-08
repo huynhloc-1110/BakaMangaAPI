@@ -21,6 +21,9 @@ public class AppMapper : Profile
         CreateMap<Chapter, ChapterBasicDTO>()
             .ForMember(dest => dest.ViewCount, opt => opt
                 .MapFrom(src => src.ChapterViews.Count));
+        CreateMap<Chapter, ChapterDetailDTO>()
+            .ForMember(dest => dest.PageUrls, opt => opt
+                .MapFrom(src => src.Pages.OrderBy(p => p.PageNumber).Select(p => p.Path)));
 
         CreateMap<ApplicationUser, UserBasicDTO>()
             .ForMember(dest => dest.Roles, opt => opt

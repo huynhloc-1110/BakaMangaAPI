@@ -19,3 +19,18 @@ public class ChapterBasicDTO
 
     public int ViewCount { get; set; }
 }
+
+public class ChapterDetailDTO
+{
+    public string Id { get; set; } = default!;
+
+    public float Number { get; }
+
+    public string Name { get; set; } = default!;
+
+    public Language Language { get; set; }
+
+    public List<string> PageUrls { get; set; } = new();
+
+    public MangaBasicDTO Manga { get; set; } = default!;
+}
