@@ -11,7 +11,7 @@ public partial class SeedData
         {
             await _roleManager.CreateAsync(new(role));
         }
-        var serverUrl = _configuration["JWT:ValidIssuer"] + "/img/";
+        var avatarUrl = _configuration["JWT:ValidIssuer"] + "/img/avatars/";
 
         List<ApplicationUser> users = new()
         {
@@ -19,25 +19,25 @@ public partial class SeedData
                 Name = "Huy Nguyen",
                 Email = "HuyNguyen123@example.com",
                 UserName = "HuyNguyen123@example.com",
-                AvatarPath = serverUrl + "huy.jpg"
+                AvatarPath = avatarUrl + "huy.jpg"
             },
             new() {
                 Name = "Loc Le",
                 Email = "LocLe345@example.com",
                 UserName = "LocLe345@example.com",
-                AvatarPath = serverUrl + "loc.jpg"
+                AvatarPath = avatarUrl + "loc.jpg"
             },
             new() {
                 Name = "Tri Tat",
                 Email = "TriTat567@example.com",
                 UserName = "TriTat567@example.com",
-                AvatarPath = serverUrl + "tri.jpg"
+                AvatarPath = avatarUrl + "tri.jpg"
             },
             new() {
                 Name = "Khoa Le",
                 Email = "KhoaLe789@example.com",
                 UserName = "KhoaLe789@example.com",
-                AvatarPath = serverUrl + "khoa.jpg"
+                AvatarPath = avatarUrl + "khoa.jpg"
             },
         };
 

@@ -9,7 +9,8 @@ public partial class SeedData
         Dictionary<string, Author> authors
     )
     {
-        var serverUrl = _configuration["JWT:ValidIssuer"] + "/img/";
+        var coverBaseUrl = _configuration["JWT:ValidIssuer"] + "/img/covers/";
+        var pageUrl = _configuration["JWT:ValidIssuer"] + "/img/pages/";
         List<Manga> mangas = new();
 
         var uploader1 = _userManager.FindByEmailAsync("LocLe345@example.com").Result;
@@ -48,6 +49,12 @@ public partial class SeedData
                             new() { User = uploader2 },
                             new() { User = uploader3 },
                         },
+                        Pages = new()
+                        {
+                            new () { PageNumber = 1, Path = pageUrl + "doraemon-chapter-1.1.png" },
+                            new () { PageNumber = 1, Path = pageUrl + "doraemon-chapter-1.2.png" },
+                            new () { PageNumber = 1, Path = pageUrl + "doraemon-chapter-1.3.png" }
+                        }
                     },
                     new Chapter()
                     {
@@ -69,6 +76,12 @@ public partial class SeedData
                         Name = "The Prophecy of Doraemon",
                         Language = Language.English,
                         Uploader = uploader1,
+                        Pages = new()
+                        {
+                            new () { PageNumber = 2, Path = pageUrl + "doraemon-chapter-2.1.png" },
+                            new () { PageNumber = 2, Path = pageUrl + "doraemon-chapter-2.2.png" },
+                            new () { PageNumber = 2, Path = pageUrl + "doraemon-chapter-2.3.png" }
+                        }
                     },
                     new Chapter()
                     {
@@ -90,6 +103,12 @@ public partial class SeedData
                         Name = "Transforming Biscuits",
                         Language = Language.English,
                         Uploader = uploader1,
+                        Pages = new()
+                        {
+                            new () { PageNumber = 3, Path = pageUrl + "doraemon-chapter-3.1.png" },
+                            new () { PageNumber = 3, Path = pageUrl + "doraemon-chapter-3.2.png" },
+                            new () { PageNumber = 3, Path = pageUrl + "doraemon-chapter-3.3.png" }
+                        }
                     },
                     new Chapter()
                     {
@@ -111,6 +130,12 @@ public partial class SeedData
                         Name = "Secret Agent",
                         Language = Language.English,
                         Uploader = uploader1,
+                        Pages = new()
+                        {
+                            new () { PageNumber = 4, Path = pageUrl + "doraemon-chapter-4.1.png" },
+                            new () { PageNumber = 4, Path = pageUrl + "doraemon-chapter-4.2.png" },
+                            new () { PageNumber = 4, Path = pageUrl + "doraemon-chapter-4.3.png" }
+                        }
                     },
                     new Chapter()
                     {
@@ -132,6 +157,12 @@ public partial class SeedData
                         Name = "Kobe Abe",
                         Language = Language.English,
                         Uploader = uploader1,
+                        Pages = new()
+                        {
+                            new () { PageNumber = 5, Path = pageUrl + "doraemon-chapter-5.1.png" },
+                            new () { PageNumber = 5, Path = pageUrl + "doraemon-chapter-5.2.png" },
+                            new () { PageNumber = 5, Path = pageUrl + "doraemon-chapter-5.3.png" }
+                        }
                     },
                     new Chapter()
                     {
@@ -148,7 +179,7 @@ public partial class SeedData
                         Uploader = uploader3,
                     },
                 },
-                CoverPath = serverUrl + "doraemon.png",
+                CoverPath = coverBaseUrl + "doraemon.png", 
                 Ratings = new()
                 {
                     new() { Value = 5, User = uploader1 },
@@ -255,7 +286,7 @@ public partial class SeedData
                         Uploader = uploader3
                     },
                 },
-                CoverPath = serverUrl + "naruto.png",
+                CoverPath = coverBaseUrl + "naruto.png",
             }
         );
 
@@ -301,7 +332,7 @@ public partial class SeedData
                         Uploader = uploader3
                     },
                 },
-                CoverPath = serverUrl + "komi.png",
+                CoverPath = coverBaseUrl + "komi.png",
             }
         );
 
@@ -350,7 +381,7 @@ public partial class SeedData
                         Uploader = uploader3
                     },
                 },
-                CoverPath = serverUrl + "the.png",
+                CoverPath = coverBaseUrl + "the.png",
             }
         );
 
@@ -398,7 +429,7 @@ public partial class SeedData
                         Uploader = uploader3
                     },
                 },
-                CoverPath = serverUrl + "itou.png",
+                CoverPath = coverBaseUrl + "itou.png",     
             }
         );
 
@@ -443,7 +474,7 @@ public partial class SeedData
                         Uploader = uploader3
                     },
                 },
-                CoverPath = serverUrl + "heroine.png",
+                CoverPath = coverBaseUrl + "heroine.png",
             }
         );
 
@@ -490,7 +521,7 @@ public partial class SeedData
                         Uploader = uploader3
                     },
                 },
-                CoverPath = serverUrl + "tsui.jpg",
+                CoverPath = coverBaseUrl + "tsui.jpg",
             }
         );
 
@@ -538,7 +569,7 @@ public partial class SeedData
                         Uploader = uploader3
                     },
                 },
-                CoverPath = serverUrl + "conan.png",
+                CoverPath = coverBaseUrl + "conan.png",
             }
         );
 
@@ -582,7 +613,7 @@ public partial class SeedData
                         Uploader = uploader3
                     },
                 },
-                CoverPath = serverUrl + "yaiteru.png",
+                CoverPath = coverBaseUrl + "yaiteru.png",
             }
         );
 
