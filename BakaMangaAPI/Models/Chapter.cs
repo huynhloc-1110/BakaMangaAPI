@@ -12,7 +12,7 @@ public class Chapter : BaseModelWithCreatedAt
 
     public Language Language { get; set; }
 
-    public List<Image> Images { get; set; } = new();
+    public List<Page> Pages { get; set; } = new();
 
     public Manga Manga { get; set; } = default!;
 
