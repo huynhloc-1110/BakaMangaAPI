@@ -24,7 +24,7 @@ public class ChapterDetailDTO
 {
     public string Id { get; set; } = default!;
 
-    public float Number { get; }
+    public float Number { get; set; }
 
     public string Name { get; set; } = default!;
 
