@@ -2,6 +2,7 @@ using AutoMapper;
 using BakaMangaAPI.Data;
 using BakaMangaAPI.DTOs;
 using BakaMangaAPI.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -103,6 +104,7 @@ public class ChapterController : ControllerBase
     }
 
     [HttpPost("{id}/comments")]
+    [Authorize]
     public async Task<IActionResult> PostCommentForChapter(string id,
         [FromForm] CommentEditDTO commentDTO)
     {
