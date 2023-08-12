@@ -8,9 +8,9 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
+[Route("comments")]
 [ApiController]
-[Authorize]
-public class CommentController : ControllerBase
+public partial class CommentController : ControllerBase
 {
     private readonly ApplicationDbContext _context;
     private readonly IMapper _mapper;
@@ -24,89 +24,8 @@ public class CommentController : ControllerBase
         _userManager = userManager;
     }
 
-    // GET: /comments/5/children
-    [AllowAnonymous]
-    [HttpGet("comments/{id}/children")]
-    public async Task<IActionResult> LoadChildComments(string id,
-        [FromQuery] FilterDTO filter)
-    {
-        var commentCount = await _context.Comments
-            .Where(c => c.ParentComment!.Id == id && c.DeletedAt == null)
-            .CountAsync();
-        var comments = await _context.Comments
-            .Where(c => c.ParentComment!.Id == id && c.DeletedAt == null)
-            .Include(c => c.User)
-            .Include(c => c.ChildComments)
-            .Include(c => c.Reacts)
-            .OrderBy(c => c.CreatedAt)
-            .Skip((filter.Page - 1) * filter.PageSize)
-            .Take(filter.PageSize)
-            .AsSplitQuery()
-            .AsNoTracking()
-            .ToListAsync();
-
-        var commentList = _mapper.Map<List<CommentDTO>>(comments);
-
-        // Check if the comment has react from current user
-        if (User.Identity!.IsAuthenticated)
-        {
-            var currentUser = await _userManager.GetUserAsync(User);
-            for (int i = 0; i < comments.Count; i++)
-            {
-                var currentReact = comments[i].Reacts
-                    .SingleOrDefault(r => r!.User == currentUser, null);
-                commentList[i].UserReactFlag = (currentReact != null) ?
-                    (int)currentReact.ReactFlag : 0;
-            }
-        }
-
-        var paginatedCommentList = new PaginatedListDTO<CommentDTO>(
-            commentList, commentCount, filter.Page, filter.PageSize);
-        return Ok(paginatedCommentList);
-    }
-
-    [HttpPost("mangas/{id}/comments")]
-    [Authorize]
-    public async Task<IActionResult> PostCommentForManga(string id,
-        [FromForm] CommentEditDTO commentDTO)
-    {
-        var comment = _mapper.Map<MangaComment>(commentDTO);
-        comment.User = await _userManager.GetUserAsync(User);
-        var manga = await _context.Mangas.FindAsync(id);
-        if (manga == null)
-        {
-            return NotFound("Manga not found");
-        }
-        comment.Manga = manga;
-
-        _context.MangaComments.Add(comment);
-        await _context.SaveChangesAsync();
-
-        return Ok(_mapper.Map<CommentDTO>(comment));
-    }
-
-    [HttpPost("comments/{id}/children")]
-    [Authorize]
-    public async Task<IActionResult> PostChildCommentFor(string id,
-        [FromForm] CommentEditDTO commentDTO)
-    {
-        var parentComment = await _context.Comments.FindAsync(id);
-        if (parentComment == null)
-        {
-            return NotFound("Parent comment not found");
-        }
-
-        var comment = _mapper.Map<Comment>(commentDTO);
-        comment.User = await _userManager.GetUserAsync(User);
-        comment.ParentComment = parentComment;
-
-        _context.Comments.Add(comment);
-        await _context.SaveChangesAsync();
-
-        return Ok(_mapper.Map<CommentDTO>(comment));
-    }
-
-    [HttpPut("comments/{id}")]
+    // PUT: /comments/5
+    [HttpPut("{id}")]
     [Authorize]
     public async Task<IActionResult> PutComment(string id,
         [FromForm] CommentEditDTO commentDTO)
@@ -135,7 +54,8 @@ public class CommentController : ControllerBase
         return NoContent();
     }
 
-    [HttpDelete("comments/{id}")]
+    // DELETE: /comments/5
+    [HttpDelete("{id}")]
     [Authorize]
     public async Task<IActionResult> DeleteComment(string id)
     {
