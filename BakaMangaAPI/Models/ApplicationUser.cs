@@ -41,4 +41,6 @@ public class ApplicationUser : IdentityUser
     public List<Comment> Comments { get; set; } = new();
 
     public List<React> Reacts { get; set; } = new();
+
+    public List<GroupMember> GroupMembers { get; set; } = new();
 }

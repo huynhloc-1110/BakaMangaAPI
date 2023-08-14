@@ -24,5 +24,5 @@ public class Chapter : BaseModelWithCreatedAt
 
     public ApplicationUser Uploader { get; set; } = default!;
 
-    // upload group
+    public Group UploadingGroup { get; set; } = default!;
 }
