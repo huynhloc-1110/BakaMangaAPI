@@ -71,6 +71,18 @@ public class ApplicationDbContext : IdentityDbContext<
                 .HasForeignKey(ur => ur.UserId);
         });
 
+        // set up group member
+        modelBuilder.Entity<GroupMember>(groupMember =>
+        {
+            groupMember.HasKey(gp => new { gp.GroupId, gp.UserId });
+            groupMember.HasOne(gp => gp.Group)
+                .WithMany(g => g.Members)
+                .HasForeignKey(gp => gp.GroupId);
+            groupMember.HasOne(gp => gp.User)
+                .WithMany(u => u.GroupMembers)
+                .HasForeignKey(gp => gp.UserId);
+        });
+
         // set default delete behaviors to restrict
         foreach (var relationship in modelBuilder.Model.GetEntityTypes().SelectMany(e => e.GetForeignKeys()))
         {
