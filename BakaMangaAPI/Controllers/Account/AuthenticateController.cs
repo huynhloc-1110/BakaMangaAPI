@@ -3,6 +3,7 @@ using BakaMangaAPI.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.DotNet.Scaffolding.Shared.Messaging;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -61,7 +62,11 @@ public class AuthenticateController : ControllerBase
             Email = dto.Email,
             UserName = dto.Email,
         };
-        await _userManager.CreateAsync(user, dto.Password);
+        var result = await _userManager.CreateAsync(user, dto.Password);
+        if (!result.Succeeded)
+        {
+            return BadRequest(result.Errors.First().Description);
+        }
         await _userManager.AddToRoleAsync(user, "User");
 
         var userRoles = await _userManager.GetRolesAsync(user);
