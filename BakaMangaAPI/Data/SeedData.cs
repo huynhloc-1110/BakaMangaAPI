@@ -29,7 +29,8 @@ public partial class SeedData : IDisposable
         {
             var categories = SeedCategories();
             var authors = SeedAuthors();
-            SeedMangas(categories, authors);
+            var groups = SeedGroups();
+            SeedMangas(categories, authors, groups);
         }
     }
 

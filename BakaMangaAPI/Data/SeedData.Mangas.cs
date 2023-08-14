@@ -6,7 +6,8 @@ public partial class SeedData
 {
     private void SeedMangas(
         Dictionary<string, Category> categories,
-        Dictionary<string, Author> authors
+        Dictionary<string, Author> authors,
+        Dictionary<string, Group> groups
     )
     {
         var coverBaseUrl = _configuration["JWT:ValidIssuer"] + "/img/covers/";
@@ -43,6 +44,7 @@ public partial class SeedData
                         Name = "All the Way From a Future World",
                         Language = Language.English,
                         Uploader = uploader1,
+                        UploadingGroup = groups["English Group"],
                         ChapterViews = new()
                         {
                             new() { User = uploader1 },
@@ -62,6 +64,7 @@ public partial class SeedData
                         Name = "Mirai no Kuni Kara Harubaruto",
                         Language = Language.Japanese,
                         Uploader = uploader2,
+                        UploadingGroup = groups["English Group"],
                     },
                     new Chapter()
                     {
@@ -69,6 +72,7 @@ public partial class SeedData
                         Name = "Người bạn đến từ tương lai",
                         Language = Language.Vietnamese,
                         Uploader = uploader3,
+                        UploadingGroup = groups["English Group"],
                     },
                     new Chapter()
                     {
@@ -76,6 +80,7 @@ public partial class SeedData
                         Name = "The Prophecy of Doraemon",
                         Language = Language.English,
                         Uploader = uploader1,
+                        UploadingGroup = groups["English Group"],
                         Pages = new()
                         {
                             new () { Number = 1, Path = pageUrl + "doraemon-chapter-2.1.png" },
@@ -89,6 +94,7 @@ public partial class SeedData
                         Name = "Doraemon no Daiyogen",
                         Language = Language.Japanese,
                         Uploader = uploader2,
+                        UploadingGroup = groups["English Group"],
                     },
                     new Chapter()
                     {
@@ -96,6 +102,7 @@ public partial class SeedData
                         Name = "Lời tiên tri của Doraemon",
                         Language = Language.Vietnamese,
                         Uploader = uploader3,
+                        UploadingGroup = groups["English Group"],
                     },
                     new Chapter()
                     {
@@ -103,6 +110,7 @@ public partial class SeedData
                         Name = "Transforming Biscuits",
                         Language = Language.English,
                         Uploader = uploader1,
+                        UploadingGroup = groups["English Group"],
                         Pages = new()
                         {
                             new () { Number = 1, Path = pageUrl + "doraemon-chapter-3.1.png" },
@@ -116,6 +124,7 @@ public partial class SeedData
                         Name = "Henshin Bisuketto",
                         Language = Language.Japanese,
                         Uploader = uploader2,
+                        UploadingGroup = groups["English Group"],
                     },
                     new Chapter()
                     {
@@ -123,6 +132,7 @@ public partial class SeedData
                         Name = "Bánh quy biến hình",
                         Language = Language.Vietnamese,
                         Uploader = uploader3,
+                        UploadingGroup = groups["English Group"],
                     },
                     new Chapter()
                     {
@@ -130,6 +140,7 @@ public partial class SeedData
                         Name = "Secret Agent",
                         Language = Language.English,
                         Uploader = uploader1,
+                        UploadingGroup = groups["English Group"],
                         Pages = new()
                         {
                             new () { Number = 1, Path = pageUrl + "doraemon-chapter-4.1.png" },
@@ -143,6 +154,7 @@ public partial class SeedData
                         Name = "Hi (maru kakomi) supaidaisakusen",
                         Language = Language.Japanese,
                         Uploader = uploader2,
+                        UploadingGroup = groups["English Group"],
                     },
                     new Chapter()
                     {
@@ -150,6 +162,7 @@ public partial class SeedData
                         Name = "Chiến dịch do thám tuyệt mật",
                         Language = Language.Vietnamese,
                         Uploader = uploader3,
+                        UploadingGroup = groups["English Group"],
                     },
                     new Chapter()
                     {
@@ -157,6 +170,7 @@ public partial class SeedData
                         Name = "Kobe Abe",
                         Language = Language.English,
                         Uploader = uploader1,
+                        UploadingGroup = groups["English Group"],
                         Pages = new()
                         {
                             new () { Number = 1, Path = pageUrl + "doraemon-chapter-5.1.png" },
@@ -170,6 +184,7 @@ public partial class SeedData
                         Name = "Kobeabe",
                         Language = Language.Japanese,
                         Uploader = uploader2,
+                        UploadingGroup = groups["English Group"],
                     },
                     new Chapter()
                     {
@@ -177,6 +192,7 @@ public partial class SeedData
                         Name = "Ống sáo ngược đời",
                         Language = Language.Vietnamese,
                         Uploader = uploader3,
+                        UploadingGroup = groups["English Group"],
                     },
                 },
                 CoverPath = coverBaseUrl + "doraemon.png", 
@@ -269,21 +285,24 @@ public partial class SeedData
                         Number = 1,
                         Name = "Naruto Uzumaki!!",
                         Language = Language.English,
-                        Uploader = uploader1
+                        Uploader = uploader1,
+                        UploadingGroup = groups["English Group"],
                     },
                     new Chapter()
                     {
                         Number = 2,
                         Name = "Konohamaru!!",
                         Language = Language.English,
-                        Uploader = uploader2
+                        Uploader = uploader2,
+                        UploadingGroup = groups["English Group"],
                     },
                     new Chapter()
                     {
                         Number = 3,
                         Name = "Sasuke Uchiha!!",
                         Language = Language.English,
-                        Uploader = uploader3
+                        Uploader = uploader3,
+                        UploadingGroup = groups["English Group"],
                     },
                 },
                 CoverPath = coverBaseUrl + "naruto.png",
@@ -315,21 +334,24 @@ public partial class SeedData
                         Number = 1,
                         Name = "A normal person",
                         Language = Language.English,
-                        Uploader = uploader1
+                        Uploader = uploader1,
+                        UploadingGroup = groups["English Group"],
                     },
                     new Chapter()
                     {
                         Number = 2,
                         Name = "Peaceful",
                         Language = Language.English,
-                        Uploader = uploader2
+                        Uploader = uploader2,
+                        UploadingGroup = groups["English Group"],
                     },
                     new Chapter()
                     {
                         Number = 3,
                         Name = "Spectre",
                         Language = Language.English,
-                        Uploader = uploader3
+                        Uploader = uploader3,
+                        UploadingGroup = groups["English Group"],
                     },
                 },
                 CoverPath = coverBaseUrl + "komi.png",
@@ -364,21 +386,24 @@ public partial class SeedData
                         Number = 1,
                         Name = "Introduction: The Legendary Moonlight Sculptor",
                         Language = Language.English,
-                        Uploader = uploader1
+                        Uploader = uploader1,
+                        UploadingGroup = groups["English Group"],
                     },
                     new Chapter()
                     {
                         Number = 2,
                         Name = "The Man with a Mask",
                         Language = Language.English,
-                        Uploader = uploader2
+                        Uploader = uploader2,
+                        UploadingGroup = groups["English Group"],
                     },
                     new Chapter()
                     {
                         Number = 3,
                         Name = "The Master and Disciple",
                         Language = Language.English,
-                        Uploader = uploader3
+                        Uploader = uploader3,
+                        UploadingGroup = groups["English Group"],
                     },
                 },
                 CoverPath = coverBaseUrl + "the.png",
@@ -412,21 +437,24 @@ public partial class SeedData
                         Number = 1,
                         Name = "Tomie",
                         Language = Language.English,
-                        Uploader = uploader1
+                        Uploader = uploader1,
+                        UploadingGroup = groups["English Group"],
                     },
                     new Chapter
                     {
                         Number = 2,
                         Name = "Photograph",
                         Language = Language.English,
-                        Uploader = uploader2
+                        Uploader = uploader2,
+                        UploadingGroup = groups["English Group"],
                     },
                     new Chapter
                     {
                         Number = 3,
                         Name = "Kiss",
                         Language = Language.English,
-                        Uploader = uploader3
+                        Uploader = uploader3,
+                        UploadingGroup = groups["English Group"],
                     },
                 },
                 CoverPath = coverBaseUrl + "itou.png",     
@@ -457,21 +485,24 @@ public partial class SeedData
                         Number = 1,
                         Name = "Encounter With A High School Student",
                         Language = Language.English,
-                        Uploader = uploader1
+                        Uploader = uploader1,
+                        UploadingGroup = groups["English Group"],
                     },
                     new Chapter
                     {
                         Number = 2,
                         Name = "A great success!!",
                         Language = Language.English,
-                        Uploader = uploader2
+                        Uploader = uploader2,
+                        UploadingGroup = groups["English Group"],
                     },
                     new Chapter
                     {
                         Number = 3,
                         Name = "I became his bodyguard",
                         Language = Language.English,
-                        Uploader = uploader3
+                        Uploader = uploader3,
+                        UploadingGroup = groups["English Group"],
                     },
                 },
                 CoverPath = coverBaseUrl + "heroine.png",
@@ -504,21 +535,24 @@ public partial class SeedData
                         Number = 1,
                         Name = "August eight",
                         Language = Language.English,
-                        Uploader = uploader1
+                        Uploader = uploader1,
+                        UploadingGroup = groups["English Group"],
                     },
                     new Chapter
                     {
                         Number = 2,
                         Name = "Con air",
                         Language = Language.English,
-                        Uploader = uploader2
+                        Uploader = uploader2,
+                        UploadingGroup = groups["English Group"],
                     },
                     new Chapter
                     {
                         Number = 3,
                         Name = "Eastern Promises",
                         Language = Language.English,
-                        Uploader = uploader3
+                        Uploader = uploader3,
+                        UploadingGroup = groups["English Group"],
                     },
                 },
                 CoverPath = coverBaseUrl + "tsui.jpg",
@@ -552,21 +586,24 @@ public partial class SeedData
                         Number = 1,
                         Name = "The Heisei Holmes",
                         Language = Language.English,
-                        Uploader = uploader1
+                        Uploader = uploader1,
+                        UploadingGroup = groups["English Group"],
                     },
                     new Chapter
                     {
                         Number = 2,
                         Name = "The shrunken detective",
                         Language = Language.English,
-                        Uploader = uploader2
+                        Uploader = uploader2,
+                        UploadingGroup = groups["English Group"],
                     },
                     new Chapter
                     {
                         Number = 3,
                         Name = "The left out detective",
                         Language = Language.English,
-                        Uploader = uploader3
+                        Uploader = uploader3,
+                        UploadingGroup = groups["English Group"],
                     },
                 },
                 CoverPath = coverBaseUrl + "conan.png",
@@ -596,21 +633,24 @@ public partial class SeedData
                         Number = 1,
                         Name = "You apply just the right amount of heat",
                         Language = Language.English,
-                        Uploader = uploader1
+                        Uploader = uploader1,
+                        UploadingGroup = groups["English Group"],
                     },
                     new Chapter
                     {
                         Number = 2,
                         Name = "First breakfast together",
                         Language = Language.English,
-                        Uploader = uploader2
+                        Uploader = uploader2,
+                        UploadingGroup = groups["English Group"],
                     },
                     new Chapter
                     {
                         Number = 3,
                         Name = "A Toast with Beer and lamp chops",
                         Language = Language.English,
-                        Uploader = uploader3
+                        Uploader = uploader3,
+                        UploadingGroup = groups["English Group"],
                     },
                 },
                 CoverPath = coverBaseUrl + "yaiteru.png",

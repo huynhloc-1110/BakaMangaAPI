@@ -23,6 +23,8 @@ public class ApplicationDbContext : IdentityDbContext<
     public DbSet<Category> Categories { get; set; } = default!;
     public DbSet<Chapter> Chapters { get; set; } = default!;
     public DbSet<Comment> Comments { get; set; } = default!;
+    public DbSet<Group> Groups { get; set; } = default!;
+    public DbSet<GroupMember> GroupMembers { get; set; } = default!;
     public DbSet<MangaComment> MangaComments { get; set; } = default!;
     public DbSet<Page> Pages { get; set; } = default!;
     public DbSet<Manga> Mangas { get; set; } = default!;
