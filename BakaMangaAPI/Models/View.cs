@@ -9,14 +9,14 @@ public class View : BaseModelWithCreatedAt
     public ApplicationUser User { get; set; } = default!;
 }
 
-[Index(nameof(UserId), nameof(ChapterId), IsUnique = true)]
+[Index(nameof(ChapterId), nameof(UserId), IsUnique = true)]
 public class ChapterView : View
 {
     public string ChapterId { get; set; } = default!;
     public Chapter Chapter { get; set; } = default!;
 }
 
-[Index(nameof(UserId), nameof(PostId), IsUnique = true)]
+[Index(nameof(PostId), nameof(UserId), IsUnique = true)]
 public class PostView : View
 {
     public string PostId { get; set; } = default!;
