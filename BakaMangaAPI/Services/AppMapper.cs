@@ -47,5 +47,7 @@ public class AppMapper : Profile
         CreateMap<CommentEditDTO, MangaComment>();
         CreateMap<CommentEditDTO, ChapterComment>();
         CreateMap<CommentEditDTO, Comment>();
+
+        CreateMap<Group, GroupBasicDTO>();
     }
 }

@@ -33,21 +33,20 @@ public class ViewController : ControllerBase
             return NotFound("Chapter not found");
         }
 
-        var currentView = await _context.Views
-            .OfType<ChapterView>()
-            .SingleOrDefaultAsync(v => v.User == user && v.Chapter == chapter);
-        if (currentView != null)
-        {
-            return BadRequest("This user has already viewed this chapter.");
-        }
-
         ChapterView view = new()
         {
             Chapter = chapter,
             User = user
         };
         _context.Views.Add(view);
-        await _context.SaveChangesAsync();
+
+        try
+        {
+            await _context.SaveChangesAsync();
+        } catch (Exception)
+        {
+            return BadRequest();
+        }
 
         return Ok();
     }

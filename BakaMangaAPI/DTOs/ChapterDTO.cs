@@ -17,6 +17,8 @@ public class ChapterBasicDTO
 
     public UserSimpleDTO Uploader { get; set; } = default!;
 
+    public GroupBasicDTO UploadingGroup { get; set; } = default!;
+
     public int ViewCount { get; set; }
 }
 

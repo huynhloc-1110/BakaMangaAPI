@@ -48,6 +48,7 @@ public partial class ChapterController
             .Where(c => chapterNumberFilter.Contains(c.Number))
             .Include(c => c.Uploader)
             .Include(c => c.ChapterViews)
+            .Include(c => c.UploadingGroup)
             .OrderBy(c => c.Number)
                 .ThenBy(c => c.Language)
                     .ThenByDescending(c => c.CreatedAt)
