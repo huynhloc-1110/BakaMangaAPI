@@ -64,7 +64,7 @@ public partial class SeedData
                         Name = "Mirai no Kuni Kara Harubaruto",
                         Language = Language.Japanese,
                         Uploader = uploader2,
-                        UploadingGroup = groups["English Group"],
+                        UploadingGroup = groups["Japan Group"],
                     },
                     new Chapter()
                     {
@@ -94,7 +94,7 @@ public partial class SeedData
                         Name = "Doraemon no Daiyogen",
                         Language = Language.Japanese,
                         Uploader = uploader2,
-                        UploadingGroup = groups["English Group"],
+                        UploadingGroup = groups["Japan Group"],
                     },
                     new Chapter()
                     {
@@ -124,7 +124,7 @@ public partial class SeedData
                         Name = "Henshin Bisuketto",
                         Language = Language.Japanese,
                         Uploader = uploader2,
-                        UploadingGroup = groups["English Group"],
+                        UploadingGroup = groups["Japan Group"],
                     },
                     new Chapter()
                     {
@@ -154,7 +154,7 @@ public partial class SeedData
                         Name = "Hi (maru kakomi) supaidaisakusen",
                         Language = Language.Japanese,
                         Uploader = uploader2,
-                        UploadingGroup = groups["English Group"],
+                        UploadingGroup = groups["Japan Group"],
                     },
                     new Chapter()
                     {
@@ -184,7 +184,7 @@ public partial class SeedData
                         Name = "Kobeabe",
                         Language = Language.Japanese,
                         Uploader = uploader2,
-                        UploadingGroup = groups["English Group"],
+                        UploadingGroup = groups["Japan Group"],
                     },
                     new Chapter()
                     {

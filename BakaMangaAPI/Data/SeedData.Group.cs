@@ -18,8 +18,7 @@ public partial class SeedData
                 Biography = "El Rincón de Atena Asamiya:\r\n\r\nSitio dedicado a Athena Asamiya, hecho por fans para fans, con la intención de compartir información referente al personaje y a los juegos en donde aparece, principalmente King of Fighters",
                 Members = new()
                 {
-                    new() { User = uploader1 },
-                    new() { User = uploader2 },
+                    new() { User = uploader1, IsLeader = true },
                     new() { User = uploader3 },
                 }
             },
@@ -27,6 +26,10 @@ public partial class SeedData
             {
                 Name = "Japan Group",
                 Biography = "Matkojebanie czy to JoJo po polsku?",
+                Members = new()
+                {
+                    new() { User = uploader2, IsLeader = true },
+                }
             },
             ["VietNam Group"] = new()
             {
