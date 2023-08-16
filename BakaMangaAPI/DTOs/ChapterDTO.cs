@@ -35,6 +35,8 @@ public class ChapterDetailDTO
     public List<string> PageUrls { get; set; } = new();
 
     public MangaBasicDTO Manga { get; set; } = default!;
+
+    public GroupBasicDTO UploadingGroup { get; set; } = default!;
 }
 
 public class ChapterSimpleDTO
@@ -44,4 +46,6 @@ public class ChapterSimpleDTO
     public float Number { get; set; }
 
     public string Name { get; set; } = default!;
+
+    public GroupBasicDTO UploadingGroup { get; set; } = default!;
 }

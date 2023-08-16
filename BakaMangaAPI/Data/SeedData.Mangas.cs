@@ -167,6 +167,14 @@ public partial class SeedData
                     new Chapter()
                     {
                         Number = 5,
+                        Name = "Test chap 5",
+                        Language = Language.English,
+                        Uploader = uploader3,
+                        UploadingGroup = groups["VietNam Group"],
+                    },
+                    new Chapter()
+                    {
+                        Number = 5,
                         Name = "Kobe Abe",
                         Language = Language.English,
                         Uploader = uploader1,
@@ -193,6 +201,30 @@ public partial class SeedData
                         Language = Language.Vietnamese,
                         Uploader = uploader3,
                         UploadingGroup = groups["English Group"],
+                    },
+                    new Chapter()
+                    {
+                        Number = 6,
+                        Name = "Test Chap 6",
+                        Language = Language.English,
+                        Uploader = uploader1,
+                        UploadingGroup = groups["English Group"],
+                    },
+                    new Chapter()
+                    {
+                        Number = 6.5f,
+                        Name = "Test Chap 6.5",
+                        Language = Language.English,
+                        Uploader = uploader3,
+                        UploadingGroup = groups["VietNam Group"],
+                    },
+                    new Chapter()
+                    {
+                        Number = 8,
+                        Name = "Test Chap 8",
+                        Language = Language.English,
+                        Uploader = uploader3,
+                        UploadingGroup = groups["VietNam Group"],
                     },
                 },
                 CoverPath = coverBaseUrl + "doraemon.png", 

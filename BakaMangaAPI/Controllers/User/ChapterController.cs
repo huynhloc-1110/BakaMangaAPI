@@ -29,6 +29,7 @@ public partial class ChapterController : ControllerBase
         var chapter = await _context.Chapters
             .Include(ch => ch.Pages)
             .Include(ch => ch.Manga)
+            .Include(ch => ch.UploadingGroup)
             .AsNoTracking()
             .SingleOrDefaultAsync(ch => ch.Id == id);
 
@@ -55,6 +56,7 @@ public partial class ChapterController : ControllerBase
         var relatedChapters = await _context.Chapters
             .Where(ch => ch.Manga == chapter.Manga)
             .Where(ch => ch.Language == chapter.Language)
+            .Include(ch => ch.UploadingGroup)
             .OrderByDescending(ch => ch.Number)
             .AsNoTracking()
             .ToListAsync();

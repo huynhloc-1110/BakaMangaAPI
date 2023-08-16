@@ -35,6 +35,10 @@ public partial class SeedData
             {
                 Name = "VietNam Group",
                 Biography = "Dedicado a traducir de inglés a español mangas que me parezcan interesantes y que no estén siendo traducidos o que hayan sido abandonados, especialmente los de la franquicia de Girls und Panzer, con la mayor pulcritud lingüística que me sea posible (de ahí el nombre).",
+                Members = new()
+                {
+                    new() { User = uploader3, IsLeader = true },
+                }
             },
         };
 
