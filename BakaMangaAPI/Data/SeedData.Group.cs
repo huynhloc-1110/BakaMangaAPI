@@ -14,8 +14,8 @@ public partial class SeedData
         {
             ["English Group"] = new()
             {
-                Name = "English Group",
-                Biography = "El Rincón de Atena Asamiya:\r\n\r\nSitio dedicado a Athena Asamiya, hecho por fans para fans, con la intención de compartir información referente al personaje y a los juegos en donde aparece, principalmente King of Fighters",
+                Name = "Tengoku Team",
+                Biography = "Please consider visiting our main site: https://lhtranslation.net/\r\nWE NEED MORE JAPANESE TRANSLATOR, PLS CONTACT DISCORD: malsi#3621 OR tagomisugi2@gmail.com",
                 Members = new()
                 {
                     new() { User = uploader1, IsLeader = true },
@@ -24,8 +24,8 @@ public partial class SeedData
             },
             ["Japan Group"] = new()
             {
-                Name = "Japan Group",
-                Biography = "Matkojebanie czy to JoJo po polsku?",
+                Name = "Yannu no Mahou",
+                Biography = "私たちはマンガの日本語翻訳を専門とするファンサブです。",
                 Members = new()
                 {
                     new() { User = uploader2, IsLeader = true },
@@ -33,8 +33,8 @@ public partial class SeedData
             },
             ["VietNam Group"] = new()
             {
-                Name = "VietNam Group",
-                Biography = "Dedicado a traducir de inglés a español mangas que me parezcan interesantes y que no estén siendo traducidos o que hayan sido abandonados, especialmente los de la franquicia de Girls und Panzer, con la mayor pulcritud lingüística que me sea posible (de ahí el nombre).",
+                Name = "Tiệm đồ ngọt",
+                Biography = "Tụi mình chuyên dịch thể loại rom-com.",
                 Members = new()
                 {
                     new() { User = uploader3, IsLeader = true },

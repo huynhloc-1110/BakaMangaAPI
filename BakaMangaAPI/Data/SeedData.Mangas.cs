@@ -21,7 +21,7 @@ public partial class SeedData
         mangas.Add(
             new()
             {
-                OriginalTitle = "Doraemon (ドラえもん)",
+                OriginalTitle = "Doraemon",
                 OriginalLanguage = Language.Japanese,
                 AlternativeTitles = "Doraemon; ドラえもん; 도라에몽; 机器猫; Đôrêmon",
                 Description =
@@ -72,7 +72,7 @@ public partial class SeedData
                         Name = "Người bạn đến từ tương lai",
                         Language = Language.Vietnamese,
                         Uploader = uploader3,
-                        UploadingGroup = groups["English Group"],
+                        UploadingGroup = groups["VietNam Group"],
                     },
                     new Chapter()
                     {
@@ -102,7 +102,7 @@ public partial class SeedData
                         Name = "Lời tiên tri của Doraemon",
                         Language = Language.Vietnamese,
                         Uploader = uploader3,
-                        UploadingGroup = groups["English Group"],
+                        UploadingGroup = groups["VietNam Group"],
                     },
                     new Chapter()
                     {
@@ -132,7 +132,7 @@ public partial class SeedData
                         Name = "Bánh quy biến hình",
                         Language = Language.Vietnamese,
                         Uploader = uploader3,
-                        UploadingGroup = groups["English Group"],
+                        UploadingGroup = groups["VietNam Group"],
                     },
                     new Chapter()
                     {
@@ -162,7 +162,7 @@ public partial class SeedData
                         Name = "Chiến dịch do thám tuyệt mật",
                         Language = Language.Vietnamese,
                         Uploader = uploader3,
-                        UploadingGroup = groups["English Group"],
+                        UploadingGroup = groups["VietNam Group"],
                     },
                     new Chapter()
                     {
@@ -200,7 +200,7 @@ public partial class SeedData
                         Name = "Ống sáo ngược đời",
                         Language = Language.Vietnamese,
                         Uploader = uploader3,
-                        UploadingGroup = groups["English Group"],
+                        UploadingGroup = groups["VietNam Group"],
                     },
                     new Chapter()
                     {
@@ -294,7 +294,7 @@ public partial class SeedData
         mangas.Add(
             new()
             {
-                OriginalTitle = "Naruto (ナルト)",
+                OriginalTitle = "Naruto",
                 OriginalLanguage = Language.Japanese,
                 AlternativeTitles = "Naruto; ナルト; 나루토;狐忍",
                 Description =
@@ -344,7 +344,7 @@ public partial class SeedData
         mangas.Add(
             new()
             {
-                OriginalTitle = "Komi-san wa Komyushou Desu (古見さんは、コミュ症です。)",
+                OriginalTitle = "Komi-san wa Komyushou Desu",
                 OriginalLanguage = Language.Japanese,
                 AlternativeTitles =
                     "Komi-san Can't Communicate; 古見さんは、コミュ症です。; 코미 양은, 커뮤증이에요;古见同学有交流障碍症; Komi-san không thể giao tiếp",
@@ -393,7 +393,7 @@ public partial class SeedData
         mangas.Add(
             new()
             {
-                OriginalTitle = "The Legendary Moonlight Sculptor (달빛 조각사)",
+                OriginalTitle = "The Legendary Moonlight Sculptor",
                 OriginalLanguage = Language.Korean,
                 AlternativeTitles =
                     "The Legendary Moonlight Sculptor; 月光彫刻師; 달빛 조각사, 커뮤증이에요; 月光彫刻師; Hành trình đế vương",
@@ -496,7 +496,7 @@ public partial class SeedData
         mangas.Add(
             new()
             {
-                OriginalTitle = "Heroine Hajimemashita (ヒロインはじめました。)",
+                OriginalTitle = "Heroine Hajimemashita",
                 OriginalLanguage = Language.Japanese,
                 AlternativeTitles = "Heroine for Hire; 今天开始成为女主角",
                 Description =
@@ -544,7 +544,7 @@ public partial class SeedData
         mangas.Add(
             new()
             {
-                OriginalTitle = "Tsui no Taimashi -Endaa Gaisutaa- (終の退魔師―エンダーガイスター)",
+                OriginalTitle = "Tsui no Taimashi -Endaa Gaisutaa-",
                 OriginalLanguage = Language.Japanese,
                 AlternativeTitles = "The Last Exorcist -Ender Geister-",
                 Description =
@@ -594,7 +594,7 @@ public partial class SeedData
         mangas.Add(
             new()
             {
-                OriginalTitle = "Meitantei Conan (名探偵コナン)",
+                OriginalTitle = "Meitantei Conan",
                 OriginalLanguage = Language.Japanese,
                 AlternativeTitles = "Case Closed; 명탐정 코난; 名侦探柯南; Thám Tử Lừng Danh Conan",
                 Description =
@@ -645,7 +645,7 @@ public partial class SeedData
         mangas.Add(
             new()
             {
-                OriginalTitle = "Yaiteru Futari (焼いてるふたり)",
+                OriginalTitle = "Yaiteru Futari",
                 OriginalLanguage = Language.Japanese,
                 AlternativeTitles = "A Rare Marriage: How to Grill Our Love; 굽고 있는 두 사람; 爱情是烤肉的滋味!",
                 Description =
