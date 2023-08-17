@@ -51,6 +51,7 @@ public class MangaController : ControllerBase
 
         // page
         var mangas = await query
+            .Include(m => m.Categories)
             .Skip((filter.Page - 1) * filter.PageSize)
             .Take(filter.PageSize)
             .AsNoTracking()

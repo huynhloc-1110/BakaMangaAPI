@@ -15,6 +15,8 @@ public class MangaBasicDTO
 
     public string? Description { get; set; }
 
+    public List<CategoryDTO> Categories { get; set; } = new();
+
     public DateTime CreatedAt { get; set; }
 
     public DateTime? DeletedAt { get; set; }
