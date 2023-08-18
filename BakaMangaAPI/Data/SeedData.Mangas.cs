@@ -689,6 +689,194 @@ public partial class SeedData
             }
         );
 
+        mangas.Add(
+            new()
+            {
+                OriginalTitle = "One Piece",
+                OriginalLanguage = Language.Japanese,
+                AlternativeTitles = "원피스;  海贼王; Đảo Hải Tặc",
+                Description =
+                    "Gol D. Roger, a man referred to as the \"Pirate King,\" is set to be executed by the World Government. But just before his demise, he confirms the existence of a great treasure, One Piece, located somewhere within the vast ocean known as the Grand Line. Announcing that One Piece can be claimed by anyone worthy enough to reach it, the Pirate King is executed, and the Great Age of Pirates begins.",
+                PublishYear = 1997,
+                Categories = new List<Category>()
+                {
+                    categories["Action"],
+                    categories["Comedy"],
+                    categories["Fantasy"],
+                },
+                Authors = new List<Author>() { authors["Oda Eiichiro"], },
+                Chapters = new List<Chapter>()
+                {
+                    new Chapter
+                    {
+                        Number = 1,
+                        Name = "Romance Dawn",
+                        Language = Language.English,
+                        Uploader = uploader1,
+                        UploadingGroup = groups["English Group"],
+                    },
+                    new Chapter
+                    {
+                        Number = 2,
+                        Name = "They Call Him “Straw Hat Luffy",
+                        Language = Language.English,
+                        Uploader = uploader2,
+                        UploadingGroup = groups["English Group"],
+                    },
+                    new Chapter
+                    {
+                        Number = 3,
+                        Name = "Enter Zolo: Pirate Hunter",
+                        Language = Language.English,
+                        Uploader = uploader3,
+                        UploadingGroup = groups["English Group"],
+                    },
+                },
+                CoverPath = coverBaseUrl + "one.png",
+            }
+        );
+
+        mangas.Add(
+            new()
+            {
+                OriginalTitle = "Black Clover",
+                OriginalLanguage = Language.Japanese,
+                AlternativeTitles = "블랙 클로버; 黑色五叶草",
+                Description =
+                    "Asta and Yuno were abandoned together at the same church, and have been inseparable since. As children, they promised that they would compete against each other to see who would become the next Emperor Magus. However, as they grew up, some differences between them became plain. When they received their Grimoires at age 15, Yuno got a spectacular book with a four-leaf clover (most people receive a three-leaf clover), while Asta received nothing at all.",
+                PublishYear = 2015,
+                Categories = new List<Category>()
+                {
+                    categories["Action"],
+                    categories["Adventure"],
+                    categories["Military"],
+                },
+                Authors = new List<Author>() { authors["Tabata Yuuki"], },
+                Chapters = new List<Chapter>()
+                {
+                    new Chapter
+                    {
+                        Number = 1,
+                        Name = "The Boy’s Vow",
+                        Language = Language.English,
+                        Uploader = uploader1,
+                        UploadingGroup = groups["English Group"],
+                    },
+                    new Chapter
+                    {
+                        Number = 2,
+                        Name = "Magic Knights Entrance Exam",
+                        Language = Language.English,
+                        Uploader = uploader2,
+                        UploadingGroup = groups["English Group"],
+                    },
+                    new Chapter
+                    {
+                        Number = 3,
+                        Name = "The Road to the Magic Emperor",
+                        Language = Language.English,
+                        Uploader = uploader3,
+                        UploadingGroup = groups["English Group"],
+                    },
+                },
+                CoverPath = coverBaseUrl + "black.png",
+            }
+        );
+
+        mangas.Add(
+           new()
+           {
+               OriginalTitle = "Drifters",
+               OriginalLanguage = Language.Japanese,
+               AlternativeTitles = "ドリフターズ; 漂泊者",
+               Description =
+                   "An isekai series from the creator of Hellsing. The story of Drifters begins during Japan's Sengoku Period (~1467-1600), a time of constant warring between the island's states. A samurai on the verge of death suddenly finds himself thrown into another, fantastic world, alongside important military figures from history. It's time to battle in a brand-new world war.\r\n",
+               PublishYear = 2009,
+               Categories = new List<Category>()
+               {
+                    categories["Historical"],
+                    categories["Isekai"],
+                    categories["Comedy"],
+               },
+               Authors = new List<Author>() { authors["Hirano Kouta"], },
+               Chapters = new List<Chapter>()
+               {
+                    new Chapter
+                    {
+                        Number = 1,
+                        Name = "Fight Song",
+                        Language = Language.English,
+                        Uploader = uploader1,
+                        UploadingGroup = groups["English Group"],
+                    },
+                    new Chapter
+                    {
+                        Number = 2,
+                        Name = "Transcending Times",
+                        Language = Language.English,
+                        Uploader = uploader2,
+                        UploadingGroup = groups["English Group"],
+                    },
+                    new Chapter
+                    {
+                        Number = 3,
+                        Name = "The Devil",
+                        Language = Language.English,
+                        Uploader = uploader3,
+                        UploadingGroup = groups["English Group"],
+                    },
+               },
+               CoverPath = coverBaseUrl + "drifters.png",
+           }
+       );
+
+        mangas.Add(
+           new()
+           {
+               OriginalTitle = "Bleach",
+               OriginalLanguage = Language.Japanese,
+               AlternativeTitles = "Sứ Mạng Thần Chết; 블리치; 死神",
+               Description =
+                   "Ichigo Kurosaki has always been able to see ghosts, but this ability doesn't change his life nearly as much as his close encounter with Rukia Kuchiki, a Soul Reaper and member of the mysterious Soul Society",
+               PublishYear = 2001,
+               Categories = new List<Category>()
+               {
+                    categories["Action"],
+                    categories["Adventure"],
+                    categories["Comedy"],
+               },
+               Authors = new List<Author>() { authors["Hirano Kouta"], },
+               Chapters = new List<Chapter>()
+               {
+                    new Chapter
+                    {
+                        Number = 1,
+                        Name = "Strawberry & the Soul Reapers",
+                        Language = Language.English,
+                        Uploader = uploader1,
+                        UploadingGroup = groups["English Group"],
+                    },
+                    new Chapter
+                    {
+                        Number = 2,
+                        Name = "Starter",
+                        Language = Language.English,
+                        Uploader = uploader2,
+                        UploadingGroup = groups["English Group"],
+                    },
+                    new Chapter
+                    {
+                        Number = 3,
+                        Name = "Head-Hittin'",
+                        Language = Language.English,
+                        Uploader = uploader3,
+                        UploadingGroup = groups["English Group"],
+                    },
+               },
+               CoverPath = coverBaseUrl + "bleach.png",
+           }
+       );
+
         _context.AddRange(mangas);
         _context.SaveChanges();
     }

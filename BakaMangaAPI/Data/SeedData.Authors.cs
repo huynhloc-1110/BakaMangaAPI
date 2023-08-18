@@ -52,8 +52,28 @@ public partial class SeedData
             {
                 Name = "Hanatsuka Shiori",
                 Biography = "You can find more about the author on their Twitter account: [Hanatsuka Shiori on Twitter](https://twitter.com/hntkchan)"
+            },
+            ["Oda Eiichiro"] = new()
+            {
+                Name = "Oda Eiichiro",
+                Biography = "Eiichiro Oda, born January 1, 1975, in Kumamoto City, Kumamoto Prefecture in Japan, is a professional manga artist, best known as the creator of the manga One Piece. A dedicated writer and artist since adolescence, Oda began working for Shueisha's Shonen Jump at 17"
+            },
+            ["Tabata Yuuki"] = new()
+            {
+                Name = "Tabata Yuuki",
+                Biography = "Tabata Yuuki was born in Fukuoka Prefecture, Japan. He served as Toshiaki Iwashiro's assistant before starting his own series. In the Golden Future Cup in 2011, Tabata entered the one-shot Hungry Joker, which took first place. Later, a full series was created from this one-shot, which appeared in Weekly Shonen Jump from 2012 to 2013."
+            },
+            ["Hirano Kouta"] = new()
+            {
+                Name = "Hirano Kouta",
+                Biography = "Kouta Hirano (平野 耕太, Hirano Kōta, born July 14, 1973) is a well-known Japanese manga artist best known for his works Hellsing and Drifters. Hirano said that reading Hetappi Manga Kenkyjo by Akira Toriyama and Akira Sakuma taught him how to create manga."
+            },
+            ["Kubo Tite"] = new()
+            {
+                Name = "Kubo Tite",
+                Biography = "His real name is Kubo Noriaki. He started drawing manga because he liked GeGeGe no Kitaro and Saint Seiya as a child. The serial Bleach is about a high school student who becomes a shinigami and fights evil spirits."
             }
-        };
+            };
 
         _context.Authors.AddRange(authors.Values);
         return authors;
