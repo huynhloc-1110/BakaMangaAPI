@@ -41,7 +41,7 @@ public partial class ChapterController
         var chapterNumberFilter = query
             .Select(c => c.Number)
             .Distinct()
-            .OrderBy(cn => cn)
+            .OrderByDescending(cn => cn)
             .Skip((filter.Page - 1) * filter.PageSize)
             .Take(filter.PageSize);
         var chapters = await query
@@ -49,7 +49,7 @@ public partial class ChapterController
             .Include(c => c.Uploader)
             .Include(c => c.ChapterViews)
             .Include(c => c.UploadingGroup)
-            .OrderBy(c => c.Number)
+            .OrderByDescending(c => c.Number)
                 .ThenBy(c => c.Language)
                     .ThenByDescending(c => c.CreatedAt)
             .AsSplitQuery()
