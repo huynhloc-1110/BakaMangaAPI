@@ -42,11 +42,18 @@ public class MangaController : ControllerBase
         // sort options
         query = filter.SortOption switch
         {
+            SortOption.Trending => throw new NotImplementedException(),
             SortOption.LatestChapter => query
                 .OrderByDescending(m => m.Chapters.Max(c => c.CreatedAt)),
             SortOption.LatestManga => query
                 .OrderByDescending(m => m.CreatedAt),
-            _ => throw new NotImplementedException()
+            SortOption.MostViewDaily => throw new NotImplementedException(),
+            SortOption.MostView => throw new NotImplementedException(),
+            SortOption.MostFollowDaily => throw new NotImplementedException(),
+            SortOption.MostFollow => throw new NotImplementedException(),
+            SortOption.BestRating => throw new NotImplementedException(),
+            SortOption.NewToYou => throw new NotImplementedException(),
+            _ => throw new ArgumentException("Invalid sort option")
         };
 
         // page
