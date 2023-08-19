@@ -31,9 +31,9 @@ public class MangaFilterDTO : FilterDTO
 
 public enum SortOption
 {
-    Trending,
+    Default,
+    Trending, NewToYou,
     LatestChapter, LatestManga,
     MostViewDaily, MostView,
-    MostFollowDaily, MostFollow,
-    BestRating, NewToYou
+    MostFollow, BestRating,
 }
