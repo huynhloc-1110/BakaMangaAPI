@@ -77,6 +77,7 @@ public class MangaController : ControllerBase
         return Ok(paginatedMangaList);
     }
 
+    // GET: /mangas/trending
     [HttpGet("trending")]
     public async Task<IActionResult> GetTrendingMangas()
     {
@@ -105,9 +106,10 @@ public class MangaController : ControllerBase
             })
             .OrderByDescending(m => 4 * m.ViewScore + 2 * m.RatingScore + 4 * m.NewScore)
             .Select(m => m.Manga)
+            .Include(m => m.Categories)
             .Take(10)
             .ToListAsync();
-        return Ok(trendingMangas);
+        return Ok(_mapper.Map<List<MangaBasicDTO>>(trendingMangas));
     }
 
     // GET: /mangas/5
