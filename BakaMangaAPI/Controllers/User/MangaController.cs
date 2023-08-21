@@ -43,7 +43,6 @@ public class MangaController : ControllerBase
         query = filter.SortOption switch
         {
             SortOption.Default => query.OrderBy(m => m.OriginalTitle),
-            SortOption.Trending => throw new NotImplementedException(),
             SortOption.LatestChapter => query
                 .OrderByDescending(m => m.Chapters.Max(c => c.CreatedAt)),
             SortOption.LatestManga => query
@@ -57,8 +56,6 @@ public class MangaController : ControllerBase
                 .OrderByDescending(m => m.Followers.Count),
             SortOption.BestRating => query
                 .OrderByDescending(m => m.Ratings.Count > 0 ? m.Ratings.Average(r => r.Value) : 3.5),
-            SortOption.NewToYou => query
-                .OrderBy(r => Guid.NewGuid()),
             _ => throw new ArgumentException("Invalid sort option")
         };
 
@@ -78,6 +75,39 @@ public class MangaController : ControllerBase
         var paginatedMangaList = new PaginatedListDTO<MangaBasicDTO>
             (mangaList, mangasCount, filter.Page, filter.PageSize);
         return Ok(paginatedMangaList);
+    }
+
+    [HttpGet("trending")]
+    public async Task<IActionResult> GetTrendingMangas()
+    {
+        var topWeeklyViews = await _context.Mangas.MaxAsync(m => m.Chapters
+            .Select(c => c.ChapterViews
+            .Count(cv => DateTime.Equals(cv.CreatedAt.Date, DateTime.UtcNow.Date)))
+            .Sum());
+        var trendingMangas = await _context.Mangas
+            .Where(m => m.DeletedAt == null)
+            .Select(m => new
+            {
+                Manga = m,
+                WeeklyViews = m.Chapters.Select(c => c.ChapterViews
+                    .Count(cv => (DateTime.UtcNow - cv.CreatedAt).Days <= 7)).Sum(),
+                MaxViews = _context.Mangas.Max(m => m.Chapters.Select(c => c.ChapterViews
+                    .Count(cv => (DateTime.UtcNow - cv.CreatedAt).Days <= 7)).Sum()),
+                AverageRating = m.Ratings.Count > 0 ? m.Ratings.Average(r => r.Value) : 3.5,
+                ExistingWeeks = (DateTime.UtcNow - m.CreatedAt).Days / 7
+            })
+            .Select(m => new
+            {
+                m.Manga,
+                ViewScore = (float)m.WeeklyViews * 10 / m.MaxViews,
+                RatingScore = 2 * m.AverageRating,
+                NewScore = 10 - (m.ExistingWeeks < 10 ? m.ExistingWeeks : 10)
+            })
+            .OrderByDescending(m => 4 * m.ViewScore + 2 * m.RatingScore + 4 * m.NewScore)
+            .Select(m => m.Manga)
+            .Take(10)
+            .ToListAsync();
+        return Ok(trendingMangas);
     }
 
     // GET: /mangas/5
