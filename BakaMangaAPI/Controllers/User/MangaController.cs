@@ -5,6 +5,7 @@ using BakaMangaAPI.DTOs;
 using AutoMapper;
 using Microsoft.AspNetCore.Identity;
 using BakaMangaAPI.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace BakaMangaAPI.Controllers;
 
@@ -110,6 +111,19 @@ public class MangaController : ControllerBase
             .Take(10)
             .ToListAsync();
         return Ok(_mapper.Map<List<MangaBasicDTO>>(trendingMangas));
+    }
+
+    //GET: /mangas/new-to-you
+    [HttpGet("new-to-you")]
+    [Authorize]
+    public async Task<IActionResult> GetRecommendedMangas()
+    {
+        var recommendedMangas = await _context.Mangas
+            .Where(m => m.DeletedAt == null)
+            .OrderBy(m => Guid.NewGuid())
+            .Take(12)
+            .ToListAsync();
+        return Ok(_mapper.Map<List<MangaBasicDTO>>(recommendedMangas));
     }
 
     // GET: /mangas/5
