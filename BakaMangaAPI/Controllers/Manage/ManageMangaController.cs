@@ -25,40 +25,6 @@ public class ManageMangaController : ControllerBase
         _mediaManager = mediaManager;
     }
 
-    // GET: manage/manga?Search=&Page=1&PageSize=12
-    [HttpGet]
-    public async Task<IActionResult> GetMangas
-        ([FromQuery] ManageFilterDTO filter)
-    {
-        var query = _context.Mangas.AsQueryable();
-        if (filter.ExcludeDeleted)
-        {
-            query = query.Where(m => m.DeletedAt == null);
-        }
-        if (!string.IsNullOrEmpty(filter.Search))
-        {
-            query = query.Where(m => m.OriginalTitle.ToLower().Contains(filter.Search.ToLower()) ||
-                m.AlternativeTitles!.Contains(filter.Search));
-        }
-
-        var mangas = await query
-            .OrderByDescending(m => m.CreatedAt)
-            .Skip((filter.Page - 1) * filter.PageSize)
-            .Take(filter.PageSize)
-            .AsNoTracking()
-            .ToListAsync();
-        if (mangas.Count == 0)
-        {
-            return NotFound();
-        }
-
-        var mangaCount = await query.CountAsync();
-        var mangaList = _mapper.Map<List<MangaBasicDTO>>(mangas);
-        var paginatedMangaList = new PaginatedListDTO<MangaBasicDTO>
-            (mangaList, mangaCount, filter.Page, filter.PageSize);
-        return Ok(paginatedMangaList);
-    }
-
     // GET: manage/manga/5
     [HttpGet("{id}")]
     public async Task<IActionResult> GetManga(string id)

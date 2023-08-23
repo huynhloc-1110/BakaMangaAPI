@@ -25,7 +25,7 @@ public class ManageUserController : ControllerBase
 
     [HttpGet]
     public async Task<IActionResult> GetUsers
-        ([FromQuery] ManageUserFilterDTO filter)
+        ([FromQuery] UserFilterDTO filter)
     {
         var query = _context.ApplicationUsers
             .Include(u => u.UserRoles)

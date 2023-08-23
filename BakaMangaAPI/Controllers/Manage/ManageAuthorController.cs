@@ -24,7 +24,8 @@ public class ManageAuthorController : ControllerBase
 
     // GET: manage/author?Search=&Page=1&PageSize=12
     [HttpGet]
-    public async Task<IActionResult> GetAuthors([FromQuery] ManageFilterDTO filter)
+    [AllowAnonymous]
+    public async Task<IActionResult> GetAuthors([FromQuery] FilterDTO filter)
     {
         var query = _context.Authors.AsQueryable();
         if (filter.ExcludeDeleted)

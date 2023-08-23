@@ -24,7 +24,8 @@ public class ManageCategoryController : ControllerBase
 
     // GET: manage/category?Search=&Page=1&PageSize=12
     [HttpGet]
-    public async Task<IActionResult> GetCategories([FromQuery] ManageFilterDTO filter)
+    [AllowAnonymous]
+    public async Task<IActionResult> GetCategories([FromQuery] FilterDTO filter)
     {
         var query = _context.Categories.AsQueryable();
         if (filter.ExcludeDeleted)
@@ -127,10 +128,10 @@ public class ManageCategoryController : ControllerBase
             {
                 throw;
             }
-		}
+        }
 
-		var categoryDTO = _mapper.Map<CategoryDTO>(category);
-		return CreatedAtAction("GetCategory", new { id = categoryDTO.Id }, categoryDTO);
+        var categoryDTO = _mapper.Map<CategoryDTO>(category);
+        return CreatedAtAction("GetCategory", new { id = categoryDTO.Id }, categoryDTO);
     }
 
     // DELETE: manage/category/5?undelete=false

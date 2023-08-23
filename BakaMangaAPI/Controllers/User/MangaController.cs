@@ -30,7 +30,13 @@ public class MangaController : ControllerBase
     public async Task<IActionResult> GetMangas
         ([FromQuery] MangaFilterDTO filter)
     {
-        var query = _context.Mangas.Where(m => m.DeletedAt == null);
+        var query = _context.Mangas.Include(m => m.Categories).AsQueryable();
+
+        // exclude deleted
+        if (filter.ExcludeDeleted)
+        {
+            query = query.Where(a => a.DeletedAt == null);
+        }
 
         // search
         if (!string.IsNullOrEmpty(filter.Search))
@@ -62,7 +68,6 @@ public class MangaController : ControllerBase
 
         // page
         var mangas = await query
-            .Include(m => m.Categories)
             .Skip((filter.Page - 1) * filter.PageSize)
             .Take(filter.PageSize)
             .AsNoTracking()
