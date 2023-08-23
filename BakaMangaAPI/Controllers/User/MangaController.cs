@@ -66,6 +66,22 @@ public class MangaController : ControllerBase
             _ => throw new ArgumentException("Invalid sort option")
         };
 
+        // category filter
+        if (filter.IncludedCategoryIds != null)
+        {
+            var includedCategoryIds = filter.IncludedCategoryIds.Split(",");
+            foreach (var categoryId in includedCategoryIds)
+            {
+                query = query.Where(m => m.Categories.Any(c => c.Id.StartsWith(categoryId)));
+            }
+        }
+        if (filter.ExcludedCategoryIds != null)
+        {
+            var excludedCategoryIds = filter.ExcludedCategoryIds.Split(",");
+            query = query.Where(m => !m.Categories.Any(c =>
+                excludedCategoryIds.Contains(c.Id.Substring(0, 5))));
+        }
+
         // page
         var mangas = await query
             .Skip((filter.Page - 1) * filter.PageSize)

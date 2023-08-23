@@ -19,6 +19,9 @@ public class UserFilterDTO : FilterDTO
 public class MangaFilterDTO : FilterDTO
 {
     public SortOption SortOption { get; set; }
+
+    public string? IncludedCategoryIds { get; set; }
+    public string? ExcludedCategoryIds { get; set; }
 }
 
 public enum RoleOption
