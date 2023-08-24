@@ -1,4 +1,6 @@
-﻿namespace BakaMangaAPI.DTOs;
+﻿using BakaMangaAPI.Models;
+
+namespace BakaMangaAPI.DTOs;
 
 public class FilterDTO
 {
@@ -20,8 +22,12 @@ public class MangaFilterDTO : FilterDTO
 {
     public SortOption SortOption { get; set; }
 
-    public string? IncludedCategoryIds { get; set; }
-    public string? ExcludedCategoryIds { get; set; }
+    public List<string> IncludedCategoryIds { get; set; } = new();
+    public List<string> ExcludedCategoryIds { get; set; } = new();
+
+    public List<Language> SelectedLanguages { get; set; } = new();
+
+    public string? SelectedAuthorId { get; set; }
 }
 
 public enum RoleOption

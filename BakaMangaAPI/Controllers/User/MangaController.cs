@@ -46,19 +46,29 @@ public class MangaController : ControllerBase
         }
 
         // category filter
-        if (filter.IncludedCategoryIds != null)
+        if (filter.IncludedCategoryIds.Count > 0)
         {
-            var includedCategoryIds = filter.IncludedCategoryIds.Split(",");
-            foreach (var categoryId in includedCategoryIds)
+            foreach (var categoryId in filter.IncludedCategoryIds)
             {
                 query = query.Where(m => m.Categories.Any(c => c.Id.StartsWith(categoryId)));
             }
         }
-        if (filter.ExcludedCategoryIds != null)
+        if (filter.ExcludedCategoryIds.Count > 0)
         {
-            var excludedCategoryIds = filter.ExcludedCategoryIds.Split(",");
             query = query.Where(m => !m.Categories.Any(c =>
-                excludedCategoryIds.Contains(c.Id.Substring(0, 5))));
+                filter.ExcludedCategoryIds.Contains(c.Id.Substring(0, 5))));
+        }
+
+        // language filter
+        if (filter.SelectedLanguages.Count > 0)
+        {
+            query = query.Where(m => filter.SelectedLanguages.Contains(m.OriginalLanguage));
+        }
+        
+        // author filter
+        if (filter.SelectedAuthorId != null)
+        {
+            query = query.Where(m => m.Authors.Any(a => a.Id == filter.SelectedAuthorId));
         }
 
         var mangasCount = await query.CountAsync();
