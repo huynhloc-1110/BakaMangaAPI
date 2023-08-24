@@ -30,20 +30,37 @@ public class MangaController : ControllerBase
     public async Task<IActionResult> GetMangas
         ([FromQuery] MangaFilterDTO filter)
     {
-        var query = _context.Mangas.Include(m => m.Categories).AsQueryable();
+        var query = _context.Mangas.AsQueryable();
 
-        // exclude deleted
+        // exclude deleted filter
         if (filter.ExcludeDeleted)
         {
             query = query.Where(a => a.DeletedAt == null);
         }
 
-        // search
+        // search filter
         if (!string.IsNullOrEmpty(filter.Search))
         {
             query = query.Where(m => m.OriginalTitle.ToLower().Contains(filter.Search.ToLower()) ||
                 m.AlternativeTitles!.Contains(filter.Search));
         }
+
+        // category filter
+        if (filter.IncludedCategoryIds != null)
+        {
+            var includedCategoryIds = filter.IncludedCategoryIds.Split(",");
+            foreach (var categoryId in includedCategoryIds)
+            {
+                query = query.Where(m => m.Categories.Any(c => c.Id.StartsWith(categoryId)));
+            }
+        }
+        if (filter.ExcludedCategoryIds != null)
+        {
+            var excludedCategoryIds = filter.ExcludedCategoryIds.Split(",");
+            query = query.Where(m => !m.Categories.Any(c =>
+                excludedCategoryIds.Contains(c.Id.Substring(0, 5))));
+        }
+
         var mangasCount = await query.CountAsync();
 
         // sort options
@@ -66,24 +83,9 @@ public class MangaController : ControllerBase
             _ => throw new ArgumentException("Invalid sort option")
         };
 
-        // category filter
-        if (filter.IncludedCategoryIds != null)
-        {
-            var includedCategoryIds = filter.IncludedCategoryIds.Split(",");
-            foreach (var categoryId in includedCategoryIds)
-            {
-                query = query.Where(m => m.Categories.Any(c => c.Id.StartsWith(categoryId)));
-            }
-        }
-        if (filter.ExcludedCategoryIds != null)
-        {
-            var excludedCategoryIds = filter.ExcludedCategoryIds.Split(",");
-            query = query.Where(m => !m.Categories.Any(c =>
-                excludedCategoryIds.Contains(c.Id.Substring(0, 5))));
-        }
-
         // page
         var mangas = await query
+            .Include(m => m.Categories)
             .Skip((filter.Page - 1) * filter.PageSize)
             .Take(filter.PageSize)
             .AsNoTracking()
