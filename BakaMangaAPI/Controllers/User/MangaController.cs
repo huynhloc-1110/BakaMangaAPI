@@ -64,7 +64,7 @@ public class MangaController : ControllerBase
         {
             query = query.Where(m => filter.SelectedLanguages.Contains(m.OriginalLanguage));
         }
-        
+
         // author filter
         if (filter.SelectedAuthorId != null)
         {
@@ -78,7 +78,8 @@ public class MangaController : ControllerBase
         {
             SortOption.Default => query.OrderBy(m => m.OriginalTitle),
             SortOption.LatestChapter => query
-                .OrderByDescending(m => m.Chapters.Max(c => c.CreatedAt)),
+                .OrderByDescending(m => m.Chapters.Any() ?
+                    m.Chapters.Max(c => c.CreatedAt) : DateTime.MinValue),
             SortOption.LatestManga => query
                 .OrderByDescending(m => m.CreatedAt),
             SortOption.MostViewDaily => query

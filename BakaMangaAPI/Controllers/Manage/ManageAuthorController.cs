@@ -57,6 +57,7 @@ public class ManageAuthorController : ControllerBase
 
     // GET: manage/author/5
     [HttpGet("{id}")]
+	[AllowAnonymous]
     public async Task<IActionResult> GetAuthor(string id)
     {
         var author = await _context.Authors.FindAsync(id);
