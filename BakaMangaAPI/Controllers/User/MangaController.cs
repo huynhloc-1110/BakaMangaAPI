@@ -135,7 +135,7 @@ public class MangaController : ControllerBase
             .Select(m => new
             {
                 m.Manga,
-                ViewScore = (float)m.WeeklyViews * 10 / m.MaxViews,
+                ViewScore = (m.MaxViews > 0) ? (float)m.WeeklyViews * 10 / m.MaxViews : 0,
                 RatingScore = 2 * m.AverageRating,
                 NewScore = 10 - (m.ExistingWeeks < 10 ? m.ExistingWeeks : 10)
             })
