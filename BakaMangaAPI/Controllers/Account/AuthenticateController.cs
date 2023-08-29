@@ -3,7 +3,6 @@ using BakaMangaAPI.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.DotNet.Scaffolding.Shared.Messaging;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -53,7 +52,7 @@ public class AuthenticateController : ControllerBase
         return new JwtSecurityTokenHandler().WriteToken(token);
     }
 
-    [HttpPost("SignUp")]
+    [HttpPost("signup")]
     public async Task<IActionResult> SignUpAsync(SignUpDTO dto)
     {
         var user = new ApplicationUser
@@ -80,7 +79,7 @@ public class AuthenticateController : ControllerBase
         });
     }
 
-    [HttpPost("SignIn")]
+    [HttpPost("signin")]
     public async Task<IActionResult> SignInAsync(SignInDTO dto)
     {
         var user = await _userManager.FindByEmailAsync(dto.Email);
