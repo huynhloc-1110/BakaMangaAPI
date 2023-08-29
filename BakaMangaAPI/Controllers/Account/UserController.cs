@@ -72,6 +72,6 @@ public class UserController : ControllerBase
         user.AvatarPath = imagePath;
         await _userManager.UpdateAsync(user);
 
-        return Ok(imagePath);
+        return Ok(_mapper.Map<UserBasicDTO>(user));
     }
 }
