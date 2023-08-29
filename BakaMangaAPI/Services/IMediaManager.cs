@@ -13,10 +13,10 @@ public interface IMediaManager
     /// <exception cref="ArgumentNullException">
     /// Thrown when the imageFile or imageId is null.
     /// </exception>
-    Task<string> UploadImage(IFormFile imageFile, string imageId, ImageType imageType);
+    Task<string> UploadImageAsync(IFormFile imageFile, string imageId, ImageType imageType);
 }
 
 public enum ImageType
 {
-    Page, Avatar, Cover
+    Avatar, Banner, Cover, Page
 }

@@ -92,7 +92,7 @@ public class ManageMangaController : ControllerBase
         // process image
         if (coverImage != null)
         {
-            manga.CoverPath = await _mediaManager.UploadImage(coverImage, manga.Id, ImageType.Cover);
+            manga.CoverPath = await _mediaManager.UploadImageAsync(coverImage, manga.Id, ImageType.Cover);
         }
 
         try
@@ -148,7 +148,7 @@ public class ManageMangaController : ControllerBase
         // process image
         if (coverImage != null)
         {
-            manga.CoverPath = await _mediaManager.UploadImage(coverImage, manga.Id, ImageType.Cover);
+            manga.CoverPath = await _mediaManager.UploadImageAsync(coverImage, manga.Id, ImageType.Cover);
         }
         _context.Mangas.Add(manga);
 
