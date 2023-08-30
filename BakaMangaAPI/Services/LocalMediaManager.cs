@@ -3,16 +3,18 @@ namespace BakaMangaAPI.Services;
 public class LocalMediaManager : IMediaManager
 {
     private readonly IWebHostEnvironment _hostingEnvironment;
+    private readonly IConfiguration _configuration;
     private const string _rootImageFolderName = "img";
 
-    public LocalMediaManager(IWebHostEnvironment hostingEnvironment)
+    public LocalMediaManager(IWebHostEnvironment hostingEnvironment, IConfiguration configuration)
     {
         _hostingEnvironment = hostingEnvironment;
+        _configuration = configuration;
     }
 
     public async Task<string> UploadImageAsync(IFormFile imageFile, string imageId, ImageType imageType)
     {
-        // validate
+        // validate image file and id not null
         if (imageFile == null)
         {
             throw new ArgumentNullException(nameof(imageFile));
@@ -22,31 +24,25 @@ public class LocalMediaManager : IMediaManager
             throw new ArgumentNullException(nameof(imageId));
         }
 
-        // prepare dir and file path
-        var folderPath = PrepareDirectory(imageType);
-        var imageName = PrepareImageName(imageFile.FileName, imageId);
-        var uploadPath = Path.Combine(_hostingEnvironment.WebRootPath, folderPath, imageName);
+        // prepare path
+        var imageExtension = Path.GetExtension(imageFile.FileName);
+        var imageFullName = Path.ChangeExtension(imageId, imageExtension);
+        var imageSubFolderName = imageType.ToString().ToLower() + "s";
+        var imagePath = Path.Combine(
+            _hostingEnvironment.WebRootPath,
+            _rootImageFolderName,
+            imageSubFolderName,
+            imageFullName);
 
-        // create file in local
-        using var fileStream = new FileStream(uploadPath, FileMode.Create);
+        // ensure directory exists
+        Directory.CreateDirectory(Directory.GetParent(imagePath)!.FullName);
+
+        // copy form file to the image path
+        using var fileStream = new FileStream(imagePath, FileMode.Create);
         await imageFile.CopyToAsync(fileStream);
 
-        return $"https://localhost:7036/{_rootImageFolderName}/{imageType.ToString().ToLower()}s/{imageName}";
-    }
-
-    private string PrepareDirectory(ImageType imageType)
-    {
-        string imageDir = Path.Combine(_rootImageFolderName, imageType.ToString().ToLower() + "s");
-        string uploadDir = Path.Combine(_hostingEnvironment.WebRootPath, imageDir);
-        Directory.CreateDirectory(uploadDir);
-
-        return imageDir;
-    }
-
-    private string PrepareImageName(string imageName, string imageId)
-    {
-        var imageExtension = Path.GetExtension(imageName);
-        var imageNameWithExtension = Path.ChangeExtension(imageId, imageExtension);
-        return imageNameWithExtension;
+        // construct and return url
+        var serverUri = _configuration["Jwt:ValidIssuer"];
+        return $"{serverUri}/{_rootImageFolderName}/{imageSubFolderName}/{imageFullName}";
     }
 }
