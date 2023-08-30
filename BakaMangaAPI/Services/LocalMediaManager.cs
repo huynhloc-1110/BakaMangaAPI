@@ -31,7 +31,7 @@ public class LocalMediaManager : IMediaManager
         using var fileStream = new FileStream(uploadPath, FileMode.Create);
         await imageFile.CopyToAsync(fileStream);
 
-        return Path.Combine("https://localhost:7036", folderPath, imageName);
+        return $"https://localhost:7036/{_rootImageFolderName}/{imageType.ToString().ToLower()}s/{imageName}";
     }
 
     private string PrepareDirectory(ImageType imageType)
