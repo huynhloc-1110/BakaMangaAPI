@@ -74,4 +74,26 @@ public class UserController : ControllerBase
 
         return Ok(_mapper.Map<UserBasicDTO>(user));
     }
+
+    [HttpPut("me/change-banner")]
+    [Authorize]
+    public async Task<IActionResult> ChangeBanner(IFormFile image)
+    {
+        if (image == null)
+        {
+            return BadRequest("Banner image is null");
+        }
+
+        var user = await _userManager.GetUserAsync(User);
+        if (user == null)
+        {
+            return BadRequest("Token corrupted");
+        }
+
+        var imagePath = await _mediaManager.UploadImageAsync(image, user.Id, ImageType.Banner);
+        user.BannerPath = imagePath;
+        await _userManager.UpdateAsync(user);
+
+        return Ok(_mapper.Map<UserBasicDTO>(user));
+    }
 }
