@@ -49,3 +49,20 @@ public class ChapterSimpleDTO
 
     public GroupBasicDTO UploadingGroup { get; set; } = default!;
 }
+
+public class ChapterEditDTO
+{
+    [Range(0, float.MaxValue)]
+    public float Number { get; set; }
+
+    [MaxLength(100)]
+    public string Name { get; set; } = string.Empty;
+
+    public Language Language { get; set; }
+
+    public List<IFormFile> Pages { get; set; } = new();
+
+    public string MangaId { get; set; } = default!;
+
+    public string UploadingGroupId { get; set; } = default!;
+}
