@@ -6,6 +6,7 @@ using BakaMangaAPI.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace BakaMangaAPI.Controllers;
 
@@ -26,6 +27,51 @@ public class UploadChapterController : ControllerBase
         _mediaManager = mediaManager;
         _mapper = mapper;
         _userManager = userManager;
+    }
+
+    [HttpGet("~/uploader/{uploaderId}/chapters")]
+    public async Task<IActionResult> GetChaptersOfUploader(string uploaderId,
+        [FromQuery] FilterDTO filter)
+    {
+        if (await _userManager.GetUserAsync(User) is not ApplicationUser uploader)
+        {
+            return BadRequest("Token outdated or corrupted.");
+        }
+
+        var query = _context.Chapters.Where(c => c.Uploader == uploader);
+
+        // filter exclude deleted
+        if (filter.ExcludeDeleted)
+        {
+            query = query.Where(c => c.DeletedAt == null);
+        }
+
+        // filter search
+        if (!string.IsNullOrEmpty(filter.Search))
+        {
+            query = query.Where(c => c.Manga.OriginalTitle.Contains(filter.Search));
+        }
+
+        // pagination
+        var chapterCount = await query.CountAsync();
+        var chapters = await query
+            .OrderByDescending(c => c.CreatedAt)
+            .Include(c => c.Manga)
+            .Include(c => c.UploadingGroup)
+            .Include(c => c.Pages)
+            .Skip((filter.Page - 1) * filter.PageSize)
+            .Take(filter.PageSize)
+            .AsNoTracking()
+            .ToListAsync();
+        if (chapters.Count == 0)
+        {
+            return NotFound();
+        }
+
+        var chapterList = _mapper.Map<List<ChapterDetailDTO>>(chapters);
+        var paginatedChapterList = new PaginatedListDTO<ChapterDetailDTO>
+            (chapterList, chapterCount, filter.Page, filter.PageSize);
+        return Ok(paginatedChapterList);
     }
 
     [HttpPost]
