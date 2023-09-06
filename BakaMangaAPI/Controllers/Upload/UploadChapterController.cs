@@ -166,4 +166,17 @@ public class UploadChapterController : ControllerBase
         await _context.SaveChangesAsync();
         return NoContent();
     }
+
+    [HttpDelete("{chapterId")]
+    public async Task<IActionResult> DeleteChapter(string chapterId, [FromQuery] bool undelete)
+    {
+        if (await _context.Chapters.FindAsync(chapterId) is not Chapter chapter)
+        {
+            return BadRequest("Chapter not found");
+        }
+        chapter.DeletedAt = undelete ? null : DateTime.UtcNow;
+        await _context.SaveChangesAsync();
+
+        return NoContent();
+    }
 }
