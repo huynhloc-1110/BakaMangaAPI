@@ -45,4 +45,15 @@ public class LocalMediaManager : IMediaManager
         var serverUri = _configuration["Jwt:ValidIssuer"];
         return $"{serverUri}/{_rootImageFolderName}/{imageSubFolderName}/{imageFullName}";
     }
+
+    public Task DeleteImageAsync(string imagePath) 
+    {
+        var uri = new Uri(imagePath);
+        var relativeFilePath = Path.Combine(
+            uri.AbsolutePath.Split("/", StringSplitOptions.RemoveEmptyEntries));
+        var filePath = Path.Combine(_hostingEnvironment.WebRootPath, relativeFilePath);
+
+        File.Delete(filePath);
+        return Task.CompletedTask;
+    }
 }

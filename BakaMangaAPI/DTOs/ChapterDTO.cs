@@ -62,7 +62,5 @@ public class ChapterEditDTO
 
     public List<IFormFile> Pages { get; set; } = new();
 
-    public string MangaId { get; set; } = default!;
-
     public string UploadingGroupId { get; set; } = default!;
 }

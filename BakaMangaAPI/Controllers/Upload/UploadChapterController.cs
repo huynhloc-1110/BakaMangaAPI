@@ -49,7 +49,8 @@ public class UploadChapterController : ControllerBase
         // filter search
         if (!string.IsNullOrEmpty(filter.Search))
         {
-            query = query.Where(c => c.Manga.OriginalTitle.Contains(filter.Search));
+            query = query.Where(c => c.Manga.OriginalTitle.ToLower()
+                .Contains(filter.Search.ToLower()));
         }
 
         // pagination
@@ -74,10 +75,10 @@ public class UploadChapterController : ControllerBase
         return Ok(paginatedChapterList);
     }
 
-    [HttpPost]
-    public async Task<IActionResult> PostChapter([FromForm] ChapterEditDTO dto)
+    [HttpPost("~/mangas/{mangaId}/chapters")]
+    public async Task<IActionResult> PostChapter(string mangaId, [FromForm] ChapterEditDTO dto)
     {
-        var manga = await _context.Mangas.FindAsync(dto.MangaId);
+        var manga = await _context.Mangas.FindAsync(mangaId);
         if (manga == null)
         {
             return BadRequest("Manga not found");
@@ -115,5 +116,54 @@ public class UploadChapterController : ControllerBase
         await _context.SaveChangesAsync();
 
         return Ok(_mapper.Map<ChapterDetailDTO>(chapter));
+    }
+
+    [HttpPut("{chapterId}")]
+    public async Task<IActionResult> PutChapter(string chapterId, [FromForm] ChapterEditDTO dto)
+    {
+        // get chapter with additional info
+        var chapter = await _context.Chapters
+            .Include(c => c.UploadingGroup)
+            .Include(c => c.Pages)
+            .SingleOrDefaultAsync(c => c.Id == chapterId);
+        if (chapter == null)
+        {
+            return BadRequest("Chapter not found");
+        }
+
+        // update chapter basic info
+        chapter.Number = dto.Number;
+        chapter.Name = dto.Name;
+        chapter.Language = dto.Language;
+
+        // update chapter uploading group
+        var uploadingGroup = await _context.Groups.FindAsync(dto.UploadingGroupId);
+        if (uploadingGroup == null)
+        {
+            return BadRequest("Uploading group not found");
+        }
+        chapter.UploadingGroup = uploadingGroup;
+
+        // update chapter images
+        // delete old images
+        foreach (var page in chapter.Pages)
+        {
+            await _mediaManager.DeleteImageAsync(page.Path);
+        }
+
+        _context.Pages.RemoveRange(chapter.Pages);
+        chapter.Pages = new();
+        
+        // upload new images
+        for (int i = 0; i < dto.Pages.Count; i++)
+        {
+            var page = dto.Pages[i];
+            var pageId = Guid.NewGuid().ToString();
+            var pagePath = await _mediaManager.UploadImageAsync(page, pageId, ImageType.Page);
+            chapter.Pages.Add(new() { Id = pageId, Number = i, Path = pagePath });
+        }
+
+        await _context.SaveChangesAsync();
+        return NoContent();
     }
 }
