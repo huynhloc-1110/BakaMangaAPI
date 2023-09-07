@@ -153,7 +153,7 @@ public class UploadChapterController : ControllerBase
 
         _context.Pages.RemoveRange(chapter.Pages);
         chapter.Pages = new();
-        
+
         // upload new images
         for (int i = 0; i < dto.Pages.Count; i++)
         {
@@ -167,7 +167,7 @@ public class UploadChapterController : ControllerBase
         return NoContent();
     }
 
-    [HttpDelete("{chapterId")]
+    [HttpDelete("{chapterId}")]
     public async Task<IActionResult> DeleteChapter(string chapterId, [FromQuery] bool undelete)
     {
         if (await _context.Chapters.FindAsync(chapterId) is not Chapter chapter)
@@ -176,7 +176,7 @@ public class UploadChapterController : ControllerBase
         }
         chapter.DeletedAt = undelete ? null : DateTime.UtcNow;
         await _context.SaveChangesAsync();
-
+        
         return NoContent();
     }
 }

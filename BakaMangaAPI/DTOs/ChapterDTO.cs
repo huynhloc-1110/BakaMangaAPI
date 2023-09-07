@@ -37,6 +37,8 @@ public class ChapterDetailDTO
     public MangaBasicDTO Manga { get; set; } = default!;
 
     public GroupBasicDTO UploadingGroup { get; set; } = default!;
+
+    public DateTime? DeletedAt { get; set; }
 }
 
 public class ChapterSimpleDTO
