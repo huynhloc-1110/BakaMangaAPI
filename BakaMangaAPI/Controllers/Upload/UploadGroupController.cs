@@ -25,10 +25,10 @@ public class UploadGroupController : ControllerBase
         _mapper = mapper;
     }
 
-    [HttpGet("~/users/me/groups")]
-    public async Task<IActionResult> GetMyGroups()
+    [HttpGet("~/users/{userId}/groups")]
+    public async Task<IActionResult> GetUserGroups(string userId)
     {
-        var user = await _userManager.GetUserAsync(User);
+        var user = await _userManager.FindByIdAsync(userId);
         if (user == null)
         {
             return BadRequest("JWT token outdated or corrupted");
