@@ -20,12 +20,15 @@ public class ApplicationUser : IdentityUser
     [MaxLength(100)]
     public string Name { get; set; } = string.Empty;
 
+    [MaxLength(1000)]
+    public string Biography { get; set; } = string.Empty;
+
     public List<ApplicationUserRole> UserRoles { get; set; } = new();
 
     #region Have yet used these
     public List<ApplicationUser> Followers { get; set; } = new();
 
-    public List<ApplicationUser> Followees { get; set; } = new();
+    public List<ApplicationUser> Followings { get; set; } = new();
 
     public List<Request> Requests { get; set; } = new();
 

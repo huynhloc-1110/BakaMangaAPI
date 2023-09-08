@@ -5,6 +5,8 @@ using AutoMapper;
 using BakaMangaAPI.Models;
 using BakaMangaAPI.DTOs;
 using BakaMangaAPI.Services;
+using BakaMangaAPI.Data;
+using Microsoft.EntityFrameworkCore;
 
 namespace BakaMangaAPI.Controllers;
 
@@ -12,13 +14,15 @@ namespace BakaMangaAPI.Controllers;
 [ApiController]
 public class UserController : ControllerBase
 {
+    private readonly ApplicationDbContext _context;
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly IMapper _mapper;
-
     private readonly IMediaManager _mediaManager;
 
-    public UserController(UserManager<ApplicationUser> userManager, IMapper mapper, IMediaManager mediaManager)
+    public UserController(ApplicationDbContext context, UserManager<ApplicationUser> userManager, 
+        IMapper mapper, IMediaManager mediaManager)
     {
+        _context = context;
         _userManager = userManager;
         _mapper = mapper;
         _mediaManager = mediaManager;
@@ -51,6 +55,26 @@ public class UserController : ControllerBase
         userBasicDto.Roles = userRoles.ToList();
 
         return Ok(userBasicDto);
+    }
+
+    [HttpGet("{userId}/stats")]
+    public async Task<IActionResult> GetUserStats(string userId)
+    {
+        // get user followers, following number, followed manga number,...
+        // number of uploaded chapters, number of views
+        var userStats = await _context.ApplicationUsers
+            .Where(u => u.Id == userId)
+            .Select(u => new UserStatsDTO
+            {
+                FollowerNumber = u.Followers.Where(f => f.DeletedAt == null).Count(),
+                FollowingNumber = u.Followings.Where(f => f.DeletedAt == null).Count(),
+                FollowedMangaNumber = u.FollowedMangas.Where(m => m.DeletedAt == null).Count(),
+                UploadedChapterNumber = u.UploadedChapters.Where(c => c.DeletedAt == null).Count(),
+                ViewGainedNumber = u.UploadedChapters.Sum(c => c.ChapterViews.Count)
+            })
+            .SingleOrDefaultAsync();
+
+        return (userStats != null) ? Ok(userStats) : NotFound();        
     }
 
     [HttpPut("me/change-avatar")]

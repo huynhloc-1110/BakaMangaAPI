@@ -92,6 +92,7 @@ public class UploadChapterController : ControllerBase
             .Include(c => c.Uploader)
             .Include(c => c.UploadingGroup)
             .Include(c => c.ChapterViews)
+            .Where(c => c.DeletedAt == null)
             .Where(c => c.Uploader == uploader)
             .GroupBy(c => c.Manga.Id)
             .Select(g => new
