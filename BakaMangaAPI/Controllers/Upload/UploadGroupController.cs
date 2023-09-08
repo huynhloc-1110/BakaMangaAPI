@@ -36,8 +36,15 @@ public class UploadGroupController : ControllerBase
 
         var groups = await _context.Groups
             .Where(g => g.Members.Select(m => m.User).Contains(user))
+            .Select(g => new GroupBasicDTO
+            {
+                Id = g.Id,
+                Name = g.Name,
+                MemberNumber = g.Members.Count(),
+                AvatarPath = g.AvatarPath,
+            })
             .ToListAsync();
 
-        return Ok(_mapper.Map<List<GroupBasicDTO>>(groups));
+        return Ok(groups);
     }
 }
