@@ -7,14 +7,17 @@ public partial class SeedData
     private Dictionary<string, Group> SeedGroups()
     {
         var uploader1 = _userManager.FindByEmailAsync("LocLe345@example.com").Result;
-        var uploader2 = _userManager.FindByEmailAsync("TriTat567@example.com").Result;
-        var uploader3 = _userManager.FindByEmailAsync("HuyNguyen123@example.com").Result;
+        var uploader2 = _userManager.FindByEmailAsync("Admin1@example.com").Result;
+        var uploader3 = _userManager.FindByEmailAsync("Uploader1@example.com").Result;
+
+        var groupAvatarUrl = _configuration["JWT:ValidIssuer"] + "/img/avatars/";
 
         Dictionary<string, Group> groups = new()
         {
             ["English Group"] = new()
             {
                 Name = "Tengoku Team",
+                AvatarPath = groupAvatarUrl + "tengoku.png",
                 Biography = "Please consider visiting our main site: https://lhtranslation.net/\r\nWE NEED MORE JAPANESE TRANSLATOR, PLS CONTACT DISCORD: malsi#3621 OR tagomisugi2@gmail.com",
                 Members = new()
                 {
@@ -25,6 +28,7 @@ public partial class SeedData
             ["Japan Group"] = new()
             {
                 Name = "Yannu no Mahou",
+                AvatarPath = groupAvatarUrl + "yannu.png",
                 Biography = "私たちはマンガの日本語翻訳を専門とするファンサブです。",
                 Members = new()
                 {
@@ -34,6 +38,7 @@ public partial class SeedData
             ["VietNam Group"] = new()
             {
                 Name = "Tiệm đồ ngọt",
+                AvatarPath = groupAvatarUrl + "tiemdongot.png",
                 Biography = "Tụi mình chuyên dịch thể loại rom-com.",
                 Members = new()
                 {

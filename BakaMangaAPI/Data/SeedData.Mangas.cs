@@ -15,8 +15,8 @@ public partial class SeedData
         List<Manga> mangas = new();
 
         var uploader1 = _userManager.FindByEmailAsync("LocLe345@example.com").Result;
-        var uploader2 = _userManager.FindByEmailAsync("TriTat567@example.com").Result;
-        var uploader3 = _userManager.FindByEmailAsync("HuyNguyen123@example.com").Result;
+        var uploader2 = _userManager.FindByEmailAsync("Admin1@example.com").Result;
+        var uploader3 = _userManager.FindByEmailAsync("Uploader1@example.com").Result;
 
         mangas.Add(
             new()

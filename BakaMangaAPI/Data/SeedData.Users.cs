@@ -19,34 +19,64 @@ public partial class SeedData
                 Name = "Huy Nguyen",
                 Email = "HuyNguyen123@example.com",
                 UserName = "HuyNguyen123@example.com",
-                AvatarPath = avatarUrl + "huy.jpg"
+                AvatarPath = avatarUrl + "huy.jpg",
+                Biography = "Huy Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
+
             },
             new() {
                 Name = "Loc Le",
                 Email = "LocLe345@example.com",
                 UserName = "LocLe345@example.com",
-                AvatarPath = avatarUrl + "loc.jpg"
+                AvatarPath = avatarUrl + "loc.jpg",
+                Biography = "Loc Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
             },
             new() {
                 Name = "Tri Tat",
                 Email = "TriTat567@example.com",
                 UserName = "TriTat567@example.com",
-                AvatarPath = avatarUrl + "tri.jpg"
+                AvatarPath = avatarUrl + "tri.jpg",
+                Biography = "Tri Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
             },
             new() {
                 Name = "Khoa Le",
                 Email = "KhoaLe789@example.com",
                 UserName = "KhoaLe789@example.com",
-                AvatarPath = avatarUrl + "khoa.jpg"
+                AvatarPath = avatarUrl + "khoa.jpg",
+                Biography = "Khoa Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
+            },
+            new() {
+                Name = "Admin",
+                Email = "Admin1@example.com",
+                UserName = "Admin1@example.com",
+                AvatarPath = avatarUrl + "admin.jpg",
+                Biography = "Admin Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
+            },
+             new() {
+                Name = "Uploader",
+                Email = "Uploader1@example.com",
+                UserName = "Uploader1@example.com",
+                AvatarPath = avatarUrl + "uploader.jpg",
+                Biography = "Uploader Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
             },
         };
 
-        var roleIndex = 0;
-        foreach (var user in users)
+        string[][] roleAssignments =
         {
-            await _userManager.CreateAsync(user, user.Email);
-            await _userManager.AddToRoleAsync(user, roles[roleIndex]);
-            roleIndex++;
+            new[] { "User" },
+            new[] { "Uploader" },
+            new[] { "Manager" },
+            new[] { "Admin" },
+            new[] { "User", "Uploader", "Manager", "Admin" },
+            new[] { "Uploader" },
+        };
+
+        for (int i = 0; i < users.Count; i++)
+        {
+            await _userManager.CreateAsync(users[i], users[i].Email);
+            foreach (string role in roleAssignments[i])
+            {
+                await _userManager.AddToRoleAsync(users[i], role);
+            }
         }
     }
 }
