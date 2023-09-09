@@ -59,6 +59,8 @@ public class UploadGroupController : ControllerBase
                 Name = g.Name,
                 AvatarPath = g.AvatarPath,
                 BannerPath = g.BannerPath,
+                Biography = g.Biography,
+                CreatedAt = g.CreatedAt,
                 MemberNumber = g.Members.Count(),
                 UploadedChapterNumber = g.Chapters.Count(),
                 ViewGainedNumber = g.Chapters.Sum(c => c.ChapterViews.Count)
@@ -70,7 +72,7 @@ public class UploadGroupController : ControllerBase
 
     [HttpPost]
     [Authorize]
-    public async Task<IActionResult> PostGroup(GroupEditDTO dto)
+    public async Task<IActionResult> PostGroup([FromForm] GroupEditDTO dto)
     {
         if (await _userManager.GetUserAsync(User) is not ApplicationUser user)
         {

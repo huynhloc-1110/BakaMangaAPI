@@ -19,6 +19,8 @@ public class GroupDetailDTO : GroupBasicDTO
 
     public DateTime CreatedAt { get; set; }
 
+    public string Biography { get; set; } = default!;
+
     public int UploadedChapterNumber { get; set; }
 
     public int ViewGainedNumber { get; set; } 
