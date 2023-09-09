@@ -47,4 +47,45 @@ public class UploadGroupController : ControllerBase
 
         return Ok(groups);
     }
+
+    [HttpGet("{groupId}")]
+    public async Task<IActionResult> GetGroup(string groupId)
+    {
+        var group = await _context.Groups
+            .Where(g => g.Id == groupId)
+            .Select(g => new GroupDetailDTO
+            {
+                Id = g.Id,
+                Name = g.Name,
+                AvatarPath = g.AvatarPath,
+                BannerPath = g.BannerPath,
+                MemberNumber = g.Members.Count(),
+                UploadedChapterNumber = g.Chapters.Count(),
+                ViewGainedNumber = g.Chapters.Sum(c => c.ChapterViews.Count)
+            })
+            .SingleOrDefaultAsync();
+
+        return Ok(group);
+    }
+
+    [HttpPost]
+    [Authorize]
+    public async Task<IActionResult> PostGroup(GroupEditDTO dto)
+    {
+        if (await _userManager.GetUserAsync(User) is not ApplicationUser user)
+        {
+            return BadRequest("Token outdated or corrupted");
+        }
+        var group = new Group
+        {
+            Name = dto.Name,
+            Biography = dto.Biography,
+            Members = new() { new GroupMember { User = user, IsLeader = true } }
+        };
+
+        _context.Groups.Add(group);
+        await _context.SaveChangesAsync();
+
+        return Ok(_mapper.Map<GroupBasicDTO>(group));
+    }
 }
