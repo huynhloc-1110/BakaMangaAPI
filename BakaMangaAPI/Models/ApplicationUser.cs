@@ -26,10 +26,6 @@ public class ApplicationUser : IdentityUser
     public List<ApplicationUserRole> UserRoles { get; set; } = new();
 
     #region Have yet used these
-    public List<ApplicationUser> Followers { get; set; } = new();
-
-    public List<ApplicationUser> Followings { get; set; } = new();
-
     public List<Request> Requests { get; set; } = new();
 
     public List<Report> Reports { get; set; } = new();
@@ -48,4 +44,10 @@ public class ApplicationUser : IdentityUser
     public List<React> Reacts { get; set; } = new();
 
     public List<GroupMember> GroupMembers { get; set; } = new();
+
+    public List<ApplicationUser> Followers { get; set; } = new();
+
+    public List<ApplicationUser> Followings { get; set; } = new();
+
+    public List<MangaList> MangaLists { get; set; } = new();
 }

@@ -28,6 +28,7 @@ public class ApplicationDbContext : IdentityDbContext<
     public DbSet<MangaComment> MangaComments { get; set; } = default!;
     public DbSet<Page> Pages { get; set; } = default!;
     public DbSet<Manga> Mangas { get; set; } = default!;
+    public DbSet<MangaList> MangaLists { get; set; } = default!;
     public DbSet<Post> Posts { get; set; } = default!;
     public DbSet<Rating> Ratings { get; set; } = default!;
     public DbSet<React> Reacts { get; set; } = default!;
