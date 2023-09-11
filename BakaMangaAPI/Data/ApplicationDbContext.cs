@@ -29,6 +29,7 @@ public class ApplicationDbContext : IdentityDbContext<
     public DbSet<Page> Pages { get; set; } = default!;
     public DbSet<Manga> Mangas { get; set; } = default!;
     public DbSet<MangaList> MangaLists { get; set; } = default!;
+    public DbSet<MangaListItem> MangaListItems { get; set; } = default!;
     public DbSet<Post> Posts { get; set; } = default!;
     public DbSet<Rating> Ratings { get; set; } = default!;
     public DbSet<React> Reacts { get; set; } = default!;
@@ -91,5 +92,19 @@ public class ApplicationDbContext : IdentityDbContext<
         {
             relationship.DeleteBehavior = DeleteBehavior.Restrict;
         }
+
+        // set up manga list
+        modelBuilder.Entity<MangaListItem>(item =>
+        {
+            item.HasKey(i => new { i.MangaListId, i.MangaId });
+            item.HasOne(i => i.MangaList)
+                .WithMany(ml => ml.Items)
+                .HasForeignKey(i => i.MangaListId)
+                .OnDelete(DeleteBehavior.Cascade);
+            item.HasOne(i => i.Manga)
+                .WithMany(m => m.MangaListItems)
+                .HasForeignKey(i => i.MangaId)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
     }
 }

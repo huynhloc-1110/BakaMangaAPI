@@ -8,6 +8,7 @@ public class MangaListBasicDTO
     public string Name { get; set; } = default!;
     public MangaListType Type { get; set; }
     public List<string?> MangaCoverUrls { get; set; } = new();
+    public DateTime UpdatedAt { get; set; }
 }
 
 public class MangaListEditDTO

@@ -40,13 +40,16 @@ public class MangaListController : ControllerBase
                 Id = ml.Id,
                 Name = ml.Name,
                 Type = ml.Type,
-                MangaCoverUrls = ml.Mangas
+                MangaCoverUrls = ml.Items
+                    .OrderBy(i => i.Index)
+                    .Select(i => i.Manga)
                     .Where(m => m.DeletedAt == null)
-                    .OrderByDescending(m => m.CreatedAt)
                     .Take(3)
                     .Select(m => m.CoverPath)
-                    .ToList()
+                    .ToList(),
+                UpdatedAt = ml.Items.Any() ? ml.Items.Max(i => i.AddedAt) : ml.CreatedAt
             })
+            .OrderByDescending(ml => ml.UpdatedAt)
             .AsNoTracking()
             .ToListAsync();
 
@@ -80,11 +83,18 @@ public class MangaListController : ControllerBase
     public async Task<IActionResult> PutMangaList(string mangaListId, [FromForm] MangaListEditDTO dto)
     {
         var mangaList = await _context.MangaLists
-            .Include(ml => ml.Mangas)
+            .Include(ml => ml.Owner)
+            .Include(ml => ml.Items)
+                .ThenInclude(i => i.Manga)
             .SingleOrDefaultAsync(ml => ml.Id == mangaListId);
+
         if (mangaList == null)
         {
             return BadRequest("Manga list not found");
+        }
+        if (mangaList.Owner != await _userManager.GetUserAsync(User))
+        {
+            return BadRequest("Current user is not the owner of this manga list");
         }
 
         mangaList.Name = dto.Name;
@@ -92,12 +102,15 @@ public class MangaListController : ControllerBase
         if (!string.IsNullOrEmpty(dto.AddedMangaId) &&
             await _context.Mangas.FindAsync(dto.AddedMangaId) is Manga addedManga)
         {
-            mangaList.Mangas.Add(addedManga);
+            mangaList.Items.Add(new() { Manga = addedManga, Index = mangaList.Items.Count });
         }
-        if (!string.IsNullOrEmpty(dto.RemovedMangaId) &&
-            await _context.Mangas.FindAsync(dto.RemovedMangaId) is Manga removedManga)
+        if (!string.IsNullOrEmpty(dto.RemovedMangaId))
         {
-            mangaList.Mangas.Remove(removedManga);
+            int removedIndex = mangaList.Items.FindIndex(i => i.Manga.Id == dto.RemovedMangaId);
+            if (removedIndex != -1)
+            {
+                mangaList.Items.RemoveAt(removedIndex);
+            }
         }
         
         await _context.SaveChangesAsync();
@@ -107,9 +120,17 @@ public class MangaListController : ControllerBase
     [HttpDelete("{mangaListId}")]
     public async Task<IActionResult> DeleteMangaList(string mangaListId)
     {
-        if (await _context.MangaLists.FindAsync(mangaListId) is not MangaList mangaList)
+        var mangaList = await _context.MangaLists
+            .Include(ml => ml.Owner)
+            .SingleOrDefaultAsync(ml => ml.Id == mangaListId);
+
+        if (mangaList == null)
         {
             return BadRequest("Manga list not found");
+        }
+        if (mangaList.Owner != await _userManager.GetUserAsync(User))
+        {
+            return BadRequest("Current user is not the owner of this manga list");
         }
 
         _context.MangaLists.Remove(mangaList);

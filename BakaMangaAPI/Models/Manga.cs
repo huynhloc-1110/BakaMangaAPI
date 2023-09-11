@@ -34,5 +34,5 @@ public class Manga : BaseModelWithCreatedAt
 
     public List<Rating> Ratings { get; set; } = new();
 
-    public List<MangaList> MangaLists { get; set; } = new();
+    public List<MangaListItem> MangaListItems { get; set; } = new();
 }
