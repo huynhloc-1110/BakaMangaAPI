@@ -10,22 +10,25 @@ public partial class MangaController
     public async Task<IActionResult> GetMangasFromList(string mangaListId)
     {
         var mangas = await _context.MangaListItems
+            .Include(i => i.Manga)
+                .ThenInclude(m => m.Chapters)
+                    .ThenInclude(c => c.ChapterViews)
+            .Include(i => i.Manga)
+                .ThenInclude(m => m.Chapters)
+                    .ThenInclude(c => c.Uploader)
+            .Include(i => i.Manga)
+                .ThenInclude(m => m.Chapters)
+                    .ThenInclude(c => c.UploadingGroup)
             .Where(i => i.MangaListId == mangaListId)
             .OrderBy(i => i.Index)
-            .Select(i => new
+            .Select(i => new ChapterGroupingDTO
             {
-                i.Manga,
-                Chapters = i.Manga.Chapters.OrderByDescending(c => c.CreatedAt).Take(3).ToList(),
+                Manga = _mapper.Map<MangaBasicDTO>(i.Manga),
+                Chapters = _mapper.Map<List<ChapterBasicDTO>>(i.Manga.Chapters
+                    .OrderBy(c => c.CreatedAt).Take(3).ToList())
             })
             .ToListAsync();
-        var mangasDTO = mangas
-            .Select(m => new ChapterGroupingDTO
-            {
-                Manga = _mapper.Map<MangaBasicDTO>(m.Manga),
-                Chapters = _mapper.Map<List<ChapterBasicDTO>>(m.Chapters)
-            })
-            .ToList();
 
-        return Ok(mangasDTO);
+        return Ok(mangas);
     }
 }
