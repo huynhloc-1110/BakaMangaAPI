@@ -11,7 +11,7 @@ namespace BakaMangaAPI.Controllers;
 
 [Route("mangas")]
 [ApiController]
-public class MangaController : ControllerBase
+public partial class MangaController : ControllerBase
 {
     private readonly ApplicationDbContext _context;
     private readonly IMapper _mapper;

@@ -40,6 +40,7 @@ public class MangaListController : ControllerBase
                 Id = ml.Id,
                 Name = ml.Name,
                 Type = ml.Type,
+                Owner = new UserSimpleDTO { Id = ml.Owner.Id, Name = ml.Owner.Name },
                 MangaCoverUrls = ml.Items
                     .OrderBy(i => i.Index)
                     .Select(i => i.Manga)
@@ -54,6 +55,33 @@ public class MangaListController : ControllerBase
             .ToListAsync();
 
         return Ok(mangaLists);
+    }
+
+    [HttpGet("{mangaListId}")]
+    public async Task<IActionResult> GetMangaList(string mangaListId)
+    {
+        var mangaList = await _context.MangaLists
+            .Where(ml => ml.Id == mangaListId)
+            .Select(ml => new MangaListBasicDTO
+            {
+                Id = ml.Id,
+                Name = ml.Name,
+                Type = ml.Type,
+                Owner = new UserSimpleDTO { Id = ml.Owner.Id, Name = ml.Owner.Name },
+                MangaCoverUrls = ml.Items
+                    .OrderBy(i => i.Index)
+                    .Select(i => i.Manga)
+                    .Where(m => m.DeletedAt == null)
+                    .Take(3)
+                    .Select(m => m.CoverPath)
+                    .ToList(),
+                UpdatedAt = ml.Items.Any() ? ml.Items.Max(i => i.AddedAt) : ml.CreatedAt,
+            })
+            .OrderByDescending(ml => ml.UpdatedAt)
+            .AsNoTracking()
+            .SingleOrDefaultAsync();
+
+        return Ok(mangaList);
     }
 
     [HttpPost]
