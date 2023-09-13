@@ -10,6 +10,7 @@ public class MangaListBasicDTO
     public UserSimpleDTO Owner { get; set; } = default!;
     public List<string?> MangaCoverUrls { get; set; } = new();
     public DateTime UpdatedAt { get; set; }
+    public bool AlreadyAdded { get; set; }
 }
 
 public class MangaListEditDTO

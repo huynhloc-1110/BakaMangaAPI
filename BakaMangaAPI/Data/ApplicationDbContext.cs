@@ -30,6 +30,7 @@ public class ApplicationDbContext : IdentityDbContext<
     public DbSet<Manga> Mangas { get; set; } = default!;
     public DbSet<MangaList> MangaLists { get; set; } = default!;
     public DbSet<MangaListItem> MangaListItems { get; set; } = default!;
+    public DbSet<MangaListFollower> MangaListFollowers { get; set; } = default!;
     public DbSet<Post> Posts { get; set; } = default!;
     public DbSet<Rating> Ratings { get; set; } = default!;
     public DbSet<React> Reacts { get; set; } = default!;
@@ -104,6 +105,19 @@ public class ApplicationDbContext : IdentityDbContext<
             item.HasOne(i => i.Manga)
                 .WithMany(m => m.MangaListItems)
                 .HasForeignKey(i => i.MangaId)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<MangaListFollower>(follower =>
+        {
+            follower.HasKey(f => new { f.MangaListID, f.UserId });
+            follower.HasOne(f => f.MangaList)
+                .WithMany(ml => ml.Followers)
+                .HasForeignKey(f => f.MangaListID)
+                .OnDelete(DeleteBehavior.Cascade);
+            follower.HasOne(f => f.User)
+                .WithMany(u => u.MangaListFollowers)
+                .HasForeignKey(f => f.UserId)
                 .OnDelete(DeleteBehavior.Cascade);
         });
     }

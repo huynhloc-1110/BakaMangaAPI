@@ -10,7 +10,7 @@ namespace BakaMangaAPI.Controllers.User;
 
 [Route("manga-lists")]
 [ApiController]
-public class MangaListController : ControllerBase
+public partial class MangaListController : ControllerBase
 {
     private readonly ApplicationDbContext _context;
     private readonly UserManager<ApplicationUser> _userManager;
@@ -22,7 +22,8 @@ public class MangaListController : ControllerBase
     }
 
     [HttpGet("~/users/{userId}/manga-lists")]
-    public async Task<IActionResult> GetUserMangaLists(string userId)
+    public async Task<IActionResult> GetUserMangaLists(string userId,
+        [FromQuery] string? checkedMangaId)
     {
         var mangaListQuery = _context.MangaLists
             .Where(ml => ml.Owner.Id == userId);
@@ -48,7 +49,9 @@ public class MangaListController : ControllerBase
                     .Take(3)
                     .Select(m => m.CoverPath)
                     .ToList(),
-                UpdatedAt = ml.Items.Any() ? ml.Items.Max(i => i.AddedAt) : ml.CreatedAt
+                UpdatedAt = ml.Items.Any() ? ml.Items.Max(i => i.AddedAt) : ml.CreatedAt,
+                AlreadyAdded = !string.IsNullOrEmpty(checkedMangaId) &&
+                    ml.Items.Select(i => i.MangaId).Contains(checkedMangaId)
             })
             .OrderByDescending(ml => ml.UpdatedAt)
             .AsNoTracking()
