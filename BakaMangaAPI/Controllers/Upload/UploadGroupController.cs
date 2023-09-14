@@ -70,6 +70,76 @@ public class UploadGroupController : ControllerBase
         return Ok(group);
     }
 
+    [HttpGet("{groupId}/members")]
+    public async Task<IActionResult> GetGroupMembers(string groupId)
+    {
+        if (await _context.Groups.FindAsync(groupId) is not Group group)
+        {
+            return NotFound();
+        }
+
+        var members = await _context.GroupMembers
+            .Where(m => m.Group == group)
+            .Select(m => new
+            {
+                m.User.Id,
+                m.User.Name,
+                m.User.AvatarPath,
+                m.IsLeader
+            })
+            .AsNoTracking()
+            .ToListAsync();
+
+        return Ok(members);
+    }
+
+    [HttpGet("{groupId}/chaptersByManga")]
+    [AllowAnonymous]
+    public async Task<IActionResult> GetChaptersOfUploaderByManga(string groupId,
+        [FromQuery] FilterDTO filter)
+    {
+        if (await _context.Groups.FindAsync(groupId) is not Group group)
+        {
+            return NotFound();
+        }
+
+        var chapterGroupingCount = await _context.Mangas
+            .Where(m => m.Chapters.Select(c => c.UploadingGroup).Contains(group))
+            .CountAsync();
+
+        var chapterGroupings = await _context.Chapters
+            .Include(c => c.Uploader)
+            .Include(c => c.UploadingGroup)
+            .Include(c => c.ChapterViews)
+            .Where(c => c.DeletedAt == null)
+            .Where(c => c.UploadingGroup == group)
+            .GroupBy(c => c.Manga.Id)
+            .Select(g => new
+            {
+                Manga = _context.Mangas.SingleOrDefault(m => m.Id == g.Key),
+                Chapters = g.OrderByDescending(c => c.CreatedAt).Take(3).ToList(),
+                UpdatedAt = g.Max(c => c.CreatedAt)
+            })
+            .OrderByDescending(g => g.UpdatedAt)
+            .Skip((filter.Page - 1) * filter.PageSize)
+            .Take(filter.PageSize)
+            .AsSplitQuery()
+            .AsNoTracking()
+            .ToListAsync();
+
+        var chapterGroupingList = chapterGroupings
+            .Select(g => new ChapterGroupingDTO()
+            {
+                Manga = _mapper.Map<MangaBasicDTO>(g.Manga),
+                Chapters = _mapper.Map<List<ChapterBasicDTO>>(g.Chapters)
+            })
+            .ToList();
+        var paginatedList = new PaginatedListDTO<ChapterGroupingDTO>
+            (chapterGroupingList, chapterGroupingCount, filter.Page, filter.PageSize);
+
+        return Ok(paginatedList);
+    }
+
     [HttpPost]
     [Authorize]
     public async Task<IActionResult> PostGroup([FromForm] GroupEditDTO dto)
