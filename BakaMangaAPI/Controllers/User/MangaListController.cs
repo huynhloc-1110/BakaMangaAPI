@@ -63,6 +63,12 @@ public partial class MangaListController : ControllerBase
     [HttpGet("{mangaListId}")]
     public async Task<IActionResult> GetMangaList(string mangaListId)
     {
+        ApplicationUser? user = null;
+        if (User.Identity!.IsAuthenticated == true)
+        {
+            user = await _userManager.GetUserAsync(User);
+        }
+
         var mangaList = await _context.MangaLists
             .Where(ml => ml.Id == mangaListId)
             .Select(ml => new MangaListBasicDTO
@@ -79,6 +85,7 @@ public partial class MangaListController : ControllerBase
                     .Select(m => m.CoverPath)
                     .ToList(),
                 UpdatedAt = ml.Items.Any() ? ml.Items.Max(i => i.AddedAt) : ml.CreatedAt,
+                AlreadyFollowed = ml.Followers.Select(f => f.User).Contains(user)
             })
             .OrderByDescending(ml => ml.UpdatedAt)
             .AsNoTracking()

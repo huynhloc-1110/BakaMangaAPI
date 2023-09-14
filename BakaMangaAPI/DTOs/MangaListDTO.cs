@@ -11,6 +11,7 @@ public class MangaListBasicDTO
     public List<string?> MangaCoverUrls { get; set; } = new();
     public DateTime UpdatedAt { get; set; }
     public bool AlreadyAdded { get; set; }
+    public bool AlreadyFollowed { get; set; }
 }
 
 public class MangaListEditDTO
