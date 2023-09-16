@@ -69,7 +69,7 @@ public class ChapterEditDTO
 
 public class ChapterGroupingDTO
 {
-    public MangaBasicDTO Manga { get; set; } = default!;
+    public MangaSimpleDTO Manga { get; set; } = default!;
 
     public List<ChapterBasicDTO> Chapters { get; set; } = new();
 }

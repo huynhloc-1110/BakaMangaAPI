@@ -6,6 +6,7 @@ using AutoMapper;
 using Microsoft.AspNetCore.Identity;
 using BakaMangaAPI.Models;
 using Microsoft.AspNetCore.Authorization;
+using AutoMapper.QueryableExtensions;
 
 namespace BakaMangaAPI.Controllers;
 
@@ -25,7 +26,6 @@ public partial class MangaController : ControllerBase
         _userManager = userManager;
     }
 
-    // GET: /mangas
     [HttpGet]
     public async Task<IActionResult> GetMangas
         ([FromQuery] MangaFilterDTO filter)
@@ -96,23 +96,17 @@ public partial class MangaController : ControllerBase
 
         // page
         var mangas = await query
-            .Include(m => m.Categories)
             .Skip((filter.Page - 1) * filter.PageSize)
             .Take(filter.PageSize)
+            .ProjectTo<MangaBasicDTO>(_mapper.ConfigurationProvider)
             .AsNoTracking()
             .ToListAsync();
-        if (mangas.Count == 0)
-        {
-            return NotFound();
-        }
 
-        var mangaList = _mapper.Map<List<MangaBasicDTO>>(mangas);
         var paginatedMangaList = new PaginatedListDTO<MangaBasicDTO>
-            (mangaList, mangasCount, filter.Page, filter.PageSize);
+            (mangas, mangasCount, filter.Page, filter.PageSize);
         return Ok(paginatedMangaList);
     }
 
-    // GET: /mangas/trending
     [HttpGet("trending")]
     public async Task<IActionResult> GetTrendingMangas()
     {
@@ -141,13 +135,13 @@ public partial class MangaController : ControllerBase
             })
             .OrderByDescending(m => 4 * m.ViewScore + 2 * m.RatingScore + 4 * m.NewScore)
             .Select(m => m.Manga)
-            .Include(m => m.Categories)
             .Take(10)
+            .ProjectTo<MangaBasicDTO>(_mapper.ConfigurationProvider)
             .ToListAsync();
-        return Ok(_mapper.Map<List<MangaBasicDTO>>(trendingMangas));
+
+        return Ok(trendingMangas);
     }
 
-    //GET: /mangas/new-to-you
     [HttpGet("new-to-you")]
     [Authorize]
     public async Task<IActionResult> GetRecommendedMangas()
@@ -156,36 +150,44 @@ public partial class MangaController : ControllerBase
             .Where(m => m.DeletedAt == null)
             .OrderBy(m => Guid.NewGuid())
             .Take(12)
+            .ProjectTo<MangaBasicDTO>(_mapper.ConfigurationProvider)
             .ToListAsync();
-        return Ok(_mapper.Map<List<MangaBasicDTO>>(recommendedMangas));
+
+        return Ok(recommendedMangas);
     }
 
-    // GET: /mangas/5
-    [HttpGet("{id}")]
-    public async Task<IActionResult> GetManga(string id)
+    [HttpGet("{mangaId}")]
+    public async Task<IActionResult> GetManga(string mangaId)
     {
         var manga = await _context.Mangas
-            .Include(m => m.Authors)
-            .Include(m => m.Categories)
-            .Include(m => m.Ratings)
-            .Include(m => m.Followers)
             .Where(m => m.DeletedAt == null)
+            .Where(m => m.Id == mangaId)
+            .ProjectTo<MangaDetailDTO>(_mapper.ConfigurationProvider)
             .AsSplitQuery()
             .AsNoTracking()
-            .SingleOrDefaultAsync(m => m.Id == id);
+            .SingleOrDefaultAsync();
 
-        if (manga == null || manga.DeletedAt != null)
+        if (manga == null)
         {
             return NotFound();
         }
 
-        var result = _mapper.Map<MangaDetailDTO>(manga);
+        return Ok(manga);
+    }
 
-        // get total views of chapters in manga
-        result.ViewCount = await _context.Chapters
-            .Where(c => c.Manga == manga)
-            .SumAsync(c => c.ChapterViews.Count);
+    [HttpGet("{mangaId}/stats")]
+    public async Task<IActionResult> GetMangaStats(string mangaId)
+    {
+        var mangaStats = await _context.Mangas
+            .Where(m => m.Id == mangaId)
+            .ProjectTo<MangaStatsDTO>(_mapper.ConfigurationProvider)
+            .AsNoTracking()
+            .SingleOrDefaultAsync();
 
-        return Ok(result);
+        if (mangaStats == null)
+        {
+            return NotFound();
+        }
+        return Ok(mangaStats);
     }
 }
