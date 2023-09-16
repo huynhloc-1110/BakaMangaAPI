@@ -2,7 +2,7 @@
 
 namespace BakaMangaAPI.Models;
 
-public class Request : BaseModelWithCreatedAt
+public class Request : BaseModel
 {
     public ApplicationUser User { get; set; } = default!;
 }

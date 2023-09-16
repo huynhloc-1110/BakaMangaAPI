@@ -2,7 +2,7 @@
 
 namespace BakaMangaAPI.Models;
 
-public class Post : BaseModelWithCreatedAt
+public class Post : BaseModel
 {
     [MaxLength(2000)]
     public string Content { get; set; } = string.Empty;

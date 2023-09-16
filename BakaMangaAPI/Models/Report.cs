@@ -2,7 +2,7 @@
 
 namespace BakaMangaAPI.Models;
 
-public class Report : BaseModelWithCreatedAt
+public class Report : BaseModel
 {
     [MaxLength(2000)]
     public string Reason { get; set; } = string.Empty;

@@ -79,9 +79,5 @@ public class ApplicationDbContext : IdentityDbContext<
         modelBuilder.Entity<MangaListItem>().HasKey(i => new { i.MangaListId, i.MangaId });
         modelBuilder.Entity<MangaListFollower>().HasKey(f => new { f.MangaListID, f.UserId });
         #endregion
-
-        #region Configure Global Filter
-
-        #endregion
     }
 }

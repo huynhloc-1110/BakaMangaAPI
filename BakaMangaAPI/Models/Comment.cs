@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace BakaMangaAPI.Models;
 
-public class Comment : BaseModelWithCreatedAt
+public class Comment : BaseModel
 {
     [MaxLength(2000)]
     public string Content { get; set; } = string.Empty;

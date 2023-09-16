@@ -2,7 +2,7 @@
 
 namespace BakaMangaAPI.Models;
 
-public class MangaList : BaseModelWithCreatedAt
+public class MangaList : BaseModel
 {
     [MaxLength(250)]
     public string Name { get; set; } = default!;

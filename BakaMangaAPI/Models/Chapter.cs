@@ -2,7 +2,7 @@
 
 namespace BakaMangaAPI.Models;
 
-public class Chapter : BaseModelWithCreatedAt
+public class Chapter : BaseModel
 {
     [Range(0, float.MaxValue)]
     public float Number { get; set; }

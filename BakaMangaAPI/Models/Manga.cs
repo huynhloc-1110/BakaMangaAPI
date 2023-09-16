@@ -2,7 +2,7 @@
 
 namespace BakaMangaAPI.Models;
 
-public class Manga : BaseModelWithCreatedAt
+public class Manga : BaseModel
 {
     [DataType(DataType.ImageUrl)]
     public string? CoverPath { get; set; }

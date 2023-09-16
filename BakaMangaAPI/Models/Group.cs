@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 namespace BakaMangaAPI.Models;
 
 [Index(nameof(Name), IsUnique = true)]
-public class Group : BaseModelWithCreatedAt
+public class Group : BaseModel
 {
     [MaxLength(100)]
     public string Name { get; set; } = default!;

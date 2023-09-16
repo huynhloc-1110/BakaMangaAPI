@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace BakaMangaAPI.Models;
 
-public class View : BaseModelWithCreatedAt
+public class View : BaseModel
 {
     public string UserId { get; set; } = default!;
     public ApplicationUser User { get; set; } = default!;
