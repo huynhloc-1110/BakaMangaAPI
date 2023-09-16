@@ -9,7 +9,7 @@ using AutoMapper;
 
 namespace BakaMangaAPI.Controllers;
 
-[Route("manage/manga")]
+[Route("manage/mangas")]
 [ApiController]
 [Authorize(Roles = "Admin")]
 public class ManageMangaController : ControllerBase
@@ -75,7 +75,7 @@ public class ManageMangaController : ControllerBase
         }
 
         var mangaDetailDTO = _mapper.Map<MangaDetailDTO>(manga);
-        return CreatedAtAction("GetManga", new { id = mangaDetailDTO.Id }, mangaDetailDTO);
+        return CreatedAtAction("GetManga", new { mangaId = mangaDetailDTO.Id }, mangaDetailDTO);
     }
 
     [HttpPut("{mangaId}")]
