@@ -1,4 +1,5 @@
 using AutoMapper;
+using AutoMapper.QueryableExtensions;
 
 using BakaMangaAPI.Data;
 using BakaMangaAPI.DTOs;
@@ -31,16 +32,16 @@ public class ManageMangaController : ControllerBase
     public async Task<IActionResult> GetManga(string mangaId)
     {
         var manga = await _context.Mangas
-            .Include(m => m.Categories)
-            .Include(m => m.Authors)
+            .Where(m => m.Id == mangaId)
+            .ProjectTo<MangaDetailDTO>(_mapper.ConfigurationProvider)
             .AsNoTracking()
-            .SingleOrDefaultAsync(m => m.Id == mangaId);
+            .SingleOrDefaultAsync();
         if (manga == null)
         {
             return NotFound();
         }
 
-        return Ok(_mapper.Map<MangaDetailDTO>(manga));
+        return Ok(manga);
     }
 
     [HttpPost]
@@ -77,7 +78,7 @@ public class ManageMangaController : ControllerBase
         }
 
         var mangaDetailDTO = _mapper.Map<MangaDetailDTO>(manga);
-        return CreatedAtAction("GetManga", new { mangaId = mangaDetailDTO.Id }, mangaDetailDTO);
+        return CreatedAtAction(nameof(GetManga), new { mangaId = mangaDetailDTO.Id }, mangaDetailDTO);
     }
 
     [HttpPut("{mangaId}")]

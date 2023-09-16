@@ -1,12 +1,14 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+﻿using AutoMapper;
+using AutoMapper.QueryableExtensions;
+
 using BakaMangaAPI.Data;
 using BakaMangaAPI.DTOs;
-using AutoMapper;
-using Microsoft.AspNetCore.Identity;
 using BakaMangaAPI.Models;
+
 using Microsoft.AspNetCore.Authorization;
-using AutoMapper.QueryableExtensions;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace BakaMangaAPI.Controllers;
 
@@ -66,7 +68,7 @@ public partial class MangaController : ControllerBase
         }
 
         // author filter
-        if (filter.SelectedAuthorId != null)
+        if (!string.IsNullOrEmpty(filter.SelectedAuthorId))
         {
             query = query.Where(m => m.Authors.Any(a => a.Id == filter.SelectedAuthorId));
         }
@@ -137,6 +139,7 @@ public partial class MangaController : ControllerBase
             .Select(m => m.Manga)
             .Take(10)
             .ProjectTo<MangaBasicDTO>(_mapper.ConfigurationProvider)
+            .AsNoTracking()
             .ToListAsync();
 
         return Ok(trendingMangas);
@@ -148,9 +151,10 @@ public partial class MangaController : ControllerBase
     {
         var recommendedMangas = await _context.Mangas
             .Where(m => m.DeletedAt == null)
-            .OrderBy(m => Guid.NewGuid())
+            .OrderBy(m => EF.Functions.Random())
             .Take(12)
             .ProjectTo<MangaBasicDTO>(_mapper.ConfigurationProvider)
+            .AsNoTracking()
             .ToListAsync();
 
         return Ok(recommendedMangas);
@@ -163,7 +167,6 @@ public partial class MangaController : ControllerBase
             .Where(m => m.DeletedAt == null)
             .Where(m => m.Id == mangaId)
             .ProjectTo<MangaDetailDTO>(_mapper.ConfigurationProvider)
-            .AsSplitQuery()
             .AsNoTracking()
             .SingleOrDefaultAsync();
 
