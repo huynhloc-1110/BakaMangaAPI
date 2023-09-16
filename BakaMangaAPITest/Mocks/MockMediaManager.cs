@@ -1,4 +1,4 @@
-﻿using BakaMangaAPI.Services;
+﻿using BakaMangaAPI.Services.Media;
 using Microsoft.AspNetCore.Http;
 
 namespace BakaMangaAPITest.Mocks;

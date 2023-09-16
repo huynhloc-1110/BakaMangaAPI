@@ -1,14 +1,17 @@
 using System.Text;
 using System.Text.Json.Serialization;
-using Microsoft.AspNetCore.Identity;
+
+using BakaMangaAPI.Data;
+using BakaMangaAPI.Models;
+using BakaMangaAPI.Services.Media;
+
+using DotNetEnv;
+using DotNetEnv.Configuration;
+
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using DotNetEnv.Configuration;
-using DotNetEnv;
-using BakaMangaAPI.Data;
-using BakaMangaAPI.Services;
-using BakaMangaAPI.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 

@@ -1,11 +1,13 @@
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.EntityFrameworkCore;
+using AutoMapper;
+
 using BakaMangaAPI.Data;
 using BakaMangaAPI.DTOs;
 using BakaMangaAPI.Models;
-using BakaMangaAPI.Services;
-using AutoMapper;
+using BakaMangaAPI.Services.Media;
+
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace BakaMangaAPI.Controllers;
 
