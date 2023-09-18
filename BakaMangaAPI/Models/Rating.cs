@@ -8,6 +8,5 @@ public class Rating : BaseModel
     public int Value { get; set; }
 
     public ApplicationUser User { get; set; } = default!;
-
     public Manga Manga { get; set; } = default!;
 }

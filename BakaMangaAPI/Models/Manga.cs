@@ -23,16 +23,10 @@ public class Manga : BaseModel
     public string? Description { get; set; }
 
     public List<Category> Categories { get; set; } = new();
-
     public List<Author> Authors { get; set; } = new();
-
     public List<Chapter> Chapters { get; set; } = new();
-
     public List<MangaComment> Comments { get; set; } = new();
-
     public List<ApplicationUser> Followers { get; set; } = new();
-
     public List<Rating> Ratings { get; set; } = new();
-
     public List<MangaListItem> MangaListItems { get; set; } = new();
 }

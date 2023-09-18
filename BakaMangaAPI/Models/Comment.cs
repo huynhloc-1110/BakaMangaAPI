@@ -1,22 +1,18 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace BakaMangaAPI.Models;
 
 public class Comment : BaseModel
 {
     [MaxLength(2000)]
-    public string Content { get; set; } = string.Empty;
+    public string Content { get; set; } = default!;
 
     public ApplicationUser User { get; set; } = default!;
-
-    public List<CommentReact> Reacts { get; set; } = new();
-
-    public List<CommentReport> Reports { get; set; } = new();
-
     public string? ParentCommentId { get; set; }
     public Comment? ParentComment { get; set; }
 
+    public List<CommentReact> Reacts { get; set; } = new();
+    public List<CommentReport> Reports { get; set; } = new();
     public List<Comment> ChildComments { get; set; } = new();
 }
 

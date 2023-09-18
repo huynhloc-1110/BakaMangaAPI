@@ -10,7 +10,6 @@ public class Request : BaseModel
 public class PromotionRequest : Request
 {
     [MaxLength(2000)]
-    public string Reason { get; set; } = string.Empty;
-
-    public string EvidenceLink { get; set; } = string.Empty;
+    public string Reason { get; set; } = default!;
+    public string EvidenceLink { get; set; } = default!;
 }

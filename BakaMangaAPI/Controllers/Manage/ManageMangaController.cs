@@ -32,6 +32,7 @@ public class ManageMangaController : ControllerBase
     public async Task<IActionResult> GetManga(string mangaId)
     {
         var manga = await _context.Mangas
+            .Where(m => m.Id == mangaId)
             .IgnoreQueryFilters()
             .ProjectTo<MangaDetailDTO>(_mapper.ConfigurationProvider)
             .AsNoTracking()

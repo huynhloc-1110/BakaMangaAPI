@@ -5,8 +5,7 @@ namespace BakaMangaAPI.Models;
 public class Report : BaseModel
 {
     [MaxLength(2000)]
-    public string Reason { get; set; } = string.Empty;
-
+    public string Reason { get; set; } = default!;
     public ReportStatus Status { get; set; }
 
     public ApplicationUser Reporter { get; set; } = default!;
