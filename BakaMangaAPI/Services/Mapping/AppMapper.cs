@@ -17,17 +17,6 @@ public partial class AppMapper : Profile
                 .MapFrom(src => src.Pages.OrderBy(p => p.Number).Select(p => p.Path).ToList()));
         CreateMap<Chapter, ChapterSimpleDTO>();
 
-        CreateMap<ApplicationUser, UserBasicDTO>()
-            .ForMember(dest => dest.Roles, opt => opt
-                .MapFrom(src => src.UserRoles.Select(ur => ur.Role.Name)));
-        CreateMap<ApplicationUser, UserSimpleDTO>();
-
-        CreateMap<Author, AuthorDTO>();
-        CreateMap<AuthorEditDTO, Author>();
-
-        CreateMap<Category, CategoryDTO>();
-        CreateMap<CategoryEditDTO, Category>();
-
         CreateMap<Comment, CommentDTO>()
             .ForMember(dest => dest.ChildCommentCount, opt => opt
                 .MapFrom(src => src.ChildComments.Count(c => c.DeletedAt == null)))
