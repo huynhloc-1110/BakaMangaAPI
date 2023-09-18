@@ -41,6 +41,7 @@ public class ManageAuthorController : ControllerBase
             query = query.Where(m => m.Name.ToLower().Contains(filter.Search.ToLower()));
         }
 
+        var authorCount = await query.CountAsync();
         var authors = await query
             .OrderBy(a => a.Name)
             .Skip((filter.Page - 1) * filter.PageSize)
@@ -49,7 +50,6 @@ public class ManageAuthorController : ControllerBase
             .AsNoTracking()
             .ToListAsync();
 
-        var authorCount = await query.CountAsync();
         var paginatedAuthorList = new PaginatedListDTO<AuthorDTO>
             (authors, authorCount, filter.Page, filter.PageSize);
         return Ok(paginatedAuthorList);

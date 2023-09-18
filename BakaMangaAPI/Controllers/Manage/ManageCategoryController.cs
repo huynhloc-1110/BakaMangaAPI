@@ -41,13 +41,18 @@ public class ManageCategoryController : ControllerBase
             query = query.Where(m => m.Name.ToLower().Contains(filter.Search.ToLower()));
         }
 
+        var categoryCount = await query.CountAsync();
         var categories = await query
             .OrderBy(a => a.Name)
+            .Skip((filter.Page - 1) * filter.PageSize)
+            .Take(filter.PageSize)
             .AsNoTracking()
             .ProjectTo<CategoryDTO>(_mapper.ConfigurationProvider)
             .ToListAsync();
 
-        return Ok(categories);
+        var paginatedCategoryList = new PaginatedListDTO<CategoryDTO>(
+            categories, categoryCount, filter.Page, filter.PageSize);
+        return Ok(paginatedCategoryList);
     }
 
     [HttpGet("{categoryId}")]
