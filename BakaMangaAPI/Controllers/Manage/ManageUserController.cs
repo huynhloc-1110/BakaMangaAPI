@@ -8,9 +8,9 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-namespace BakaMangaAPI.Controllers;
+namespace BakaMangaAPI.Controllers.Manage;
 
-[Route("manage/user")]
+[Route("manage/users")]
 [ApiController]
 [Authorize(Roles = "Admin")]
 public class ManageUserController : ControllerBase
@@ -62,14 +62,13 @@ public class ManageUserController : ControllerBase
         return Ok(paginatedUserList);
     }
 
-    [HttpPut("{id}")]
-    public async Task<IActionResult> UpdateRoles([FromRoute] string id,
-        [FromBody] string[] roles)
+    [HttpPut("{userId}")]
+    public async Task<IActionResult> UpdateRoles([FromRoute] string userId, [FromBody] string[] roles)
     {
         var user = _context.ApplicationUsers
             .Include(u => u.UserRoles)
                 .ThenInclude(ur => ur.Role)
-            .SingleOrDefault(u => u.Id == id);
+            .SingleOrDefault(u => u.Id == userId);
 
         if (user == null)
         {

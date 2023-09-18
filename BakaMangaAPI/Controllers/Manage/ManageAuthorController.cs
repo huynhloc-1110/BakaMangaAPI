@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-namespace BakaMangaAPI.Controllers;
+namespace BakaMangaAPI.Controllers.Manage;
 
 [Route("manage/authors")]
 [ApiController]
@@ -96,7 +96,7 @@ public class ManageAuthorController : ControllerBase
         }
 
         var authorDTO = _mapper.Map<AuthorDTO>(author);
-        return CreatedAtAction(nameof(GetAuthor) , new { authorId = authorDTO.Id }, authorDTO);
+        return CreatedAtAction(nameof(GetAuthor), new { authorId = authorDTO.Id }, authorDTO);
     }
 
     [HttpPut("{authorId}")]

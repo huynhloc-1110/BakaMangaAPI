@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-namespace BakaMangaAPI.Controllers;
+namespace BakaMangaAPI.Controllers.Manage;
 
 [Route("manage/mangas")]
 [ApiController]
@@ -148,7 +148,7 @@ public class ManageMangaController : ControllerBase
     {
         return _context.Mangas.IgnoreQueryFilters().Any(e => e.Id == id);
     }
-    
+
     private async Task<List<Category>> ConvertCategoriesAysnc(string categoryIds)
     {
         var categoryArr = categoryIds.Split(',');
@@ -156,7 +156,7 @@ public class ManageMangaController : ControllerBase
             .Where(c => categoryArr.Contains(c.Id))
             .ToListAsync();
     }
-    
+
     private async Task<List<Author>> ConvertAuthorsAsync(string authorIds)
     {
         var authorArr = authorIds.Split(',');

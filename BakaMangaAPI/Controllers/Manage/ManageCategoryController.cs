@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-namespace BakaMangaAPI.Controllers;
+namespace BakaMangaAPI.Controllers.Manage;
 
 [Route("manage/categories")]
 [ApiController]
@@ -30,12 +30,12 @@ public class ManageCategoryController : ControllerBase
     public async Task<IActionResult> GetCategories([FromQuery] FilterDTO filter)
     {
         var query = _context.Categories.AsQueryable();
-        
+
         if (filter.IncludeDeleted)
         {
             query = query.IgnoreQueryFilters();
         }
-        
+
         if (!string.IsNullOrEmpty(filter.Search))
         {
             query = query.Where(m => m.Name.ToLower().Contains(filter.Search.ToLower()));
