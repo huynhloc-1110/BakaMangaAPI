@@ -35,9 +35,9 @@ public partial class MangaController : ControllerBase
         var query = _context.Mangas.AsQueryable();
 
         // exclude deleted filter
-        if (filter.ExcludeDeleted)
+        if (filter.IncludeDeleted)
         {
-            query = query.Where(a => a.DeletedAt == null);
+            query = query.IgnoreQueryFilters();
         }
 
         // search filter
@@ -117,7 +117,6 @@ public partial class MangaController : ControllerBase
             .Count(cv => DateTime.Equals(cv.CreatedAt.Date, DateTime.UtcNow.Date)))
             .Sum());
         var trendingMangas = await _context.Mangas
-            .Where(m => m.DeletedAt == null)
             .Select(m => new
             {
                 Manga = m,
@@ -150,7 +149,6 @@ public partial class MangaController : ControllerBase
     public async Task<IActionResult> GetRecommendedMangas()
     {
         var recommendedMangas = await _context.Mangas
-            .Where(m => m.DeletedAt == null)
             .OrderBy(m => EF.Functions.Random())
             .Take(12)
             .ProjectTo<MangaBasicDTO>(_mapper.ConfigurationProvider)
@@ -164,7 +162,6 @@ public partial class MangaController : ControllerBase
     public async Task<IActionResult> GetManga(string mangaId)
     {
         var manga = await _context.Mangas
-            .Where(m => m.DeletedAt == null)
             .Where(m => m.Id == mangaId)
             .ProjectTo<MangaDetailDTO>(_mapper.ConfigurationProvider)
             .AsNoTracking()

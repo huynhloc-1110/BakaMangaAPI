@@ -79,5 +79,15 @@ public class ApplicationDbContext : IdentityDbContext<
         modelBuilder.Entity<MangaListItem>().HasKey(i => new { i.MangaListId, i.MangaId });
         modelBuilder.Entity<MangaListFollower>().HasKey(f => new { f.MangaListID, f.UserId });
         #endregion
+
+        #region Configure Global Filter
+        modelBuilder.Entity<Author>().HasQueryFilter(a => a.DeletedAt == null);
+
+        modelBuilder.Entity<Category>().HasQueryFilter(c => c.DeletedAt == null);
+
+        modelBuilder.Entity<Manga>().HasQueryFilter(m => m.DeletedAt == null);
+        modelBuilder.Entity<MangaListItem>().HasQueryFilter(i => i.Manga.DeletedAt == null);
+        modelBuilder.Entity<Rating>().HasQueryFilter(i => i.Manga.DeletedAt == null);
+        #endregion
     }
 }

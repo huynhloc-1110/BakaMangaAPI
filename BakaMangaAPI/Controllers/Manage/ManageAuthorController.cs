@@ -1,14 +1,17 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.EntityFrameworkCore;
+﻿using AutoMapper;
+using AutoMapper.QueryableExtensions;
+
 using BakaMangaAPI.Data;
-using BakaMangaAPI.Models;
-using AutoMapper;
 using BakaMangaAPI.DTOs;
+using BakaMangaAPI.Models;
+
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace BakaMangaAPI.Controllers;
 
-[Route("manage/author")]
+[Route("manage/authors")]
 [ApiController]
 [Authorize(Roles = "Admin")]
 public class ManageAuthorController : ControllerBase
@@ -22,16 +25,17 @@ public class ManageAuthorController : ControllerBase
         _mapper = mapper;
     }
 
-    // GET: manage/author?Search=&Page=1&PageSize=12
     [HttpGet]
     [AllowAnonymous]
     public async Task<IActionResult> GetAuthors([FromQuery] FilterDTO filter)
     {
         var query = _context.Authors.AsQueryable();
-        if (filter.ExcludeDeleted)
+
+        if (filter.IncludeDeleted)
         {
-            query = query.Where(a => a.DeletedAt == null);
+            query = query.IgnoreQueryFilters();
         }
+
         if (!string.IsNullOrEmpty(filter.Search))
         {
             query = query.Where(m => m.Name.ToLower().Contains(filter.Search.ToLower()));
@@ -41,79 +45,40 @@ public class ManageAuthorController : ControllerBase
             .OrderBy(a => a.Name)
             .Skip((filter.Page - 1) * filter.PageSize)
             .Take(filter.PageSize)
+            .ProjectTo<AuthorDTO>(_mapper.ConfigurationProvider)
             .AsNoTracking()
             .ToListAsync();
-        if (authors.Count == 0)
-        {
-            return NotFound();
-        }
 
         var authorCount = await query.CountAsync();
-        var authorList = _mapper.Map<List<AuthorDTO>>(authors);
         var paginatedAuthorList = new PaginatedListDTO<AuthorDTO>
-            (authorList, authorCount, filter.Page, filter.PageSize);
+            (authors, authorCount, filter.Page, filter.PageSize);
         return Ok(paginatedAuthorList);
     }
 
-    // GET: manage/author/5
-    [HttpGet("{id}")]
+    [HttpGet("{authorId}")]
     [AllowAnonymous]
-    public async Task<IActionResult> GetAuthor(string id)
+    public async Task<IActionResult> GetAuthor(string authorId)
     {
-        var author = await _context.Authors.FindAsync(id);
-
-        if (author == null)
-        {
-            return NotFound();
-        }
-
-        return Ok(_mapper.Map<AuthorDTO>(author));
-    }
-
-    // PUT: manage/author/5
-    [HttpPut("{id}")]
-    public async Task<IActionResult> PutAuthor(string id, AuthorEditDTO authorEditDTO)
-    {
-        if (id != authorEditDTO.Id)
-        {
-            return BadRequest();
-        }
-
         var author = await _context.Authors
-            .SingleOrDefaultAsync(a => a.Id == id);
+            .IgnoreQueryFilters()
+            .Where(a => a.Id == authorId)
+            .ProjectTo<AuthorDTO>(_mapper.ConfigurationProvider)
+            .SingleOrDefaultAsync();
+
         if (author == null)
         {
             return NotFound();
         }
 
-        author = _mapper.Map(authorEditDTO, author);
-
-        try
-        {
-            await _context.SaveChangesAsync();
-        }
-        catch (DbUpdateConcurrencyException)
-        {
-            if (!AuthorExists(id))
-            {
-                return NotFound();
-            }
-            else
-            {
-                throw;
-            }
-        }
-
-        return NoContent();
+        return Ok(author);
     }
 
-    // POST: manage/author
-    // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
     [HttpPost]
     public async Task<IActionResult> PostAuthor(AuthorEditDTO authorEditDTO)
     {
         var author = _mapper.Map<Author>(authorEditDTO);
         _context.Authors.Add(author);
+
         try
         {
             await _context.SaveChangesAsync();
@@ -131,37 +96,62 @@ public class ManageAuthorController : ControllerBase
         }
 
         var authorDTO = _mapper.Map<AuthorDTO>(author);
-        return CreatedAtAction("GetAuthor", new { id = authorDTO.Id }, authorDTO);
+        return CreatedAtAction(nameof(GetAuthor) , new { authorId = authorDTO.Id }, authorDTO);
     }
 
-    // DELETE: manage/author/5?undelete=false
-    [HttpDelete("{id}")]
-    public async Task<IActionResult> DeleteAuthor(string id, [FromQuery] bool undelete)
+    [HttpPut("{authorId}")]
+    public async Task<IActionResult> PutAuthor(string authorId, AuthorEditDTO authorEditDTO)
     {
-        if (_context.Authors == null)
-        {
-            return NotFound();
-        }
-        var author = await _context.Authors.FindAsync(id);
+        var author = await _context.Authors
+            .IgnoreQueryFilters()
+            .SingleOrDefaultAsync(a => a.Id == authorId);
+
         if (author == null)
         {
             return NotFound();
         }
 
-        if (undelete)
+        author = _mapper.Map(authorEditDTO, author);
+
+        try
         {
-            author.DeletedAt = null;
+            await _context.SaveChangesAsync();
         }
-        else
+        catch (DbUpdateConcurrencyException)
         {
-            author.DeletedAt = DateTime.UtcNow;
+            if (!AuthorExists(authorId))
+            {
+                return NotFound();
+            }
+            else
+            {
+                throw;
+            }
         }
+
+        return NoContent();
+    }
+
+    [HttpDelete("{authorId}")]
+    public async Task<IActionResult> DeleteAuthor(string authorId, [FromQuery] bool undelete)
+    {
+        var author = await _context.Authors
+            .IgnoreQueryFilters()
+            .SingleOrDefaultAsync(a => a.Id == authorId);
+
+        if (author == null)
+        {
+            return NotFound();
+        }
+
+        author.DeletedAt = undelete ? null : DateTime.UtcNow;
+
         await _context.SaveChangesAsync();
         return NoContent();
     }
 
     private bool AuthorExists(string id)
     {
-        return (_context.Authors?.Any(e => e.Id == id)).GetValueOrDefault();
+        return _context.Authors.Any(e => e.Id == id);
     }
 }

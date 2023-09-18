@@ -15,7 +15,6 @@ public partial class MangaController
             .Where(i => i.MangaListId == mangaListId)
             .OrderBy(i => i.Index)
             .ProjectTo<ChapterGroupingDTO>(_mapper.ConfigurationProvider)
-            .AsSplitQuery()
             .AsNoTracking()
             .ToListAsync();
 

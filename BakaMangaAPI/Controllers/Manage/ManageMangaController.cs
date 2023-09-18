@@ -32,7 +32,7 @@ public class ManageMangaController : ControllerBase
     public async Task<IActionResult> GetManga(string mangaId)
     {
         var manga = await _context.Mangas
-            .Where(m => m.Id == mangaId)
+            .IgnoreQueryFilters()
             .ProjectTo<MangaDetailDTO>(_mapper.ConfigurationProvider)
             .AsNoTracking()
             .SingleOrDefaultAsync();
@@ -85,9 +85,10 @@ public class ManageMangaController : ControllerBase
     public async Task<IActionResult> PutManga(string mangaId, [FromForm] MangaEditDTO mangaEditDTO)
     {
         var manga = await _context.Mangas
+            .IgnoreQueryFilters()
             .Include(m => m.Authors)
             .Include(m => m.Categories)
-            .FirstOrDefaultAsync(m => m.Id == mangaId);
+            .SingleOrDefaultAsync(m => m.Id == mangaId);
         if (manga == null)
         {
             return NotFound();
@@ -128,7 +129,9 @@ public class ManageMangaController : ControllerBase
     [HttpDelete("{mangaId}")]
     public async Task<IActionResult> DeleteManga(string mangaId, [FromQuery] bool undelete)
     {
-        var manga = await _context.Mangas.FindAsync(mangaId);
+        var manga = await _context.Mangas
+            .IgnoreQueryFilters()
+            .SingleOrDefaultAsync(m => m.Id == mangaId);
         if (manga == null)
         {
             return NotFound();
@@ -142,7 +145,7 @@ public class ManageMangaController : ControllerBase
 
     private bool MangaExists(string id)
     {
-        return (_context.Mangas?.Any(e => e.Id == id)).GetValueOrDefault();
+        return _context.Mangas.IgnoreQueryFilters().Any(e => e.Id == id);
     }
     
     private async Task<List<Category>> ConvertCategoriesAysnc(string categoryIds)

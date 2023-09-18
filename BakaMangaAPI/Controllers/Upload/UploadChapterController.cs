@@ -42,7 +42,7 @@ public class UploadChapterController : ControllerBase
         var query = _context.Chapters.Where(c => c.Uploader == uploader);
 
         // filter exclude deleted
-        if (filter.ExcludeDeleted)
+        if (!filter.IncludeDeleted)
         {
             query = query.Where(c => c.DeletedAt == null);
         }

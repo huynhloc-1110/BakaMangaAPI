@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+
 using BakaMangaAPI.Models;
 
 namespace BakaMangaAPI.DTOs;

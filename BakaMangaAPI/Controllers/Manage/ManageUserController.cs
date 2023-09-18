@@ -1,11 +1,12 @@
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.EntityFrameworkCore;
-using BakaMangaAPI.Data;
-using BakaMangaAPI.Models;
 using AutoMapper;
+using AutoMapper.QueryableExtensions;
+
+using BakaMangaAPI.Data;
 using BakaMangaAPI.DTOs;
-using Microsoft.AspNetCore.Identity;
+
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace BakaMangaAPI.Controllers;
 
@@ -24,23 +25,22 @@ public class ManageUserController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetUsers
-        ([FromQuery] UserFilterDTO filter)
+    public async Task<IActionResult> GetUsers([FromQuery] UserFilterDTO filter)
     {
-        var query = _context.ApplicationUsers
-            .Include(u => u.UserRoles)
-                .ThenInclude(ur => ur.Role)
-            .AsQueryable();
-        if (filter.ExcludeDeleted)
+        var query = _context.ApplicationUsers.AsQueryable();
+
+        if (!filter.IncludeDeleted)
         {
             query = query.Where(u => u.DeletedAt == null);
         }
+
         if (!string.IsNullOrEmpty(filter.Search))
         {
             query = query
                 .Where(u => u.Name.ToLower().Contains(filter.Search.ToLower())
                     || u.Email.ToLower().Contains(filter.Search.ToLower()));
         }
+
         query = filter.RoleOption switch
         {
             RoleOption.All => query,
@@ -48,21 +48,17 @@ public class ManageUserController : ControllerBase
                 .Contains(filter.RoleOption.ToString()))
         };
 
+        var userCount = await query.CountAsync();
         var users = await query
             .OrderBy(u => u.Name)
             .Skip((filter.Page - 1) * filter.PageSize)
             .Take(filter.PageSize)
+            .ProjectTo<UserBasicDTO>(_mapper.ConfigurationProvider)
             .AsNoTracking()
             .ToListAsync();
-        if (users.Count == 0)
-        {
-            return NotFound();
-        }
 
-        var userCount = await query.CountAsync();
-        var userList = _mapper.Map<List<UserBasicDTO>>(users);
         var paginatedUserList = new PaginatedListDTO<UserBasicDTO>
-            (userList, userCount, filter.Page, filter.PageSize);
+            (users, userCount, filter.Page, filter.PageSize);
         return Ok(paginatedUserList);
     }
 
@@ -74,6 +70,7 @@ public class ManageUserController : ControllerBase
             .Include(u => u.UserRoles)
                 .ThenInclude(ur => ur.Role)
             .SingleOrDefault(u => u.Id == id);
+
         if (user == null)
         {
             return BadRequest();
@@ -87,6 +84,7 @@ public class ManageUserController : ControllerBase
                 Role = _context.ApplicationRoles.SingleOrDefault(r => r.Name == role)!
             });
         }
+
         await _context.SaveChangesAsync();
         return NoContent();
     }
