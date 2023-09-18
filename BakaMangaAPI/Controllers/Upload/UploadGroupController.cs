@@ -2,6 +2,7 @@ using AutoMapper;
 using BakaMangaAPI.Data;
 using BakaMangaAPI.DTOs;
 using BakaMangaAPI.Models;
+using BakaMangaAPI.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -16,13 +17,15 @@ public class UploadGroupController : ControllerBase
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly ApplicationDbContext _context;
     private readonly IMapper _mapper;
+    private readonly IMediaManager _mediaManager;
 
     public UploadGroupController(UserManager<ApplicationUser> userManager, ApplicationDbContext context,
-        IMapper mapper)
+        IMapper mapper, IMediaManager mediaManager)
     {
         _userManager = userManager;
         _context = context;
         _mapper = mapper;
+        _mediaManager = mediaManager;
     }
 
     [HttpGet("~/users/{userId}/groups")]
@@ -66,6 +69,11 @@ public class UploadGroupController : ControllerBase
                 ViewGainedNumber = g.Chapters.Sum(c => c.ChapterViews.Count)
             })
             .SingleOrDefaultAsync();
+
+        if (group == null)
+        {
+            return NotFound();
+        }
 
         return Ok(group);
     }
@@ -159,5 +167,48 @@ public class UploadGroupController : ControllerBase
         await _context.SaveChangesAsync();
 
         return Ok(_mapper.Map<GroupBasicDTO>(group));
+    }
+
+    [HttpPut("{groupId}")]
+    public async Task<IActionResult> PutGroup(string groupId, [FromForm] GroupEditDTO dto)
+    {
+        if (await _context.Groups.FindAsync(groupId) is not Group group)
+        {
+            return BadRequest("Group not found");
+        }
+
+        group.Name = dto.Name;
+        group.Biography = dto.Biography;
+
+        if (dto.AvatarImage != null)
+        {
+            var imagePath = await _mediaManager.UploadImageAsync(
+                dto.AvatarImage, groupId, ImageType.Avatar);
+            group.AvatarPath = imagePath;
+        }
+        
+        if (dto.BannerImage != null)
+        {
+            var imagePath = await _mediaManager.UploadImageAsync(
+                dto.BannerImage, groupId, ImageType.Banner);
+            group.BannerPath = imagePath;
+        }
+
+        await _context.SaveChangesAsync();
+        return NoContent();
+    }
+
+    [HttpDelete("{groupId}")]
+    public async Task<IActionResult> DeleteGroup(string groupId)
+    {
+        if (await _context.Groups.FindAsync(groupId) is not Group group)
+        {
+            return BadRequest("Group not found");
+        }
+
+        group.DeletedAt = DateTime.UtcNow;
+
+        await _context.SaveChangesAsync();
+        return NoContent();
     }
 }
