@@ -2,7 +2,8 @@ using AutoMapper;
 using BakaMangaAPI.Data;
 using BakaMangaAPI.DTOs;
 using BakaMangaAPI.Models;
-using BakaMangaAPI.Services;
+using BakaMangaAPI.Services.Media;
+
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -101,7 +102,7 @@ public class UploadGroupController : ControllerBase
         return Ok(members);
     }
 
-    [HttpGet("{groupId}/chaptersByManga")]
+    [HttpGet("{groupId}/chapters-by-manga")]
     [AllowAnonymous]
     public async Task<IActionResult> GetChaptersOfUploaderByManga(string groupId,
         [FromQuery] FilterDTO filter)
@@ -169,31 +170,60 @@ public class UploadGroupController : ControllerBase
         return Ok(_mapper.Map<GroupBasicDTO>(group));
     }
 
+    [HttpPost("{groupId}/avatar")]
+    [Authorize]
+    public async Task<IActionResult> PostGroupAvatar(string groupId, IFormFile avatarImage)
+    {
+        if (await _context.Groups.FindAsync(groupId) is not Group group)
+        {
+            return NotFound("Group not found");
+        }
+        if (!await IsUserLeader(group))
+        {
+            return Unauthorized("The user must be group leader to do this");
+        }
+
+        group.AvatarPath = await _mediaManager.UploadImageAsync(
+            avatarImage, groupId, ImageType.Avatar);
+
+        await _context.SaveChangesAsync();
+        return Ok(_mapper.Map<GroupDetailDTO>(group));
+    }
+
+    [HttpPost("{groupId}/banner")]
+    public async Task<IActionResult> PostGroupBanner(string groupId, IFormFile bannerImage)
+    {
+        if (await _context.Groups.FindAsync(groupId) is not Group group)
+        {
+            return NotFound("Group not found");
+        }
+        if (!await IsUserLeader(group))
+        {
+            return Unauthorized("The user must be group leader to do this");
+        }
+
+        group.BannerPath = await _mediaManager.UploadImageAsync(
+            bannerImage, groupId, ImageType.Banner);
+
+        await _context.SaveChangesAsync();
+        return Ok(_mapper.Map<GroupDetailDTO>(group));
+    }
+
     [HttpPut("{groupId}")]
     public async Task<IActionResult> PutGroup(string groupId, [FromForm] GroupEditDTO dto)
     {
         if (await _context.Groups.FindAsync(groupId) is not Group group)
         {
-            return BadRequest("Group not found");
+            return NotFound("Group not found");
+        }
+        if (!await IsUserLeader(group))
+        {
+            return Unauthorized("The user must be group leader to do this");
         }
 
         group.Name = dto.Name;
         group.Biography = dto.Biography;
-
-        if (dto.AvatarImage != null)
-        {
-            var imagePath = await _mediaManager.UploadImageAsync(
-                dto.AvatarImage, groupId, ImageType.Avatar);
-            group.AvatarPath = imagePath;
-        }
         
-        if (dto.BannerImage != null)
-        {
-            var imagePath = await _mediaManager.UploadImageAsync(
-                dto.BannerImage, groupId, ImageType.Banner);
-            group.BannerPath = imagePath;
-        }
-
         await _context.SaveChangesAsync();
         return NoContent();
     }
@@ -205,10 +235,22 @@ public class UploadGroupController : ControllerBase
         {
             return BadRequest("Group not found");
         }
+        if (!await IsUserLeader(group))
+        {
+            return Unauthorized("The user must be group leader to do this");
+        }
 
         group.DeletedAt = DateTime.UtcNow;
 
         await _context.SaveChangesAsync();
         return NoContent();
+    }
+
+    private async Task<bool> IsUserLeader(Group group)
+    {
+        var user = await _userManager.GetUserAsync(User);
+        return await _context.GroupMembers
+            .Where(gm => gm.Group == group)
+            .AnyAsync(gm => gm.User == user && gm.IsLeader);
     }
 }

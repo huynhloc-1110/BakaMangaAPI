@@ -29,6 +29,7 @@ public partial class AppMapper : Profile
         CreateMap<CommentEditDTO, Comment>();
 
         CreateMap<Group, GroupBasicDTO>();
+        CreateMap<Group, GroupDetailDTO>();
 
         CreateMap<MangaListItem, ChapterGroupingDTO>()
             .ForMember(dest => dest.Chapters, opt => opt

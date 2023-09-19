@@ -33,8 +33,4 @@ public class GroupEditDTO
 
     [MaxLength(1000)]
     public string Biography { get; set; } = default!;
-
-    public IFormFile? AvatarImage { get; set; }
-
-    public IFormFile? BannerImage { get; set; }
 }
