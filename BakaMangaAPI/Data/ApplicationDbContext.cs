@@ -45,7 +45,7 @@ public class ApplicationDbContext : IdentityDbContext<
         // do not remove, this is necessary when using IdentityDbContext
         base.OnModelCreating(modelBuilder);
 
-        #region declare inheritance
+        #region Declare Inheritance
         modelBuilder.Entity<MangaComment>().HasBaseType<Comment>();
         modelBuilder.Entity<ChapterComment>().HasBaseType<Comment>();
         modelBuilder.Entity<PostComment>().HasBaseType<Comment>();
@@ -64,7 +64,7 @@ public class ApplicationDbContext : IdentityDbContext<
         modelBuilder.Entity<PromotionRequest>().HasBaseType<Request>();
         #endregion
 
-        // set up application user, role, userrole
+        #region Configure relationships
         modelBuilder.Entity<ApplicationUserRole>(userRole =>
         {
             userRole.HasKey(ur => new { ur.UserId, ur.RoleId });
@@ -75,50 +75,19 @@ public class ApplicationDbContext : IdentityDbContext<
                 .WithMany(u => u.UserRoles)
                 .HasForeignKey(ur => ur.UserId);
         });
+        modelBuilder.Entity<GroupMember>().HasKey(gp => new { gp.GroupId, gp.UserId });
+        modelBuilder.Entity<MangaListItem>().HasKey(i => new { i.MangaListId, i.MangaId });
+        modelBuilder.Entity<MangaListFollower>().HasKey(f => new { f.MangaListID, f.UserId });
+        #endregion
 
-        // set up group member
-        modelBuilder.Entity<GroupMember>(groupMember =>
-        {
-            groupMember.HasKey(gp => new { gp.GroupId, gp.UserId });
-            groupMember.HasOne(gp => gp.Group)
-                .WithMany(g => g.Members)
-                .HasForeignKey(gp => gp.GroupId);
-            groupMember.HasOne(gp => gp.User)
-                .WithMany(u => u.GroupMembers)
-                .HasForeignKey(gp => gp.UserId);
-        });
+        #region Configure Global Filter
+        modelBuilder.Entity<Author>().HasQueryFilter(a => a.DeletedAt == null);
 
-        // set default delete behaviors to restrict
-        foreach (var relationship in modelBuilder.Model.GetEntityTypes().SelectMany(e => e.GetForeignKeys()))
-        {
-            relationship.DeleteBehavior = DeleteBehavior.Restrict;
-        }
+        modelBuilder.Entity<Category>().HasQueryFilter(c => c.DeletedAt == null);
 
-        // set up manga list
-        modelBuilder.Entity<MangaListItem>(item =>
-        {
-            item.HasKey(i => new { i.MangaListId, i.MangaId });
-            item.HasOne(i => i.MangaList)
-                .WithMany(ml => ml.Items)
-                .HasForeignKey(i => i.MangaListId)
-                .OnDelete(DeleteBehavior.Cascade);
-            item.HasOne(i => i.Manga)
-                .WithMany(m => m.MangaListItems)
-                .HasForeignKey(i => i.MangaId)
-                .OnDelete(DeleteBehavior.Cascade);
-        });
-
-        modelBuilder.Entity<MangaListFollower>(follower =>
-        {
-            follower.HasKey(f => new { f.MangaListID, f.UserId });
-            follower.HasOne(f => f.MangaList)
-                .WithMany(ml => ml.Followers)
-                .HasForeignKey(f => f.MangaListID)
-                .OnDelete(DeleteBehavior.Cascade);
-            follower.HasOne(f => f.User)
-                .WithMany(u => u.MangaListFollowers)
-                .HasForeignKey(f => f.UserId)
-                .OnDelete(DeleteBehavior.Cascade);
-        });
+        modelBuilder.Entity<Manga>().HasQueryFilter(m => m.DeletedAt == null);
+        modelBuilder.Entity<MangaListItem>().HasQueryFilter(i => i.Manga.DeletedAt == null);
+        modelBuilder.Entity<Rating>().HasQueryFilter(i => i.Manga.DeletedAt == null);
+        #endregion
     }
 }

@@ -1,10 +1,11 @@
-﻿using Microsoft.EntityFrameworkCore;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
+
+using Microsoft.EntityFrameworkCore;
 
 namespace BakaMangaAPI.Models;
 
 [Index(nameof(Name), IsUnique = true)]
-public class Group : BaseModelWithCreatedAt
+public class Group : BaseModel
 {
     [MaxLength(100)]
     public string Name { get; set; } = default!;
@@ -19,6 +20,5 @@ public class Group : BaseModelWithCreatedAt
     public string? BannerPath { get; set; }
 
     public List<GroupMember> Members { get; set; } = new();
-
     public List<Chapter> Chapters { get; set; } = new();
 }

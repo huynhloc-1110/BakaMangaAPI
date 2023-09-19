@@ -1,4 +1,4 @@
-namespace BakaMangaAPI.Services;
+namespace BakaMangaAPI.Services.Media;
 
 public interface IMediaManager
 {

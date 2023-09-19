@@ -1,4 +1,6 @@
-﻿using BakaMangaAPI.DTOs;
+﻿using AutoMapper.QueryableExtensions;
+using BakaMangaAPI.DTOs;
+using BakaMangaAPI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -10,23 +12,10 @@ public partial class MangaController
     public async Task<IActionResult> GetMangasFromList(string mangaListId)
     {
         var mangas = await _context.MangaListItems
-            .Include(i => i.Manga)
-                .ThenInclude(m => m.Chapters)
-                    .ThenInclude(c => c.ChapterViews)
-            .Include(i => i.Manga)
-                .ThenInclude(m => m.Chapters)
-                    .ThenInclude(c => c.Uploader)
-            .Include(i => i.Manga)
-                .ThenInclude(m => m.Chapters)
-                    .ThenInclude(c => c.UploadingGroup)
             .Where(i => i.MangaListId == mangaListId)
             .OrderBy(i => i.Index)
-            .Select(i => new ChapterGroupingDTO
-            {
-                Manga = _mapper.Map<MangaBasicDTO>(i.Manga),
-                Chapters = _mapper.Map<List<ChapterBasicDTO>>(i.Manga.Chapters
-                    .OrderBy(c => c.CreatedAt).Take(3).ToList())
-            })
+            .ProjectTo<ChapterGroupingDTO>(_mapper.ConfigurationProvider)
+            .AsNoTracking()
             .ToListAsync();
 
         return Ok(mangas);

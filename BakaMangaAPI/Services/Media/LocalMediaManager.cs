@@ -1,4 +1,4 @@
-namespace BakaMangaAPI.Services;
+namespace BakaMangaAPI.Services.Media;
 
 public class LocalMediaManager : IMediaManager
 {
@@ -46,7 +46,7 @@ public class LocalMediaManager : IMediaManager
         return $"{serverUri}/{_rootImageFolderName}/{imageSubFolderName}/{imageFullName}";
     }
 
-    public Task DeleteImageAsync(string imagePath) 
+    public Task DeleteImageAsync(string imagePath)
     {
         var uri = new Uri(imagePath);
         var relativeFilePath = Path.Combine(

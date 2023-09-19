@@ -1,8 +1,10 @@
 using AutoMapper;
+
 using BakaMangaAPI.Data;
 using BakaMangaAPI.DTOs;
 using BakaMangaAPI.Models;
-using BakaMangaAPI.Services;
+using BakaMangaAPI.Services.Media;
+
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -40,7 +42,7 @@ public class UploadChapterController : ControllerBase
         var query = _context.Chapters.Where(c => c.Uploader == uploader);
 
         // filter exclude deleted
-        if (filter.ExcludeDeleted)
+        if (!filter.IncludeDeleted)
         {
             query = query.Where(c => c.DeletedAt == null);
         }
@@ -111,7 +113,7 @@ public class UploadChapterController : ControllerBase
         var chapterGroupingList = chapterGroupings
             .Select(g => new ChapterGroupingDTO()
             {
-                Manga = _mapper.Map<MangaBasicDTO>(g.Manga),
+                Manga = _mapper.Map<MangaSimpleDTO>(g.Manga),
                 Chapters = _mapper.Map<List<ChapterBasicDTO>>(g.Chapters)
             })
             .ToList();

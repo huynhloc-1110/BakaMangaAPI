@@ -2,7 +2,7 @@
 
 namespace BakaMangaAPI.Models;
 
-public class Request : BaseModelWithCreatedAt
+public class Request : BaseModel
 {
     public ApplicationUser User { get; set; } = default!;
 }
@@ -10,7 +10,6 @@ public class Request : BaseModelWithCreatedAt
 public class PromotionRequest : Request
 {
     [MaxLength(2000)]
-    public string Reason { get; set; } = string.Empty;
-
-    public string EvidenceLink { get; set; } = string.Empty;
+    public string Reason { get; set; } = default!;
+    public string EvidenceLink { get; set; } = default!;
 }

@@ -1,29 +1,28 @@
-﻿using BakaMangaAPI.DTOs;
+﻿using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
+
+using BakaMangaAPI.DTOs;
 using BakaMangaAPI.Models;
+
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Text;
 
-namespace BakaMangaAPI.Controllers;
+namespace BakaMangaAPI.Controllers.Account;
 
 [Route("account")]
 [ApiController]
 public class AuthenticateController : ControllerBase
 {
     private readonly UserManager<ApplicationUser> _userManager;
-    private readonly RoleManager<ApplicationRole> _roleManager;
     private readonly IConfiguration _configuration;
 
-    public AuthenticateController(RoleManager<ApplicationRole> roleManager,
-        UserManager<ApplicationUser> userManager, IConfiguration configuration)
+    public AuthenticateController(UserManager<ApplicationUser> userManager, IConfiguration configuration)
     {
         _userManager = userManager;
         _configuration = configuration;
-        _roleManager = roleManager;
     }
 
     private string CreateToken(ApplicationUser user, IEnumerable<string> userRoles, DateTime expiredDate)
@@ -93,14 +92,13 @@ public class AuthenticateController : ControllerBase
             {
                 token = tokenString,
                 expiration = expiredDate
-
             });
         }
         return Unauthorized();
     }
 
     [Authorize]
-    [HttpPost("Extend")]
+    [HttpPost("extend")]
     public async Task<IActionResult> ExtendAsync()
     {
         var currentUser = await _userManager.GetUserAsync(User);

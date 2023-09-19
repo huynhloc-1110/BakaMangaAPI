@@ -1,16 +1,18 @@
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Identity;
 using AutoMapper;
-using BakaMangaAPI.Models;
-using BakaMangaAPI.DTOs;
-using BakaMangaAPI.Services;
+
 using BakaMangaAPI.Data;
+using BakaMangaAPI.DTOs;
+using BakaMangaAPI.Models;
+using BakaMangaAPI.Services.Media;
+
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-namespace BakaMangaAPI.Controllers;
+namespace BakaMangaAPI.Controllers.Account;
 
-[Route("profile")]
+[Route("account")]
 [ApiController]
 public class UserController : ControllerBase
 {
@@ -19,7 +21,7 @@ public class UserController : ControllerBase
     private readonly IMapper _mapper;
     private readonly IMediaManager _mediaManager;
 
-    public UserController(ApplicationDbContext context, UserManager<ApplicationUser> userManager, 
+    public UserController(ApplicationDbContext context, UserManager<ApplicationUser> userManager,
         IMapper mapper, IMediaManager mediaManager)
     {
         _context = context;
@@ -41,10 +43,10 @@ public class UserController : ControllerBase
         return Ok(userBasicDto);
     }
 
-    [HttpGet("{id}")]
-    public async Task<IActionResult> GetUserBasicInfo(string id)
+    [HttpGet("{userId}")]
+    public async Task<IActionResult> GetUserBasicInfo(string userId)
     {
-        var user = await _userManager.FindByIdAsync(id);
+        var user = await _userManager.FindByIdAsync(userId);
         if (user == null)
         {
             return NotFound();
@@ -74,7 +76,7 @@ public class UserController : ControllerBase
             })
             .SingleOrDefaultAsync();
 
-        return (userStats != null) ? Ok(userStats) : NotFound();        
+        return userStats != null ? Ok(userStats) : NotFound();
     }
 
     [HttpPut("me/change-avatar")]

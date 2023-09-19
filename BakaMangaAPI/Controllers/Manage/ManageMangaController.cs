@@ -1,15 +1,18 @@
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.EntityFrameworkCore;
+using AutoMapper;
+using AutoMapper.QueryableExtensions;
+
 using BakaMangaAPI.Data;
 using BakaMangaAPI.DTOs;
 using BakaMangaAPI.Models;
-using BakaMangaAPI.Services;
-using AutoMapper;
+using BakaMangaAPI.Services.Media;
 
-namespace BakaMangaAPI.Controllers;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
-[Route("manage/manga")]
+namespace BakaMangaAPI.Controllers.Manage;
+
+[Route("manage/mangas")]
 [ApiController]
 [Authorize(Roles = "Admin")]
 public class ManageMangaController : ControllerBase
@@ -25,133 +28,40 @@ public class ManageMangaController : ControllerBase
         _mediaManager = mediaManager;
     }
 
-    // GET: manage/manga/5
-    [HttpGet("{id}")]
-    public async Task<IActionResult> GetManga(string id)
+    [HttpGet("{mangaId}")]
+    public async Task<IActionResult> GetManga(string mangaId)
     {
         var manga = await _context.Mangas
-            .Include(m => m.Categories)
-            .Include(m => m.Authors)
+            .Where(m => m.Id == mangaId)
+            .IgnoreQueryFilters()
+            .ProjectTo<MangaDetailDTO>(_mapper.ConfigurationProvider)
             .AsNoTracking()
-            .SingleOrDefaultAsync(m => m.Id == id);
-
+            .SingleOrDefaultAsync();
         if (manga == null)
         {
             return NotFound();
         }
 
-        return Ok(_mapper.Map<MangaDetailDTO>(manga));
+        return Ok(manga);
     }
 
-    // PUT: manage/manga/5
-    [HttpPut("{id}")]
-    public async Task<IActionResult> PutManga([FromRoute] string id,
-        [FromForm] MangaEditDTO mangaEditDTO, [FromForm] IFormFile? coverImage)
-    {
-        if (id != mangaEditDTO.Id)
-        {
-            return BadRequest();
-        }
-
-        var manga = await _context.Mangas
-            .Include(m => m.Authors)
-            .Include(m => m.Categories)
-            .FirstOrDefaultAsync(m => m.Id == id);
-        if (manga == null)
-        {
-            return NotFound();
-        }
-
-        manga = _mapper.Map(mangaEditDTO, manga);
-
-        // process categories
-        manga.Categories = new();
-        var categoryIds = mangaEditDTO.CategoryIds.Split(',');
-        foreach (var categoryId in categoryIds)
-        {
-            var category = await _context.Categories
-                .FindAsync(categoryId);
-            if (category != null)
-            {
-                manga.Categories.Add(category);
-            }
-        }
-
-        // process authors
-        var authorIds = mangaEditDTO.AuthorIds.Split(',');
-        foreach (var authorId in authorIds)
-        {
-            var author = await _context.Authors
-                .FindAsync(authorId);
-            if (author != null)
-            {
-                manga.Authors.Add(author);
-            }
-        }
-
-        // process image
-        if (coverImage != null)
-        {
-            manga.CoverPath = await _mediaManager.UploadImageAsync(coverImage, manga.Id, ImageType.Cover);
-        }
-
-        try
-        {
-            await _context.SaveChangesAsync();
-        }
-        catch (DbUpdateConcurrencyException)
-        {
-            if (!MangaExists(id))
-            {
-                return NotFound();
-            }
-            else
-            {
-                throw;
-            }
-        }
-
-        return NoContent();
-    }
-
-    // POST: manage/manga
     [HttpPost]
-    public async Task<IActionResult> PostManga
-        ([FromForm] MangaEditDTO mangaEditDTO, [FromForm] IFormFile? coverImage)
+    public async Task<IActionResult> PostManga([FromForm] MangaEditDTO mangaEditDTO)
     {
         var manga = _mapper.Map<Manga>(mangaEditDTO);
-
-        // process categories
-        var categoryIds = mangaEditDTO.CategoryIds.Split(',');
-        foreach (var categoryId in categoryIds)
-        {
-            var category = await _context.Categories
-                .FindAsync(categoryId);
-            if (category != null)
-            {
-                manga.Categories.Add(category);
-            }
-        }
-
-        // process authors
-        var authorIds = mangaEditDTO.AuthorIds.Split(',');
-        foreach (var authorId in authorIds)
-        {
-            var author = await _context.Authors
-                .FindAsync(authorId);
-            if (author != null)
-            {
-                manga.Authors.Add(author);
-            }
-        }
+        manga.Categories = await ConvertCategoriesAysnc(mangaEditDTO.CategoryIds);
+        manga.Authors = await ConvertAuthorsAsync(mangaEditDTO.AuthorIds);
 
         // process image
-        if (coverImage != null)
+        if (mangaEditDTO.CoverImage != null)
         {
-            manga.CoverPath = await _mediaManager.UploadImageAsync(coverImage, manga.Id, ImageType.Cover);
+            manga.CoverPath = await _mediaManager.UploadImageAsync(
+                mangaEditDTO.CoverImage,
+                manga.Id,
+                ImageType.Cover);
         }
-        _context.Mangas.Add(manga);
 
+        _context.Mangas.Add(manga);
         try
         {
             await _context.SaveChangesAsync();
@@ -169,27 +79,66 @@ public class ManageMangaController : ControllerBase
         }
 
         var mangaDetailDTO = _mapper.Map<MangaDetailDTO>(manga);
-        return CreatedAtAction("GetManga", new { id = mangaDetailDTO.Id }, mangaDetailDTO);
+        return CreatedAtAction(nameof(GetManga), new { mangaId = mangaDetailDTO.Id }, mangaDetailDTO);
     }
 
-    // DELETE: manage/manga/5?undelete=false
-    [HttpDelete("{id}")]
-    public async Task<IActionResult> DeleteManga(string id, [FromQuery] bool undelete)
+    [HttpPut("{mangaId}")]
+    public async Task<IActionResult> PutManga(string mangaId, [FromForm] MangaEditDTO mangaEditDTO)
     {
-        var manga = await _context.Mangas.FindAsync(id);
+        var manga = await _context.Mangas
+            .IgnoreQueryFilters()
+            .Include(m => m.Authors)
+            .Include(m => m.Categories)
+            .SingleOrDefaultAsync(m => m.Id == mangaId);
         if (manga == null)
         {
             return NotFound();
         }
 
-        if (undelete)
+        manga = _mapper.Map(mangaEditDTO, manga);
+        manga.Categories = await ConvertCategoriesAysnc(mangaEditDTO.CategoryIds);
+        manga.Authors = await ConvertAuthorsAsync(mangaEditDTO.AuthorIds);
+
+        // process image
+        if (mangaEditDTO.CoverImage != null)
         {
-            manga.DeletedAt = null;
+            manga.CoverPath = await _mediaManager.UploadImageAsync(
+                mangaEditDTO.CoverImage,
+                manga.Id,
+                ImageType.Cover);
         }
-        else
+
+        try
         {
-            manga.DeletedAt = DateTime.UtcNow;
+            await _context.SaveChangesAsync();
         }
+        catch (DbUpdateConcurrencyException)
+        {
+            if (!MangaExists(mangaId))
+            {
+                return NotFound();
+            }
+            else
+            {
+                throw;
+            }
+        }
+
+        return NoContent();
+    }
+
+    [HttpDelete("{mangaId}")]
+    public async Task<IActionResult> DeleteManga(string mangaId, [FromQuery] bool undelete)
+    {
+        var manga = await _context.Mangas
+            .IgnoreQueryFilters()
+            .SingleOrDefaultAsync(m => m.Id == mangaId);
+        if (manga == null)
+        {
+            return NotFound();
+        }
+
+        manga.DeletedAt = undelete ? null : DateTime.UtcNow;
 
         await _context.SaveChangesAsync();
         return NoContent();
@@ -197,6 +146,22 @@ public class ManageMangaController : ControllerBase
 
     private bool MangaExists(string id)
     {
-        return (_context.Mangas?.Any(e => e.Id == id)).GetValueOrDefault();
+        return _context.Mangas.IgnoreQueryFilters().Any(e => e.Id == id);
+    }
+
+    private async Task<List<Category>> ConvertCategoriesAysnc(string categoryIds)
+    {
+        var categoryArr = categoryIds.Split(',');
+        return await _context.Categories
+            .Where(c => categoryArr.Contains(c.Id))
+            .ToListAsync();
+    }
+
+    private async Task<List<Author>> ConvertAuthorsAsync(string authorIds)
+    {
+        var authorArr = authorIds.Split(',');
+        return await _context.Authors
+            .Where(a => authorArr.Contains(a.Id))
+            .ToListAsync();
     }
 }

@@ -1,6 +1,6 @@
 ﻿namespace BakaMangaAPI.Models;
 
-public class React : BaseModelWithCreatedAt
+public class React : BaseModel
 {
     public ReactFlag ReactFlag { get; set; }
 

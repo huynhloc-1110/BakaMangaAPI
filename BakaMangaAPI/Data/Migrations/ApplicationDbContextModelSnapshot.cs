@@ -204,6 +204,9 @@ namespace BakaMangaAPI.Data.Migrations
                         .HasMaxLength(1000)
                         .HasColumnType("character varying(1000)");
 
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<DateTime?>("DeletedAt")
                         .HasColumnType("timestamp with time zone");
 
@@ -221,6 +224,9 @@ namespace BakaMangaAPI.Data.Migrations
                 {
                     b.Property<string>("Id")
                         .HasColumnType("text");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<DateTime?>("DeletedAt")
                         .HasColumnType("timestamp with time zone");
@@ -489,6 +495,9 @@ namespace BakaMangaAPI.Data.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<DateTime?>("DeletedAt")
                         .HasColumnType("timestamp with time zone");
 
@@ -540,6 +549,9 @@ namespace BakaMangaAPI.Data.Migrations
                 {
                     b.Property<string>("Id")
                         .HasColumnType("text");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<DateTime?>("DeletedAt")
                         .HasColumnType("timestamp with time zone");
@@ -957,13 +969,13 @@ namespace BakaMangaAPI.Data.Migrations
                     b.HasOne("BakaMangaAPI.Models.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("FollowersId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("BakaMangaAPI.Models.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("FollowingsId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
@@ -972,13 +984,13 @@ namespace BakaMangaAPI.Data.Migrations
                     b.HasOne("BakaMangaAPI.Models.Manga", null)
                         .WithMany()
                         .HasForeignKey("FollowedMangasId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("BakaMangaAPI.Models.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("FollowersId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
@@ -987,13 +999,13 @@ namespace BakaMangaAPI.Data.Migrations
                     b.HasOne("BakaMangaAPI.Models.Author", null)
                         .WithMany()
                         .HasForeignKey("AuthorsId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("BakaMangaAPI.Models.Manga", null)
                         .WithMany()
                         .HasForeignKey("MangasId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
@@ -1002,13 +1014,13 @@ namespace BakaMangaAPI.Data.Migrations
                     b.HasOne("BakaMangaAPI.Models.ApplicationRole", "Role")
                         .WithMany("UserRoles")
                         .HasForeignKey("RoleId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("BakaMangaAPI.Models.ApplicationUser", "User")
                         .WithMany("UserRoles")
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Role");
@@ -1020,19 +1032,17 @@ namespace BakaMangaAPI.Data.Migrations
                 {
                     b.HasOne("BakaMangaAPI.Models.Manga", "Manga")
                         .WithMany("Chapters")
-                        .HasForeignKey("MangaId")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .HasForeignKey("MangaId");
 
                     b.HasOne("BakaMangaAPI.Models.ApplicationUser", "Uploader")
                         .WithMany("UploadedChapters")
                         .HasForeignKey("UploaderId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("BakaMangaAPI.Models.Group", "UploadingGroup")
                         .WithMany("Chapters")
-                        .HasForeignKey("UploadingGroupId")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .HasForeignKey("UploadingGroupId");
 
                     b.Navigation("Manga");
 
@@ -1045,13 +1055,12 @@ namespace BakaMangaAPI.Data.Migrations
                 {
                     b.HasOne("BakaMangaAPI.Models.Comment", "ParentComment")
                         .WithMany("ChildComments")
-                        .HasForeignKey("ParentCommentId")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .HasForeignKey("ParentCommentId");
 
                     b.HasOne("BakaMangaAPI.Models.ApplicationUser", "User")
                         .WithMany("Comments")
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("ParentComment");
@@ -1064,13 +1073,13 @@ namespace BakaMangaAPI.Data.Migrations
                     b.HasOne("BakaMangaAPI.Models.Group", "Group")
                         .WithMany("Members")
                         .HasForeignKey("GroupId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("BakaMangaAPI.Models.ApplicationUser", "User")
                         .WithMany("GroupMembers")
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Group");
@@ -1083,7 +1092,7 @@ namespace BakaMangaAPI.Data.Migrations
                     b.HasOne("BakaMangaAPI.Models.ApplicationUser", "Owner")
                         .WithMany("MangaLists")
                         .HasForeignKey("OwnerId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Owner");
@@ -1132,7 +1141,7 @@ namespace BakaMangaAPI.Data.Migrations
                     b.HasOne("BakaMangaAPI.Models.Chapter", "Chapter")
                         .WithMany("Pages")
                         .HasForeignKey("ChapterId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Chapter");
@@ -1143,7 +1152,7 @@ namespace BakaMangaAPI.Data.Migrations
                     b.HasOne("BakaMangaAPI.Models.ApplicationUser", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("User");
@@ -1154,13 +1163,13 @@ namespace BakaMangaAPI.Data.Migrations
                     b.HasOne("BakaMangaAPI.Models.Manga", "Manga")
                         .WithMany("Ratings")
                         .HasForeignKey("MangaId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("BakaMangaAPI.Models.ApplicationUser", "User")
                         .WithMany("Ratings")
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Manga");
@@ -1173,7 +1182,7 @@ namespace BakaMangaAPI.Data.Migrations
                     b.HasOne("BakaMangaAPI.Models.ApplicationUser", "User")
                         .WithMany("Reacts")
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("User");
@@ -1184,7 +1193,7 @@ namespace BakaMangaAPI.Data.Migrations
                     b.HasOne("BakaMangaAPI.Models.ApplicationUser", "Reporter")
                         .WithMany("Reports")
                         .HasForeignKey("ReporterId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Reporter");
@@ -1195,7 +1204,7 @@ namespace BakaMangaAPI.Data.Migrations
                     b.HasOne("BakaMangaAPI.Models.ApplicationUser", "User")
                         .WithMany("Requests")
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("User");
@@ -1206,7 +1215,7 @@ namespace BakaMangaAPI.Data.Migrations
                     b.HasOne("BakaMangaAPI.Models.ApplicationUser", "User")
                         .WithMany("Views")
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("User");
@@ -1217,13 +1226,13 @@ namespace BakaMangaAPI.Data.Migrations
                     b.HasOne("BakaMangaAPI.Models.Category", null)
                         .WithMany()
                         .HasForeignKey("CategoriesId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("BakaMangaAPI.Models.Manga", null)
                         .WithMany()
                         .HasForeignKey("MangasId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
@@ -1232,7 +1241,7 @@ namespace BakaMangaAPI.Data.Migrations
                     b.HasOne("BakaMangaAPI.Models.ApplicationRole", null)
                         .WithMany()
                         .HasForeignKey("RoleId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
@@ -1241,7 +1250,7 @@ namespace BakaMangaAPI.Data.Migrations
                     b.HasOne("BakaMangaAPI.Models.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
@@ -1250,7 +1259,7 @@ namespace BakaMangaAPI.Data.Migrations
                     b.HasOne("BakaMangaAPI.Models.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
@@ -1259,7 +1268,7 @@ namespace BakaMangaAPI.Data.Migrations
                     b.HasOne("BakaMangaAPI.Models.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
@@ -1268,7 +1277,7 @@ namespace BakaMangaAPI.Data.Migrations
                     b.HasOne("BakaMangaAPI.Models.Chapter", "Chapter")
                         .WithMany("Comments")
                         .HasForeignKey("ChapterId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Chapter");
@@ -1279,7 +1288,7 @@ namespace BakaMangaAPI.Data.Migrations
                     b.HasOne("BakaMangaAPI.Models.Chapter", "Chapter")
                         .WithMany("Reports")
                         .HasForeignKey("ChapterId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Chapter");
@@ -1290,7 +1299,7 @@ namespace BakaMangaAPI.Data.Migrations
                     b.HasOne("BakaMangaAPI.Models.Chapter", "Chapter")
                         .WithMany("ChapterViews")
                         .HasForeignKey("ChapterId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Chapter");
@@ -1300,8 +1309,7 @@ namespace BakaMangaAPI.Data.Migrations
                 {
                     b.HasOne("BakaMangaAPI.Models.Comment", "Comment")
                         .WithMany("Reacts")
-                        .HasForeignKey("CommentId")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .HasForeignKey("CommentId");
 
                     b.Navigation("Comment");
                 });
@@ -1311,7 +1319,7 @@ namespace BakaMangaAPI.Data.Migrations
                     b.HasOne("BakaMangaAPI.Models.Comment", "Comment")
                         .WithMany("Reports")
                         .HasForeignKey("CommentId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Comment");
@@ -1321,8 +1329,7 @@ namespace BakaMangaAPI.Data.Migrations
                 {
                     b.HasOne("BakaMangaAPI.Models.Manga", "Manga")
                         .WithMany("Comments")
-                        .HasForeignKey("MangaId")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .HasForeignKey("MangaId");
 
                     b.Navigation("Manga");
                 });
@@ -1332,7 +1339,7 @@ namespace BakaMangaAPI.Data.Migrations
                     b.HasOne("BakaMangaAPI.Models.Post", "Post")
                         .WithMany("Comments")
                         .HasForeignKey("PostId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Post");
@@ -1343,7 +1350,7 @@ namespace BakaMangaAPI.Data.Migrations
                     b.HasOne("BakaMangaAPI.Models.Post", "Post")
                         .WithMany("Reacts")
                         .HasForeignKey("PostId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Post");
@@ -1354,7 +1361,7 @@ namespace BakaMangaAPI.Data.Migrations
                     b.HasOne("BakaMangaAPI.Models.Post", "Post")
                         .WithMany("Reports")
                         .HasForeignKey("PostId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Post");
@@ -1365,7 +1372,7 @@ namespace BakaMangaAPI.Data.Migrations
                     b.HasOne("BakaMangaAPI.Models.Post", "Post")
                         .WithMany()
                         .HasForeignKey("PostId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Post");
@@ -1376,7 +1383,7 @@ namespace BakaMangaAPI.Data.Migrations
                     b.HasOne("BakaMangaAPI.Models.ApplicationUser", "Reportee")
                         .WithMany()
                         .HasForeignKey("ReporteeId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Reportee");

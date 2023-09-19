@@ -138,7 +138,7 @@ public class UploadGroupController : ControllerBase
         var chapterGroupingList = chapterGroupings
             .Select(g => new ChapterGroupingDTO()
             {
-                Manga = _mapper.Map<MangaBasicDTO>(g.Manga),
+                Manga = _mapper.Map<MangaSimpleDTO>(g.Manga),
                 Chapters = _mapper.Map<List<ChapterBasicDTO>>(g.Chapters)
             })
             .ToList();
