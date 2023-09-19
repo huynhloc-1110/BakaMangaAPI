@@ -172,7 +172,7 @@ public class UploadGroupController : ControllerBase
 
     [HttpPost("{groupId}/avatar")]
     [Authorize]
-    public async Task<IActionResult> PostGroupAvatar(string groupId, IFormFile avatarImage)
+    public async Task<IActionResult> PostGroupAvatar(string groupId, IFormFile image)
     {
         if (await _context.Groups.FindAsync(groupId) is not Group group)
         {
@@ -184,14 +184,15 @@ public class UploadGroupController : ControllerBase
         }
 
         group.AvatarPath = await _mediaManager.UploadImageAsync(
-            avatarImage, groupId, ImageType.Avatar);
+            image, groupId, ImageType.Avatar);
 
         await _context.SaveChangesAsync();
         return Ok(_mapper.Map<GroupDetailDTO>(group));
     }
 
     [HttpPost("{groupId}/banner")]
-    public async Task<IActionResult> PostGroupBanner(string groupId, IFormFile bannerImage)
+    [Authorize]
+    public async Task<IActionResult> PostGroupBanner(string groupId, IFormFile image)
     {
         if (await _context.Groups.FindAsync(groupId) is not Group group)
         {
@@ -203,13 +204,14 @@ public class UploadGroupController : ControllerBase
         }
 
         group.BannerPath = await _mediaManager.UploadImageAsync(
-            bannerImage, groupId, ImageType.Banner);
+            image, groupId, ImageType.Banner);
 
         await _context.SaveChangesAsync();
         return Ok(_mapper.Map<GroupDetailDTO>(group));
     }
 
     [HttpPut("{groupId}")]
+    [Authorize]
     public async Task<IActionResult> PutGroup(string groupId, [FromForm] GroupEditDTO dto)
     {
         if (await _context.Groups.FindAsync(groupId) is not Group group)
@@ -229,6 +231,7 @@ public class UploadGroupController : ControllerBase
     }
 
     [HttpDelete("{groupId}")]
+    [Authorize]
     public async Task<IActionResult> DeleteGroup(string groupId)
     {
         if (await _context.Groups.FindAsync(groupId) is not Group group)
