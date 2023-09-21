@@ -19,6 +19,8 @@ public class Group : BaseModel
     [DataType(DataType.ImageUrl)]
     public string? BannerPath { get; set; }
 
+    public bool IsMangaGroup { get; set; }
+
     public List<GroupMember> Members { get; set; } = new();
     public List<Chapter> Chapters { get; set; } = new();
 }

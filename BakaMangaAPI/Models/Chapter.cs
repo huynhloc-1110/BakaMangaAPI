@@ -14,7 +14,7 @@ public class Chapter : BaseModel
 
     public Manga Manga { get; set; } = default!;
     public ApplicationUser Uploader { get; set; } = default!;
-    public Group UploadingGroup { get; set; } = default!;
+    public Group? UploadingGroup { get; set; }
 
     public List<Page> Pages { get; set; } = new();
     public List<ChapterComment> Comments { get; set; } = new();

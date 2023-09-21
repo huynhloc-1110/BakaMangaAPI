@@ -94,7 +94,7 @@ public class UploadGroupController : ControllerBase
                 m.User.Id,
                 m.User.Name,
                 m.User.AvatarPath,
-                m.IsLeader
+                m.GroupRoles
             })
             .AsNoTracking()
             .ToListAsync();
@@ -161,7 +161,7 @@ public class UploadGroupController : ControllerBase
         {
             Name = dto.Name,
             Biography = dto.Biography,
-            Members = new() { new GroupMember { User = user, IsLeader = true } }
+            Members = new() { new GroupMember { User = user, GroupRoles = GroupRole.Owner } }
         };
 
         _context.Groups.Add(group);
@@ -178,7 +178,7 @@ public class UploadGroupController : ControllerBase
         {
             return NotFound("Group not found");
         }
-        if (!await IsUserLeader(group))
+        if (!await IsUserOfRole(group, GroupRole.Moderator))
         {
             return Unauthorized("The user must be group leader to do this");
         }
@@ -198,7 +198,7 @@ public class UploadGroupController : ControllerBase
         {
             return NotFound("Group not found");
         }
-        if (!await IsUserLeader(group))
+        if (!await IsUserOfRole(group, GroupRole.Moderator))
         {
             return Unauthorized("The user must be group leader to do this");
         }
@@ -218,7 +218,7 @@ public class UploadGroupController : ControllerBase
         {
             return NotFound("Group not found");
         }
-        if (!await IsUserLeader(group))
+        if (!await IsUserOfRole(group, GroupRole.Moderator))
         {
             return Unauthorized("The user must be group leader to do this");
         }
@@ -238,7 +238,7 @@ public class UploadGroupController : ControllerBase
         {
             return BadRequest("Group not found");
         }
-        if (!await IsUserLeader(group))
+        if (!await IsUserOfRole(group, GroupRole.Owner))
         {
             return Unauthorized("The user must be group leader to do this");
         }
@@ -249,11 +249,28 @@ public class UploadGroupController : ControllerBase
         return NoContent();
     }
 
-    private async Task<bool> IsUserLeader(Group group)
+    // test
+    [HttpPatch("{groupId}/members/{userId}/group-roles")]
+    public async Task<IActionResult> ChangeGroupRolesOfMember(string groupId, string userId,
+        [FromBody] GroupRole groupRoles)
+    {
+        var groupMember = await _context.GroupMembers
+            .SingleOrDefaultAsync(gm => gm.Group.Id == groupId && gm.User.Id == userId);
+        if (groupMember == null )
+        {
+            return NotFound();
+        }
+        groupMember.GroupRoles = groupRoles;
+        await _context.SaveChangesAsync();
+
+        return NoContent();
+    }
+
+    private async Task<bool> IsUserOfRole(Group group, GroupRole groupRole)
     {
         var user = await _userManager.GetUserAsync(User);
         return await _context.GroupMembers
             .Where(gm => gm.Group == group)
-            .AnyAsync(gm => gm.User == user && gm.IsLeader);
+            .AnyAsync(gm => gm.User == user && gm.GroupRoles.HasFlag(groupRole));
     }
 }

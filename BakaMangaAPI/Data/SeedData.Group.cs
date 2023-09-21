@@ -21,8 +21,8 @@ public partial class SeedData
                 Biography = "Please consider visiting our main site: https://lhtranslation.net/\r\nWE NEED MORE JAPANESE TRANSLATOR, PLS CONTACT DISCORD: malsi#3621 OR tagomisugi2@gmail.com",
                 Members = new()
                 {
-                    new() { User = uploader1, IsLeader = true },
-                    new() { User = uploader3 },
+                    new() { User = uploader1, GroupRoles = GroupRole.Owner | GroupRole.GroupUploader },
+                    new() { User = uploader3, GroupRoles = GroupRole.Moderator },
                 }
             },
             ["Japan Group"] = new()
@@ -32,7 +32,7 @@ public partial class SeedData
                 Biography = "私たちはマンガの日本語翻訳を専門とするファンサブです。",
                 Members = new()
                 {
-                    new() { User = uploader2, IsLeader = true },
+                    new() { User = uploader2, GroupRoles = GroupRole.Owner | GroupRole.GroupUploader },
                 }
             },
             ["VietNam Group"] = new()
@@ -42,7 +42,7 @@ public partial class SeedData
                 Biography = "Tụi mình chuyên dịch thể loại rom-com.",
                 Members = new()
                 {
-                    new() { User = uploader3, IsLeader = true },
+                    new() { User = uploader3, GroupRoles = GroupRole.Owner | GroupRole.GroupUploader },
                 }
             },
         };
