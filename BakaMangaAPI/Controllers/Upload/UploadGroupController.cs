@@ -183,7 +183,7 @@ public class UploadGroupController : ControllerBase
         {
             return NotFound("Group not found");
         }
-        if (!await IsUserOfRole(group, GroupRole.Moderator | GroupRole.Owner))
+        if (!await IsUserOfRoleOrHigher(group, GroupRole.Moderator))
         {
             return Unauthorized("The user must be group moderator or owner to do this");
         }
@@ -203,7 +203,7 @@ public class UploadGroupController : ControllerBase
         {
             return NotFound("Group not found");
         }
-        if (!await IsUserOfRole(group, GroupRole.Moderator | GroupRole.Owner))
+        if (!await IsUserOfRoleOrHigher(group, GroupRole.Moderator))
         {
             return Unauthorized("The user must be group moderator or owner to do this");
         }
@@ -223,7 +223,7 @@ public class UploadGroupController : ControllerBase
         {
             return NotFound("Group not found");
         }
-        if (!await IsUserOfRole(group, GroupRole.Moderator | GroupRole.Owner))
+        if (!await IsUserOfRoleOrHigher(group, GroupRole.Moderator))
         {
             return Unauthorized("The user must be group moderator or owner to do this");
         }
@@ -244,7 +244,7 @@ public class UploadGroupController : ControllerBase
         {
             return BadRequest("Group not found");
         }
-        if (!await IsUserOfRole(group, GroupRole.Owner))
+        if (!await IsUserOfRoleOrHigher(group, GroupRole.Owner))
         {
             return Unauthorized("The user must be group owner to do this");
         }
@@ -261,22 +261,25 @@ public class UploadGroupController : ControllerBase
         [FromForm] GroupRole groupRoles)
     {
         var targetedMember = await _context.GroupMembers
-            .SingleOrDefaultAsync(gm => gm.Group.Id == groupId && gm.User.Id == memberId);
+            .SingleOrDefaultAsync(gm => gm.GroupId == groupId && gm.User.Id == memberId);
+        var currentMemberId = User.FindFirstValue(ClaimTypes.NameIdentifier);
         var currentMember = await _context.GroupMembers
-            .SingleOrDefaultAsync(m => m.UserId == User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
+            .SingleOrDefaultAsync(gm => gm.GroupId == groupId && gm.UserId == currentMemberId);
 
         if (targetedMember == null || currentMember == null)
         {
             return NotFound();
         }
 
-        // check if targeted member has smaller role
-        if (targetedMember.GroupRoles >= currentMember.GroupRoles)
+        // condition to continue:
+        // - current user has owner role OR
+        // - the targeted member role is lower than the current user
+        if (!currentMember.GroupRoles.HasFlag(GroupRole.Owner) && targetedMember.GroupRoles >= currentMember.GroupRoles)
         {
             return Unauthorized("Your group role must be higher to change this member role");
         }
 
-        // transfer ownership
+        // condition to transfer ownership: the current user must has owner role
         if (groupRoles.HasFlag(GroupRole.Owner))
         {
             currentMember.GroupRoles -= GroupRole.Owner;
@@ -288,11 +291,11 @@ public class UploadGroupController : ControllerBase
         return NoContent();
     }
 
-    private async Task<bool> IsUserOfRole(Group group, GroupRole groupRole)
+    private async Task<bool> IsUserOfRoleOrHigher(Group group, GroupRole groupRole)
     {
         var user = await _userManager.GetUserAsync(User);
         return await _context.GroupMembers
             .Where(gm => gm.Group == group)
-            .AnyAsync(gm => gm.User == user && gm.GroupRoles.HasFlag(groupRole));
+            .AnyAsync(gm => gm.User == user && gm.GroupRoles >= groupRole);
     }
 }

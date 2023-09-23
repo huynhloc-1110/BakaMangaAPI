@@ -18,6 +18,7 @@ public partial class SeedData
             {
                 Name = "Tengoku Team",
                 AvatarPath = groupAvatarUrl + "tengoku.png",
+                IsMangaGroup = true,
                 Biography = "Please consider visiting our main site: https://lhtranslation.net/\r\nWE NEED MORE JAPANESE TRANSLATOR, PLS CONTACT DISCORD: malsi#3621 OR tagomisugi2@gmail.com",
                 Members = new()
                 {
@@ -30,6 +31,7 @@ public partial class SeedData
                 Name = "Yannu no Mahou",
                 AvatarPath = groupAvatarUrl + "yannu.png",
                 Biography = "私たちはマンガの日本語翻訳を専門とするファンサブです。",
+                IsMangaGroup = true,
                 Members = new()
                 {
                     new() { User = uploader2, GroupRoles = GroupRole.Owner | GroupRole.GroupUploader },
@@ -40,6 +42,7 @@ public partial class SeedData
                 Name = "Tiệm đồ ngọt",
                 AvatarPath = groupAvatarUrl + "tiemdongot.png",
                 Biography = "Tụi mình chuyên dịch thể loại rom-com.",
+                IsMangaGroup = true,
                 Members = new()
                 {
                     new() { User = uploader3, GroupRoles = GroupRole.Owner | GroupRole.GroupUploader },
