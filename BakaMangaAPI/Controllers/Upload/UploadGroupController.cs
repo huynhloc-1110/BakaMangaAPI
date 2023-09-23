@@ -1,3 +1,5 @@
+using System.Security.Claims;
+
 using AutoMapper;
 using BakaMangaAPI.Data;
 using BakaMangaAPI.DTOs;
@@ -170,17 +172,17 @@ public class UploadGroupController : ControllerBase
         return Ok(_mapper.Map<GroupBasicDTO>(group));
     }
 
-    [HttpPost("{groupId}/avatar")]
+    [HttpPut("{groupId}/avatar")]
     [Authorize]
-    public async Task<IActionResult> PostGroupAvatar(string groupId, IFormFile image)
+    public async Task<IActionResult> PutGroupAvatar(string groupId, IFormFile image)
     {
         if (await _context.Groups.FindAsync(groupId) is not Group group)
         {
             return NotFound("Group not found");
         }
-        if (!await IsUserOfRole(group, GroupRole.Moderator))
+        if (!await IsUserOfRole(group, GroupRole.Moderator | GroupRole.Owner))
         {
-            return Unauthorized("The user must be group leader to do this");
+            return Unauthorized("The user must be group moderator or owner to do this");
         }
 
         group.AvatarPath = await _mediaManager.UploadImageAsync(
@@ -190,17 +192,17 @@ public class UploadGroupController : ControllerBase
         return Ok(_mapper.Map<GroupDetailDTO>(group));
     }
 
-    [HttpPost("{groupId}/banner")]
+    [HttpPut("{groupId}/banner")]
     [Authorize]
-    public async Task<IActionResult> PostGroupBanner(string groupId, IFormFile image)
+    public async Task<IActionResult> PutGroupBanner(string groupId, IFormFile image)
     {
         if (await _context.Groups.FindAsync(groupId) is not Group group)
         {
             return NotFound("Group not found");
         }
-        if (!await IsUserOfRole(group, GroupRole.Moderator))
+        if (!await IsUserOfRole(group, GroupRole.Moderator | GroupRole.Owner))
         {
-            return Unauthorized("The user must be group leader to do this");
+            return Unauthorized("The user must be group moderator or owner to do this");
         }
 
         group.BannerPath = await _mediaManager.UploadImageAsync(
@@ -218,9 +220,9 @@ public class UploadGroupController : ControllerBase
         {
             return NotFound("Group not found");
         }
-        if (!await IsUserOfRole(group, GroupRole.Moderator))
+        if (!await IsUserOfRole(group, GroupRole.Moderator | GroupRole.Owner))
         {
-            return Unauthorized("The user must be group leader to do this");
+            return Unauthorized("The user must be group moderator or owner to do this");
         }
 
         group.Name = dto.Name;
@@ -240,7 +242,7 @@ public class UploadGroupController : ControllerBase
         }
         if (!await IsUserOfRole(group, GroupRole.Owner))
         {
-            return Unauthorized("The user must be group leader to do this");
+            return Unauthorized("The user must be group owner to do this");
         }
 
         group.DeletedAt = DateTime.UtcNow;
@@ -249,18 +251,34 @@ public class UploadGroupController : ControllerBase
         return NoContent();
     }
 
-    // test
-    [HttpPatch("{groupId}/members/{userId}/group-roles")]
-    public async Task<IActionResult> ChangeGroupRolesOfMember(string groupId, string userId,
-        [FromBody] GroupRole groupRoles)
+    [HttpPut("{groupId}/members/{memberId}/group-roles")]
+    [Authorize]
+    public async Task<IActionResult> PutGroupRolesOfMember(string groupId, string memberId,
+        [FromForm] GroupRole groupRoles)
     {
-        var groupMember = await _context.GroupMembers
-            .SingleOrDefaultAsync(gm => gm.Group.Id == groupId && gm.User.Id == userId);
-        if (groupMember == null )
+        var targetedMember = await _context.GroupMembers
+            .SingleOrDefaultAsync(gm => gm.Group.Id == groupId && gm.User.Id == memberId);
+        var currentMember = await _context.GroupMembers
+            .SingleOrDefaultAsync(m => m.UserId == User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
+
+        if (targetedMember == null || currentMember == null)
         {
             return NotFound();
         }
-        groupMember.GroupRoles = groupRoles;
+
+        // check if targeted member has smaller role
+        if (targetedMember.GroupRoles >= currentMember.GroupRoles)
+        {
+            return Unauthorized("Your group role must be higher to change this member role");
+        }
+
+        // transfer ownership
+        if (groupRoles.HasFlag(GroupRole.Owner))
+        {
+            currentMember.GroupRoles -= GroupRole.Owner;
+        }
+
+        targetedMember.GroupRoles = groupRoles;
         await _context.SaveChangesAsync();
 
         return NoContent();
