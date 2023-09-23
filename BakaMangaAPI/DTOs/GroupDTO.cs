@@ -10,6 +10,8 @@ public class GroupBasicDTO
 
     public int MemberNumber { get; set; }
 
+    public bool IsMangaGroup { get; set; }
+
     public string? AvatarPath { get; set; }
 }
 
@@ -33,4 +35,6 @@ public class GroupEditDTO
 
     [MaxLength(1000)]
     public string Biography { get; set; } = default!;
+
+    public bool IsMangaGroup { get; set; }
 }

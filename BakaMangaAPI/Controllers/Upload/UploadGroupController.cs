@@ -47,6 +47,7 @@ public class UploadGroupController : ControllerBase
                 Id = g.Id,
                 Name = g.Name,
                 MemberNumber = g.Members.Count(),
+                IsMangaGroup = g.IsMangaGroup,
                 AvatarPath = g.AvatarPath,
             })
             .ToListAsync();
@@ -66,6 +67,7 @@ public class UploadGroupController : ControllerBase
                 AvatarPath = g.AvatarPath,
                 BannerPath = g.BannerPath,
                 Biography = g.Biography,
+                IsMangaGroup = g.IsMangaGroup,
                 CreatedAt = g.CreatedAt,
                 MemberNumber = g.Members.Count(),
                 UploadedChapterNumber = g.Chapters.Count(),
@@ -163,6 +165,7 @@ public class UploadGroupController : ControllerBase
         {
             Name = dto.Name,
             Biography = dto.Biography,
+            IsMangaGroup = dto.IsMangaGroup,
             Members = new() { new GroupMember { User = user, GroupRoles = GroupRole.Owner } }
         };
 
@@ -227,6 +230,7 @@ public class UploadGroupController : ControllerBase
 
         group.Name = dto.Name;
         group.Biography = dto.Biography;
+        group.IsMangaGroup = dto.IsMangaGroup;
         
         await _context.SaveChangesAsync();
         return NoContent();
