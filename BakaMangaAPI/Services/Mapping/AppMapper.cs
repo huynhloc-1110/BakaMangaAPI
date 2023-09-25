@@ -28,9 +28,6 @@ public partial class AppMapper : Profile
         CreateMap<CommentEditDTO, ChapterComment>();
         CreateMap<CommentEditDTO, Comment>();
 
-        CreateMap<Group, GroupBasicDTO>();
-        CreateMap<Group, GroupDetailDTO>();
-
         CreateMap<MangaListItem, ChapterGroupingDTO>()
             .ForMember(dest => dest.Chapters, opt => opt
                 .MapFrom(src => src.Manga.Chapters.OrderBy(c => c.CreatedAt).Take(3)));

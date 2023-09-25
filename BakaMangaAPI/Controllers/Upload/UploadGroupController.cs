@@ -1,113 +1,53 @@
-using System.Security.Claims;
+﻿using AutoMapper;
+using AutoMapper.QueryableExtensions;
 
-using AutoMapper;
 using BakaMangaAPI.Data;
 using BakaMangaAPI.DTOs;
 using BakaMangaAPI.Models;
-using BakaMangaAPI.Services.Media;
 
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-namespace BakaMangaAPI.Controllers;
+namespace BakaMangaAPI.Controllers.Upload;
 
 [ApiController]
 [Route("groups")]
 public class UploadGroupController : ControllerBase
-{
+{    
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly ApplicationDbContext _context;
     private readonly IMapper _mapper;
-    private readonly IMediaManager _mediaManager;
 
     public UploadGroupController(UserManager<ApplicationUser> userManager, ApplicationDbContext context,
-        IMapper mapper, IMediaManager mediaManager)
+        IMapper mapper)
     {
         _userManager = userManager;
         _context = context;
         _mapper = mapper;
-        _mediaManager = mediaManager;
     }
 
-    [HttpGet("~/users/{userId}/groups")]
-    public async Task<IActionResult> GetUserGroups(string userId)
+    [HttpGet("~/users/{userId}/manga-groups")]
+    [Authorize]
+    public async Task<IActionResult> GetUserMangaGroups(string userId)
     {
-        var user = await _userManager.FindByIdAsync(userId);
-        if (user == null)
+        if (await _userManager.GetUserAsync(User) is not ApplicationUser user)
         {
-            return BadRequest("JWT token outdated or corrupted");
+            return Forbid();
         }
 
         var groups = await _context.Groups
-            .Where(g => g.Members.Select(m => m.User).Contains(user))
-            .Select(g => new GroupBasicDTO
-            {
-                Id = g.Id,
-                Name = g.Name,
-                MemberNumber = g.Members.Count(),
-                IsMangaGroup = g.IsMangaGroup,
-                AvatarPath = g.AvatarPath,
-            })
+            .Where(g => g.IsMangaGroup)
+            .Where(g => g.Members.Single(m => m.User == user).GroupRoles.HasFlag(GroupRole.GroupUploader))
+            .Select(g => new { g.Id, g.Name })
+            .AsNoTracking()
             .ToListAsync();
 
         return Ok(groups);
     }
 
-    [HttpGet("{groupId}")]
-    public async Task<IActionResult> GetGroup(string groupId)
-    {
-        var group = await _context.Groups
-            .Where(g => g.Id == groupId)
-            .Select(g => new GroupDetailDTO
-            {
-                Id = g.Id,
-                Name = g.Name,
-                AvatarPath = g.AvatarPath,
-                BannerPath = g.BannerPath,
-                Biography = g.Biography,
-                IsMangaGroup = g.IsMangaGroup,
-                CreatedAt = g.CreatedAt,
-                MemberNumber = g.Members.Count(),
-                UploadedChapterNumber = g.Chapters.Count(),
-                ViewGainedNumber = g.Chapters.Sum(c => c.ChapterViews.Count)
-            })
-            .SingleOrDefaultAsync();
-
-        if (group == null)
-        {
-            return NotFound();
-        }
-
-        return Ok(group);
-    }
-
-    [HttpGet("{groupId}/members")]
-    public async Task<IActionResult> GetGroupMembers(string groupId)
-    {
-        if (await _context.Groups.FindAsync(groupId) is not Group group)
-        {
-            return NotFound();
-        }
-
-        var members = await _context.GroupMembers
-            .Where(m => m.Group == group)
-            .Select(m => new
-            {
-                m.User.Id,
-                m.User.Name,
-                m.User.AvatarPath,
-                m.GroupRoles
-            })
-            .AsNoTracking()
-            .ToListAsync();
-
-        return Ok(members);
-    }
-
     [HttpGet("{groupId}/chapters-by-manga")]
-    [AllowAnonymous]
     public async Task<IActionResult> GetChaptersOfUploaderByManga(string groupId,
         [FromQuery] FilterDTO filter)
     {
@@ -151,151 +91,5 @@ public class UploadGroupController : ControllerBase
             (chapterGroupingList, chapterGroupingCount, filter.Page, filter.PageSize);
 
         return Ok(paginatedList);
-    }
-
-    [HttpPost]
-    [Authorize]
-    public async Task<IActionResult> PostGroup([FromForm] GroupEditDTO dto)
-    {
-        if (await _userManager.GetUserAsync(User) is not ApplicationUser user)
-        {
-            return BadRequest("Token outdated or corrupted");
-        }
-        var group = new Group
-        {
-            Name = dto.Name,
-            Biography = dto.Biography,
-            IsMangaGroup = dto.IsMangaGroup,
-            Members = new() { new GroupMember { User = user, GroupRoles = GroupRole.Owner } }
-        };
-
-        _context.Groups.Add(group);
-        await _context.SaveChangesAsync();
-
-        return Ok(_mapper.Map<GroupBasicDTO>(group));
-    }
-
-    [HttpPut("{groupId}/avatar")]
-    [Authorize]
-    public async Task<IActionResult> PutGroupAvatar(string groupId, IFormFile image)
-    {
-        if (await _context.Groups.FindAsync(groupId) is not Group group)
-        {
-            return NotFound("Group not found");
-        }
-        if (!await IsUserOfRoleOrHigher(group, GroupRole.Moderator))
-        {
-            return Unauthorized("The user must be group moderator or owner to do this");
-        }
-
-        group.AvatarPath = await _mediaManager.UploadImageAsync(
-            image, groupId, ImageType.Avatar);
-
-        await _context.SaveChangesAsync();
-        return Ok(_mapper.Map<GroupDetailDTO>(group));
-    }
-
-    [HttpPut("{groupId}/banner")]
-    [Authorize]
-    public async Task<IActionResult> PutGroupBanner(string groupId, IFormFile image)
-    {
-        if (await _context.Groups.FindAsync(groupId) is not Group group)
-        {
-            return NotFound("Group not found");
-        }
-        if (!await IsUserOfRoleOrHigher(group, GroupRole.Moderator))
-        {
-            return Unauthorized("The user must be group moderator or owner to do this");
-        }
-
-        group.BannerPath = await _mediaManager.UploadImageAsync(
-            image, groupId, ImageType.Banner);
-
-        await _context.SaveChangesAsync();
-        return Ok(_mapper.Map<GroupDetailDTO>(group));
-    }
-
-    [HttpPut("{groupId}")]
-    [Authorize]
-    public async Task<IActionResult> PutGroup(string groupId, [FromForm] GroupEditDTO dto)
-    {
-        if (await _context.Groups.FindAsync(groupId) is not Group group)
-        {
-            return NotFound("Group not found");
-        }
-        if (!await IsUserOfRoleOrHigher(group, GroupRole.Moderator))
-        {
-            return Unauthorized("The user must be group moderator or owner to do this");
-        }
-
-        group.Name = dto.Name;
-        group.Biography = dto.Biography;
-        group.IsMangaGroup = dto.IsMangaGroup;
-        
-        await _context.SaveChangesAsync();
-        return NoContent();
-    }
-
-    [HttpDelete("{groupId}")]
-    [Authorize]
-    public async Task<IActionResult> DeleteGroup(string groupId)
-    {
-        if (await _context.Groups.FindAsync(groupId) is not Group group)
-        {
-            return BadRequest("Group not found");
-        }
-        if (!await IsUserOfRoleOrHigher(group, GroupRole.Owner))
-        {
-            return Unauthorized("The user must be group owner to do this");
-        }
-
-        group.DeletedAt = DateTime.UtcNow;
-
-        await _context.SaveChangesAsync();
-        return NoContent();
-    }
-
-    [HttpPut("{groupId}/members/{memberId}/group-roles")]
-    [Authorize]
-    public async Task<IActionResult> PutGroupRolesOfMember(string groupId, string memberId,
-        [FromForm] GroupRole groupRoles)
-    {
-        var targetedMember = await _context.GroupMembers
-            .SingleOrDefaultAsync(gm => gm.GroupId == groupId && gm.User.Id == memberId);
-        var currentMemberId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        var currentMember = await _context.GroupMembers
-            .SingleOrDefaultAsync(gm => gm.GroupId == groupId && gm.UserId == currentMemberId);
-
-        if (targetedMember == null || currentMember == null)
-        {
-            return NotFound();
-        }
-
-        // condition to continue:
-        // - current user has owner role OR
-        // - the targeted member role is lower than the current user
-        if (!currentMember.GroupRoles.HasFlag(GroupRole.Owner) && targetedMember.GroupRoles >= currentMember.GroupRoles)
-        {
-            return Unauthorized("Your group role must be higher to change this member role");
-        }
-
-        // condition to transfer ownership: the current user must has owner role
-        if (groupRoles.HasFlag(GroupRole.Owner))
-        {
-            currentMember.GroupRoles -= GroupRole.Owner;
-        }
-
-        targetedMember.GroupRoles = groupRoles;
-        await _context.SaveChangesAsync();
-
-        return NoContent();
-    }
-
-    private async Task<bool> IsUserOfRoleOrHigher(Group group, GroupRole groupRole)
-    {
-        var user = await _userManager.GetUserAsync(User);
-        return await _context.GroupMembers
-            .Where(gm => gm.Group == group)
-            .AnyAsync(gm => gm.User == user && gm.GroupRoles >= groupRole);
     }
 }

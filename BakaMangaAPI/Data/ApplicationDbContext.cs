@@ -88,6 +88,9 @@ public class ApplicationDbContext : IdentityDbContext<
         modelBuilder.Entity<Manga>().HasQueryFilter(m => m.DeletedAt == null);
         modelBuilder.Entity<MangaListItem>().HasQueryFilter(i => i.Manga.DeletedAt == null);
         modelBuilder.Entity<Rating>().HasQueryFilter(i => i.Manga.DeletedAt == null);
+
+        modelBuilder.Entity<Group>().HasQueryFilter(g => g.DeletedAt == null);
+        modelBuilder.Entity<GroupMember>().HasQueryFilter(gm => gm.Group.DeletedAt == null);
         #endregion
     }
 }
