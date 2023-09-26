@@ -60,6 +60,7 @@ public partial class GroupController
 
         // prevent owner to drop ownership without transfer
         if (currentMember.GroupRoles.HasFlag(GroupRole.Owner)
+            && targetedMember == currentMember
             && !groupRoles.HasFlag(GroupRole.Owner))
         {
             return BadRequest("The owner cannot drop group ownership " +
