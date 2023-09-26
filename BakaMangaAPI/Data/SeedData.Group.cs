@@ -9,6 +9,8 @@ public partial class SeedData
         var uploader1 = _userManager.FindByEmailAsync("LocLe345@example.com").Result;
         var uploader2 = _userManager.FindByEmailAsync("Admin1@example.com").Result;
         var uploader3 = _userManager.FindByEmailAsync("Uploader1@example.com").Result;
+        var user1 = _userManager.FindByEmailAsync("KhoaLe789@example.com").Result;
+        var user2 = _userManager.FindByEmailAsync("HuyNguyen123@example.com").Result;
 
         var groupAvatarUrl = _configuration["JWT:ValidIssuer"] + "/img/avatars/";
 
@@ -24,6 +26,9 @@ public partial class SeedData
                 {
                     new() { User = uploader1, GroupRoles = GroupRole.Owner | GroupRole.GroupUploader },
                     new() { User = uploader3, GroupRoles = GroupRole.Moderator },
+                    new() { User = user1, GroupRoles = GroupRole.Member },
+                    new() { User = user2, GroupRoles = GroupRole.Member },
+
                 }
             },
             ["Japan Group"] = new()
