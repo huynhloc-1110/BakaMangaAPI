@@ -3,6 +3,7 @@ using System.Text.Json.Serialization;
 
 using BakaMangaAPI.Data;
 using BakaMangaAPI.Models;
+using BakaMangaAPI.Services.Hubs;
 using BakaMangaAPI.Services.Media;
 
 using DotNetEnv;
@@ -29,6 +30,9 @@ var reactServerUrl = builder.Configuration["ReactServerUrl"];
 // DbContext
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseNpgsql(configuration));
+
+// Add SignalR
+builder.Services.AddSignalR();
 
 // Identity
 builder.Services.AddIdentity<ApplicationUser, ApplicationRole>()
@@ -71,7 +75,7 @@ builder.Services.AddSwaggerGen(c =>
 builder.Services.AddCors(options =>
     options.AddDefaultPolicy(
         policy =>
-            policy.WithOrigins(reactServerUrl).AllowAnyMethod().AllowAnyHeader()));
+            policy.WithOrigins(reactServerUrl).AllowAnyMethod().AllowAnyHeader().AllowCredentials()));
 
 // JWT Authentication/Authorization
 builder.Services.AddAuthentication(options =>
@@ -135,6 +139,8 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
+app.MapHub<ChatHub>("/chat");
 
 app.Run();
 

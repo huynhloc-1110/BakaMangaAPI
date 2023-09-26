@@ -1,8 +1,10 @@
 using BakaMangaAPI.Data;
 using BakaMangaAPI.Models;
+using BakaMangaAPI.Services.Hubs;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 
 [Route("user/follow/mangas")]
@@ -12,12 +14,15 @@ public class MangaFollowController : ControllerBase
 {
     private readonly ApplicationDbContext _context;
     private readonly UserManager<ApplicationUser> _userManager;
+    private readonly IHubContext<ChatHub> _chatHub;
 
     public MangaFollowController(ApplicationDbContext context,
-        UserManager<ApplicationUser> userManager)
+        UserManager<ApplicationUser> userManager,
+        IHubContext<ChatHub> chatHub)
     {
         _context = context;
         _userManager = userManager;
+        _chatHub = chatHub;
     }
 
     // GET: /user/follow/mangas/5
@@ -50,6 +55,7 @@ public class MangaFollowController : ControllerBase
         manga.Followers.Add(currentUser);
         await _context.SaveChangesAsync();
 
+        await _chatHub.Clients.All.SendAsync("ReceiveMessage", "admin", "You have followed");
         return CreatedAtAction(nameof(GetUserFollowForManga), new { id }, true);
     }
 
