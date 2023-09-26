@@ -119,9 +119,12 @@ public partial class GroupController
         }
 
         // role permission condition
-        // - current member role is owner and he does not remove himself
-        // - curent member role is mod and the targetted is lower than mod
+        // - current member is not owner and he remove himself
+        // - current member is owner and he does not remove himself
+        // - current member role is mod and the targetted is lower than mod
         var rolePermission =
+            (!currentMember.GroupRoles.HasFlag(GroupRole.Owner)
+                && currentMember == targetedMember) ||
             (currentMember.GroupRoles.HasFlag(GroupRole.Owner)
                 && currentMember != targetedMember) ||
             (currentMember.GroupRoles.HasFlag(GroupRole.Moderator)
