@@ -1,5 +1,8 @@
 ﻿using System.Security.Claims;
 
+using AutoMapper.QueryableExtensions;
+
+using BakaMangaAPI.DTOs;
 using BakaMangaAPI.Models;
 
 using Microsoft.AspNetCore.Authorization;
@@ -20,7 +23,7 @@ public partial class GroupController
 
         var members = await _context.GroupMembers
             .Where(m => m.Group == group)
-            .Select(m => new { m.User.Id, m.User.Name, m.User.AvatarPath, m.GroupRoles })
+            .ProjectTo<GroupMemberDTO>(_mapper.ConfigurationProvider)
             .AsNoTracking()
             .ToListAsync();
 
@@ -73,6 +76,31 @@ public partial class GroupController
         await _context.SaveChangesAsync();
 
         return NoContent();
+    }
+
+    [HttpPost("{groupId}/members")]
+    [Authorize]
+    public async Task<IActionResult> JoinGroup(string groupId)
+    {
+        var group = await _context.Groups.FindAsync(groupId);
+        var user = await _userManager.GetUserAsync(User);
+        if (group == null || user == null)
+        {
+            return NotFound();
+        }
+
+        var groupMember = new GroupMember
+        {
+            Group = group,
+            User = user,
+            GroupRoles = GroupRole.Member
+        };
+
+        _context.GroupMembers.Add(groupMember);
+        await _context.SaveChangesAsync();
+
+        var memberDTO = _mapper.Map<GroupMemberDTO>(groupMember);
+        return Ok(memberDTO);
     }
 
     [HttpDelete("{groupId}/members/{memberId}")]

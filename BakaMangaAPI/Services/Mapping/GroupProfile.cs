@@ -22,5 +22,13 @@ public class GroupProfile : Profile
                 .MapFrom(src => src.Chapters.Sum(c => c.ChapterViews.Count)));
 
         CreateMap<GroupEditDTO, Group>();
+
+        CreateMap<GroupMember, GroupMemberDTO>()
+            .ForMember(dest => dest.Id, opt => opt
+                .MapFrom(src => src.UserId))
+            .ForMember(dest => dest.Name, opt => opt
+                .MapFrom(src => src.User.Name))
+            .ForMember(dest => dest.AvatarPath, opt => opt
+                .MapFrom(src => src.User.AvatarPath));
     }
 }
