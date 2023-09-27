@@ -14,7 +14,10 @@ namespace BakaMangaAPI.Controllers.Community;
 public partial class GroupController
 {
     [HttpGet("{groupId}/members")]
-    public async Task<IActionResult> GetGroupMembers(string groupId)
+    public async Task<IActionResult> GetGroupMembers(string groupId,
+        [FromQuery] GroupRole? roleUpperBound,
+        [FromQuery] GroupRole? roleLowerBound,
+        [FromQuery] DateTime? joinedAtCursor)
     {
         if (await _context.Groups.FindAsync(groupId) is not Group group)
         {
@@ -23,11 +26,28 @@ public partial class GroupController
 
         var members = await _context.GroupMembers
             .Where(m => m.Group == group)
+            .Where(m => roleUpperBound == null || m.GroupRoles < roleUpperBound)
+            .Where(m => roleLowerBound == null || m.GroupRoles >= roleLowerBound)
+            .Where(m => joinedAtCursor == null || m.JoinedAt < joinedAtCursor)
+            .OrderByDescending(m => m.JoinedAt)
+            .Take(4)
             .ProjectTo<GroupMemberDTO>(_mapper.ConfigurationProvider)
             .AsNoTracking()
             .ToListAsync();
 
         return Ok(members);
+    }
+
+    [HttpGet("{groupId}/members/{memberId}")]
+    public async Task<IActionResult> GetGroupMember(string groupId, string memberId)
+    {
+        var member = await _context.GroupMembers
+            .Where(m => m.GroupId == groupId && m.UserId == memberId)
+            .ProjectTo<GroupMemberDTO>(_mapper.ConfigurationProvider)
+            .AsNoTracking()
+            .SingleOrDefaultAsync();
+
+        return member != null ? Ok(member) : NotFound();
     }
 
     [HttpPut("{groupId}/members/{memberId}/group-roles")]

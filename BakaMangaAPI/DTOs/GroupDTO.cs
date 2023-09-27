@@ -39,4 +39,5 @@ public class GroupMemberDTO
     public string Name { get; set; } = default!;
     public string? AvatarPath { get; set; }
     public GroupRole GroupRoles { get; set; }
+    public DateTime JoinedAt { get; set; }
 }

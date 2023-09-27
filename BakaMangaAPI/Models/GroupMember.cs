@@ -1,5 +1,8 @@
-﻿namespace BakaMangaAPI.Models;
+﻿using Microsoft.EntityFrameworkCore;
 
+namespace BakaMangaAPI.Models;
+
+[Index(nameof(GroupId), nameof(UserId), IsUnique = true)]
 public class GroupMember
 {
     public string GroupId { get; set; } = default!;
@@ -9,6 +12,7 @@ public class GroupMember
     public ApplicationUser User { get; set; } = default!;
 
     public GroupRole GroupRoles { get; set; } = new();
+    public DateTime JoinedAt { get; set; } = DateTime.UtcNow;
 }
 
 [Flags]
