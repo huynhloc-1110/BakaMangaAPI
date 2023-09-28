@@ -38,6 +38,39 @@ public partial class GroupController
         return Ok(members);
     }
 
+    [HttpGet("{groupId}/paginated-members")]
+    [Authorize]
+    public async Task<IActionResult> GetPaginatedGroupMembers(string groupId,
+        [FromQuery] MemberFilterDTO filter)
+    {
+        var currentMember = await _context.GroupMembers
+            .SingleOrDefaultAsync(m => 
+                m.UserId == User.FindFirstValue(ClaimTypes.NameIdentifier) &&
+                m.GroupId == groupId);
+        if (currentMember == null || currentMember.GroupRoles < GroupRole.Moderator)
+        {
+            return Forbid();
+        }
+
+        var memberQuery = _context.GroupMembers
+            .Where(m => m.GroupId == groupId)
+            .Where(m => filter.Search == null || m.User.Name.ToLower().Contains(filter.Search.ToLower()))
+            .Where(m => m.GroupRoles.HasFlag(filter.GroupRoleOptions));
+
+        var members = await memberQuery
+            .OrderByDescending(m => m.JoinedAt)
+            .Skip((filter.Page - 1) * filter.PageSize)
+            .Take(filter.PageSize)
+            .ProjectTo<GroupMemberDTO>(_mapper.ConfigurationProvider)
+            .ToListAsync();
+        var memberCount = await memberQuery.CountAsync();
+
+        var memberList = new PaginatedListDTO<GroupMemberDTO>(
+            members, memberCount, filter.Page, filter.PageSize);
+        return Ok(memberList);
+    }
+
+
     [HttpGet("{groupId}/members/{memberId}")]
     public async Task<IActionResult> GetGroupMember(string groupId, string memberId)
     {

@@ -15,6 +15,11 @@ public class UserFilterDTO : FilterDTO
     public RoleOption RoleOption { get; set; }
 }
 
+public class MemberFilterDTO : FilterDTO
+{
+    public GroupRole GroupRoleOptions { get; set; }
+}
+
 public class MangaFilterDTO : FilterDTO
 {
     public SortOption SortOption { get; set; }
