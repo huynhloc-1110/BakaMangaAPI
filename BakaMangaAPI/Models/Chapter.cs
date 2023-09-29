@@ -16,7 +16,7 @@ public class Chapter : BaseModel
     public ApplicationUser Uploader { get; set; } = default!;
     public Group? UploadingGroup { get; set; }
 
-    public List<Page> Pages { get; set; } = new();
+    public List<ChapterImage> Images { get; set; } = new();
     public List<ChapterComment> Comments { get; set; } = new();
     public List<ChapterReport> Reports { get; set; } = new();
     public List<ChapterView> ChapterViews { get; set; } = new();

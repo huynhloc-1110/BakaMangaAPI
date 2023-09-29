@@ -60,7 +60,7 @@ public class UploadChapterController : ControllerBase
             .OrderByDescending(c => c.CreatedAt)
             .Include(c => c.Manga)
             .Include(c => c.UploadingGroup)
-            .Include(c => c.Pages)
+            .Include(c => c.Images)
             .Skip((filter.Page - 1) * filter.PageSize)
             .Take(filter.PageSize)
             .AsNoTracking()
@@ -156,8 +156,8 @@ public class UploadChapterController : ControllerBase
         {
             var page = dto.Pages[i];
             var pageId = Guid.NewGuid().ToString();
-            var pagePath = await _mediaManager.UploadImageAsync(page, pageId, ImageType.Page);
-            chapter.Pages.Add(new() { Id = pageId, Number = i, Path = pagePath });
+            var pagePath = await _mediaManager.UploadImageAsync(page, pageId, ImageType.Chapter);
+            chapter.Images.Add(new() { Id = pageId, Number = i, Path = pagePath });
         }
 
         _context.Chapters.Add(chapter);
@@ -172,7 +172,7 @@ public class UploadChapterController : ControllerBase
         // get chapter with additional info
         var chapter = await _context.Chapters
             .Include(c => c.UploadingGroup)
-            .Include(c => c.Pages)
+            .Include(c => c.Images)
             .SingleOrDefaultAsync(c => c.Id == chapterId);
         if (chapter == null)
         {
@@ -194,21 +194,21 @@ public class UploadChapterController : ControllerBase
 
         // update chapter images
         // delete old images
-        foreach (var page in chapter.Pages)
+        foreach (var page in chapter.Images)
         {
             await _mediaManager.DeleteImageAsync(page.Path);
         }
 
-        _context.Pages.RemoveRange(chapter.Pages);
-        chapter.Pages = new();
+        _context.Images.RemoveRange(chapter.Images);
+        chapter.Images = new();
 
         // upload new images
         for (int i = 0; i < dto.Pages.Count; i++)
         {
             var page = dto.Pages[i];
             var pageId = Guid.NewGuid().ToString();
-            var pagePath = await _mediaManager.UploadImageAsync(page, pageId, ImageType.Page);
-            chapter.Pages.Add(new() { Id = pageId, Number = i, Path = pagePath });
+            var pagePath = await _mediaManager.UploadImageAsync(page, pageId, ImageType.Chapter);
+            chapter.Images.Add(new() { Id = pageId, Number = i, Path = pagePath });
         }
 
         await _context.SaveChangesAsync();

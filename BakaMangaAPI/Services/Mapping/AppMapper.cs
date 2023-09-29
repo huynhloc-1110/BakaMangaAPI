@@ -14,7 +14,7 @@ public partial class AppMapper : Profile
                 .MapFrom(src => src.ChapterViews.Count));
         CreateMap<Chapter, ChapterDetailDTO>()
             .ForMember(dest => dest.PageUrls, opt => opt
-                .MapFrom(src => src.Pages.OrderBy(p => p.Number).Select(p => p.Path).ToList()));
+                .MapFrom(src => src.Images.OrderBy(p => p.Number).Select(p => p.Path).ToList()));
         CreateMap<Chapter, ChapterSimpleDTO>();
 
         CreateMap<Comment, CommentDTO>()

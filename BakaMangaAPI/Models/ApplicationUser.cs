@@ -42,4 +42,5 @@ public class ApplicationUser : IdentityUser
     public List<ApplicationUser> Followings { get; set; } = new();
     public List<MangaList> MangaLists { get; set; } = new();
     public List<MangaListFollower> MangaListFollowers { get; set; } = new();
+    public List<Post> Posts { get; set; } = new();
 }

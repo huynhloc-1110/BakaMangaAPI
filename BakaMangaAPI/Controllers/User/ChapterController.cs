@@ -27,7 +27,7 @@ public partial class ChapterController : ControllerBase
     public async Task<IActionResult> GetChapter(string id)
     {
         var chapter = await _context.Chapters
-            .Include(ch => ch.Pages)
+            .Include(ch => ch.Images)
             .Include(ch => ch.Manga)
             .Include(ch => ch.UploadingGroup)
             .AsNoTracking()

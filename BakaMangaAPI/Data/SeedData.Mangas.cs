@@ -11,7 +11,7 @@ public partial class SeedData
     )
     {
         var coverBaseUrl = _configuration["JWT:ValidIssuer"] + "/img/covers/";
-        var pageUrl = _configuration["JWT:ValidIssuer"] + "/img/pages/";
+        var pageUrl = _configuration["JWT:ValidIssuer"] + "/img/chapters/";
         List<Manga> mangas = new();
 
         var uploader1 = _userManager.FindByEmailAsync("LocLe345@example.com").Result;
@@ -51,7 +51,7 @@ public partial class SeedData
                             new() { User = uploader2 },
                             new() { User = uploader3 },
                         },
-                        Pages = new()
+                        Images = new()
                         {
                             new () { Number = 1, Path = pageUrl + "doraemon-chapter-1.1.png" },
                             new () { Number = 2, Path = pageUrl + "doraemon-chapter-1.2.png" },
@@ -81,7 +81,7 @@ public partial class SeedData
                         Language = Language.English,
                         Uploader = uploader1,
                         UploadingGroup = groups["English Group"],
-                        Pages = new()
+                        Images = new()
                         {
                             new () { Number = 1, Path = pageUrl + "doraemon-chapter-2.1.png" },
                             new () { Number = 2, Path = pageUrl + "doraemon-chapter-2.2.png" },
@@ -111,7 +111,7 @@ public partial class SeedData
                         Language = Language.English,
                         Uploader = uploader1,
                         UploadingGroup = groups["English Group"],
-                        Pages = new()
+                        Images = new()
                         {
                             new () { Number = 1, Path = pageUrl + "doraemon-chapter-3.1.png" },
                             new () { Number = 2, Path = pageUrl + "doraemon-chapter-3.2.png" },
@@ -141,7 +141,7 @@ public partial class SeedData
                         Language = Language.English,
                         Uploader = uploader1,
                         UploadingGroup = groups["English Group"],
-                        Pages = new()
+                        Images = new()
                         {
                             new () { Number = 1, Path = pageUrl + "doraemon-chapter-4.1.png" },
                             new () { Number = 2, Path = pageUrl + "doraemon-chapter-4.2.png" },
@@ -171,7 +171,7 @@ public partial class SeedData
                         Language = Language.English,
                         Uploader = uploader1,
                         UploadingGroup = groups["English Group"],
-                        Pages = new()
+                        Images = new()
                         {
                             new () { Number = 1, Path = pageUrl + "doraemon-chapter-5.1.png" },
                             new () { Number = 2, Path = pageUrl + "doraemon-chapter-5.2.png" },

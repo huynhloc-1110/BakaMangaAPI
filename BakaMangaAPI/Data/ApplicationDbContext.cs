@@ -23,10 +23,12 @@ public class ApplicationDbContext : IdentityDbContext<
     public DbSet<Category> Categories { get; set; } = default!;
     public DbSet<Chapter> Chapters { get; set; } = default!;
     public DbSet<Comment> Comments { get; set; } = default!;
+    public DbSet<MangaComment> MangaComments { get; set; } = default!;
     public DbSet<Group> Groups { get; set; } = default!;
     public DbSet<GroupMember> GroupMembers { get; set; } = default!;
-    public DbSet<MangaComment> MangaComments { get; set; } = default!;
-    public DbSet<Page> Pages { get; set; } = default!;
+    public DbSet<Image> Images { get; set; } = default!;
+    public DbSet<ChapterImage> ChapterImages { get; set; } = default!;
+    public DbSet<PostImage> PostImages { get; set; } = default!;
     public DbSet<Manga> Mangas { get; set; } = default!;
     public DbSet<MangaList> MangaLists { get; set; } = default!;
     public DbSet<MangaListItem> MangaListItems { get; set; } = default!;
@@ -60,6 +62,9 @@ public class ApplicationDbContext : IdentityDbContext<
 
         modelBuilder.Entity<ChapterView>().HasBaseType<View>();
         modelBuilder.Entity<PostView>().HasBaseType<View>();
+
+        modelBuilder.Entity<ChapterImage>().HasBaseType<Image>();
+        modelBuilder.Entity<PostImage>().HasBaseType<Image>();
 
         modelBuilder.Entity<PromotionRequest>().HasBaseType<Request>();
         #endregion
