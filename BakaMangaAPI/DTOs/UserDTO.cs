@@ -26,7 +26,7 @@ public class UserBasicDTO
 public class UserSimpleDTO
 {
     public string Id { get; set; } = default!;
-
+    public string? AvatarPath { get; set; }
     public string Name { get; set; } = default!;
 }
 

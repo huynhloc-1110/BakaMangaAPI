@@ -59,6 +59,7 @@ public class AuthenticateController : ControllerBase
             Name = dto.Name,
             Email = dto.Email,
             UserName = dto.Email,
+            Biography = "No biography yet."
         };
         var result = await _userManager.CreateAsync(user, dto.Password);
         if (!result.Succeeded)
