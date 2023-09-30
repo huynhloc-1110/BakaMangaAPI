@@ -1,4 +1,6 @@
-﻿using AutoMapper;
+﻿using System.Security.Claims;
+
+using AutoMapper;
 using AutoMapper.QueryableExtensions;
 
 using BakaMangaAPI.Data;
@@ -32,6 +34,7 @@ public class PostController : ControllerBase
     [HttpGet("~/users/{userId}/posts")]
     public async Task<IActionResult> GetUserPosts(string userId, [FromQuery] DateTime? createdAtCursor)
     {
+        var currentUserID = User.FindFirstValue(ClaimTypes.NameIdentifier);
         var posts = await _context.Posts
             .Where(p => p.User.Id == userId)
             .Where(p => createdAtCursor == null || p.CreatedAt < createdAtCursor)

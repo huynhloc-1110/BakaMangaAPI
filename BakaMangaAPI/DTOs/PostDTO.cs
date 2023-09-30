@@ -1,5 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
+using BakaMangaAPI.Models;
+
 namespace BakaMangaAPI.DTOs;
 
 public class PostBasicDTO
@@ -10,7 +12,7 @@ public class PostBasicDTO
     public List<string> ImageUrls { get; set; } = new();
     public int LikeCount { get; set; }
     public int DislikeCount { get; set; }
-    public int UserReactFlag { get; set; }
+    public ReactFlag? UserReactFlag { get; set; }
     public int CommentCount { get; set; }
     public DateTime CreatedAt { get; set; }
 }
