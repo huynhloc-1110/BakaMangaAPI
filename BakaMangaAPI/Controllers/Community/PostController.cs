@@ -1,7 +1,6 @@
 ﻿using System.Security.Claims;
 
 using AutoMapper;
-using AutoMapper.QueryableExtensions;
 
 using BakaMangaAPI.Data;
 using BakaMangaAPI.DTOs;
@@ -34,13 +33,25 @@ public class PostController : ControllerBase
     [HttpGet("~/users/{userId}/posts")]
     public async Task<IActionResult> GetUserPosts(string userId, [FromQuery] DateTime? createdAtCursor)
     {
-        var currentUserID = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
         var posts = await _context.Posts
             .Where(p => p.User.Id == userId)
             .Where(p => createdAtCursor == null || p.CreatedAt < createdAtCursor)
             .OrderByDescending(p => p.CreatedAt)
             .Take(4)
-            .ProjectTo<PostBasicDTO>(_mapper.ConfigurationProvider)
+            .Select(p => new PostBasicDTO
+            {
+                Id = p.Id, Content = p.Content, CreatedAt = p.CreatedAt,
+                User = new UserSimpleDTO { Id = p.User.Id, Name = p.User.Name },
+                ImageUrls = p.Images.Select(i => i.Path).ToList(),
+                LikeCount = p.Reacts.Count(r => r.ReactFlag == ReactFlag.Like),
+                DislikeCount = p.Reacts.Count(r => r.ReactFlag == ReactFlag.Dislike),
+                CommentCount = p.Comments.Count,
+                UserReactFlag = p.Reacts
+                    .Where(r => r.UserId == currentUserId)
+                    .Select(r => r.ReactFlag)
+                    .SingleOrDefault()
+            })
             .ToListAsync();
 
         return Ok(posts);
