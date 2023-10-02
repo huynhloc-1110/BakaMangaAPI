@@ -47,7 +47,12 @@ public class PostController : ControllerBase
                 Id = p.Id,
                 Content = p.Content,
                 CreatedAt = p.CreatedAt,
-                User = new UserSimpleDTO { Id = p.User.Id, Name = p.User.Name },
+                User = new UserSimpleDTO
+                {
+                    Id = p.User.Id,
+                    Name = p.User.Name,
+                    AvatarPath = p.User.AvatarPath
+                },
                 ImageUrls = p.Images.Select(i => i.Path).ToList(),
                 LikeCount = p.Reacts.Count(r => r.ReactFlag == ReactFlag.Like),
                 DislikeCount = p.Reacts.Count(r => r.ReactFlag == ReactFlag.Dislike),
