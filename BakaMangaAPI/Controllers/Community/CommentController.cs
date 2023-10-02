@@ -1,12 +1,17 @@
 using System.Security.Claims;
+
 using AutoMapper;
+
 using BakaMangaAPI.Data;
 using BakaMangaAPI.DTOs;
 using BakaMangaAPI.Models;
+
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+
+namespace BakaMangaAPI.Controllers.Community;
 
 [Route("comments")]
 [ApiController]
@@ -24,20 +29,13 @@ public partial class CommentController : ControllerBase
         _userManager = userManager;
     }
 
-    // PUT: /comments/5
-    [HttpPut("{id}")]
+    [HttpPut("{commentId}")]
     [Authorize]
-    public async Task<IActionResult> PutComment(string id,
-        [FromForm] CommentEditDTO commentDTO)
+    public async Task<IActionResult> PutComment(string commentId, [FromForm] CommentEditDTO commentDTO)
     {
-        if (id != commentDTO.Id)
-        {
-            return BadRequest("Comment Id not matched");
-        }
-
         var comment = await _context.Comments
             .Include(c => c.User)
-            .SingleOrDefaultAsync(c => c.Id == id);
+            .SingleOrDefaultAsync(c => c.Id == commentId);
         if (comment == null)
         {
             return NotFound("Comment not found");
@@ -54,14 +52,13 @@ public partial class CommentController : ControllerBase
         return NoContent();
     }
 
-    // DELETE: /comments/5
-    [HttpDelete("{id}")]
+    [HttpDelete("{commentId}")]
     [Authorize]
-    public async Task<IActionResult> DeleteComment(string id)
+    public async Task<IActionResult> DeleteComment(string commentId)
     {
         var comment = await _context.Comments
             .Include(c => c.User)
-            .SingleOrDefaultAsync(c => c.Id == id);
+            .SingleOrDefaultAsync(c => c.Id == commentId);
         if (comment == null)
         {
             return NotFound("Comment not found");
