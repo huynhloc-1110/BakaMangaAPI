@@ -21,4 +21,6 @@ public class PostEditDTO
 {
     [MaxLength(2000)]
     public string Content { get; set; } = default!;
+
+    public List<IFormFile> Images { get; set; } = new();
 }

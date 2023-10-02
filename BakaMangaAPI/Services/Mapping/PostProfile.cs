@@ -19,6 +19,7 @@ public class PostProfile : Profile
             .ForMember(dest => dest.CommentCount, opt => opt
                 .MapFrom(src => src.Comments.Count(c => c.DeletedAt == null)));
 
-        CreateMap<PostEditDTO, Post>();
+        CreateMap<PostEditDTO, Post>()
+            .ForMember(dest => dest.Images, opt => opt.Ignore());
     }
 }

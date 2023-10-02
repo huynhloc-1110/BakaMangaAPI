@@ -27,5 +27,5 @@ public interface IMediaManager
 
 public enum ImageType
 {
-    Avatar, Banner, Cover, Chapter
+    Avatar, Banner, Cover, Chapter, Post
 }

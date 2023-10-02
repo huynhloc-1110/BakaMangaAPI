@@ -5,7 +5,7 @@ using AutoMapper;
 using BakaMangaAPI.Data;
 using BakaMangaAPI.DTOs;
 using BakaMangaAPI.Models;
-
+using BakaMangaAPI.Services.Media;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -20,14 +20,17 @@ public class PostController : ControllerBase
     private readonly ApplicationDbContext _context;
     private readonly IMapper _mapper;
     private readonly UserManager<ApplicationUser> _userManager;
+    private readonly IMediaManager _mediaManager;
 
     public PostController(ApplicationDbContext context,
         IMapper mapper,
-        UserManager<ApplicationUser> userManager)
+        UserManager<ApplicationUser> userManager,
+        IMediaManager mediaManager)
     {
         _context = context;
         _mapper = mapper;
         _userManager = userManager;
+        _mediaManager = mediaManager;
     }
 
     [HttpGet("~/users/{userId}/posts")]
@@ -41,7 +44,9 @@ public class PostController : ControllerBase
             .Take(4)
             .Select(p => new PostBasicDTO
             {
-                Id = p.Id, Content = p.Content, CreatedAt = p.CreatedAt,
+                Id = p.Id,
+                Content = p.Content,
+                CreatedAt = p.CreatedAt,
                 User = new UserSimpleDTO { Id = p.User.Id, Name = p.User.Name },
                 ImageUrls = p.Images.Select(i => i.Path).ToList(),
                 LikeCount = p.Reacts.Count(r => r.ReactFlag == ReactFlag.Like),
@@ -65,6 +70,15 @@ public class PostController : ControllerBase
         var post = _mapper.Map<Post>(dto);
 
         post.User = user;
+
+        for (int i = 0; i < dto.Images.Count; i++)
+        {
+            var page = dto.Images[i];
+            var pageId = Guid.NewGuid().ToString();
+            var pagePath = await _mediaManager.UploadImageAsync(page, pageId, ImageType.Post);
+            post.Images.Add(new() { Id = pageId, Number = i, Path = pagePath });
+        }
+
         _context.Posts.Add(post);
         await _context.SaveChangesAsync();
 
