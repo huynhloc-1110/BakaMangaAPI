@@ -1,13 +1,16 @@
-using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
+
 using BakaMangaAPI.Data;
-using Microsoft.AspNetCore.Identity;
 using BakaMangaAPI.Models;
+
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace BakaMangaAPI.Controllers;
 
-[Route("user/rating/mangas")]
+[Route("mangas/{mangaId}/my-rating")]
 [ApiController]
 [Authorize]
 public class RatingController : ControllerBase
@@ -22,103 +25,67 @@ public class RatingController : ControllerBase
         _userManager = userManager;
     }
 
-    private async Task<Rating?> LoadRatingAsync(ApplicationUser user,
-        Manga manga)
+    [HttpGet]
+    public async Task<IActionResult> GetMyRatingForManga(string mangaId)
     {
-        return await _context.Ratings
-            .Include(r => r.User)
-            .Include(r => r.Manga)
-            .SingleOrDefaultAsync(r => r.User == user && r.Manga == manga);
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        var rating = await _context.Ratings
+            .SingleOrDefaultAsync(r => r.UserId == userId && r.MangaId == mangaId);
+
+        return rating == null ? NotFound() : Ok(rating.Value);
     }
 
-    // GET: /user/rating/mangas/5
-    [HttpGet("{id}")]
-    public async Task<IActionResult> GetUserRatingForManga(string id)
+    [HttpPut]
+    public async Task<IActionResult> PutMyRatingForManga(string mangaId, [FromForm] int inputRating)
     {
-        var currentUser = await _userManager.GetUserAsync(User);
-        var manga = await _context.Mangas.FindAsync(id);
-        if (manga == null)
-        {
-            return BadRequest();
-        }
-        return Ok((await LoadRatingAsync(currentUser, manga))?.Value);
-    }
-
-    // POST: /user/rating/mangas/5
-    [HttpPost("{id}")]
-    public async Task<IActionResult> PostRatingForManga(string id, [FromForm]
-        int inputRating)
-    {
-        var currentUser = await _userManager.GetUserAsync(User);
-        var manga = await _context.Mangas.FindAsync(id);
-        if (manga == null || inputRating < 1 || inputRating > 5)
+        if (inputRating < 1 || inputRating > 5)
         {
             return BadRequest("Invalid manga id or rating value.");
         }
 
-        var existingRating = await LoadRatingAsync(currentUser, manga);
-        if (existingRating != null)
+        // rating exists
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        var currentRating = await _context.Ratings
+            .SingleOrDefaultAsync(r => r.UserId == userId && r.MangaId == mangaId);
+        if (currentRating != null)
         {
-            return BadRequest("Rating already exists. Use PUT instead.");
+            currentRating.Value = inputRating;
+            await _context.SaveChangesAsync();
+            return NoContent();
+        }
+
+        // rating not exists yet
+        var manga = await _context.Mangas.FindAsync(mangaId);
+        if (manga == null)
+        {
+            return NotFound("Manga not found");
         }
 
         var rating = new Rating()
         {
             Value = inputRating,
-            User = currentUser,
-            Manga = manga
+            UserId = userId,
+            MangaId = mangaId
         };
         _context.Ratings.Add(rating);
         await _context.SaveChangesAsync();
 
-        return CreatedAtAction(nameof(GetUserRatingForManga), new { id },
-            inputRating);
+        return CreatedAtAction(nameof(GetMyRatingForManga), new { mangaId }, inputRating);
     }
 
-    // PUT: /user/rating/mangas/5
-    [HttpPut("{id}")]
-    public async Task<IActionResult> PutRatingForManga(string id, [FromForm]
-        int inputRating)
+    [HttpDelete]
+    public async Task<IActionResult> DeleteMyRatingForManga(string mangaId)
     {
-        var currentUser = await _userManager.GetUserAsync(User);
-        var manga = await _context.Mangas.FindAsync(id);
-        if (manga == null || inputRating < 1 || inputRating > 5)
-        {
-            return BadRequest("Invalid manga id or rating value.");
-        }
-
-        var rating = await LoadRatingAsync(currentUser, manga);
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        var rating = await _context.Ratings
+            .SingleOrDefaultAsync(r => r.UserId == userId && r.MangaId == mangaId);
         if (rating == null)
         {
-            return NotFound("Rating not found.");
-        }
-
-        rating.Value = inputRating;
-        await _context.SaveChangesAsync();
-
-        return NoContent();
-    }
-
-    // DELETE: /user/rating/mangas/5
-    [HttpDelete("{id}")]
-    public async Task<IActionResult> DeleteRatingForManga(string id)
-    {
-        var currentUser = await _userManager.GetUserAsync(User);
-        var manga = await _context.Mangas.FindAsync(id);
-        if (manga == null)
-        {
-            return BadRequest("Invalid manga id.");
-        }
-
-        var rating = await LoadRatingAsync(currentUser, manga);
-        if (rating == null)
-        {
-            return BadRequest();
+            return NotFound();
         }
 
         _context.Ratings.Remove(rating);
         await _context.SaveChangesAsync();
-
         return NoContent();
     }
 }

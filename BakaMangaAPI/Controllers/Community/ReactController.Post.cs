@@ -14,7 +14,7 @@ public partial class ReactController
     {
         return await _context.Reacts
             .OfType<PostReact>()
-            .SingleOrDefaultAsync(r => r.User.Id == userId && r.Post.Id == postId);
+            .SingleOrDefaultAsync(r => r.UserId == userId && r.PostId == postId);
     }
 
     [HttpGet("~/posts/{postId}/my-react")]
@@ -43,6 +43,12 @@ public partial class ReactController
         }
 
         // react not exists yet
+        var post = await _context.Posts.FindAsync(postId);
+        if (post == null)
+        {
+            return NotFound("Post not found");
+        }
+
         var newReact = new PostReact()
         {
             ReactFlag = reactFlag,

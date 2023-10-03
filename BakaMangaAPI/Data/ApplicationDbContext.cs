@@ -27,8 +27,6 @@ public class ApplicationDbContext : IdentityDbContext<
     public DbSet<Group> Groups { get; set; } = default!;
     public DbSet<GroupMember> GroupMembers { get; set; } = default!;
     public DbSet<Image> Images { get; set; } = default!;
-    public DbSet<ChapterImage> ChapterImages { get; set; } = default!;
-    public DbSet<PostImage> PostImages { get; set; } = default!;
     public DbSet<Manga> Mangas { get; set; } = default!;
     public DbSet<MangaList> MangaLists { get; set; } = default!;
     public DbSet<MangaListItem> MangaListItems { get; set; } = default!;
@@ -36,7 +34,6 @@ public class ApplicationDbContext : IdentityDbContext<
     public DbSet<Post> Posts { get; set; } = default!;
     public DbSet<Rating> Ratings { get; set; } = default!;
     public DbSet<React> Reacts { get; set; } = default!;
-    public DbSet<CommentReact> CommentReacts { get; set; } = default!;
     public DbSet<Report> Reports { get; set; } = default!;
     public DbSet<Request> Requests { get; set; } = default!;
     public DbSet<View> Views { get; set; } = default!;

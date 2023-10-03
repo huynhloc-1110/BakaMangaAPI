@@ -14,7 +14,7 @@ public partial class ReactController
     {
         return await _context.Reacts
             .OfType<CommentReact>()
-            .SingleOrDefaultAsync(r => r.User.Id == userId && r.Comment.Id == commentId);
+            .SingleOrDefaultAsync(r => r.UserId == userId && r.CommentId == commentId);
     }
 
     [HttpGet("~/comments/{commentId}/my-react")]
@@ -43,6 +43,12 @@ public partial class ReactController
         }
 
         // react not exists yet
+        var comment = await _context.Comments.FindAsync(commentId);
+        if (comment == null)
+        {
+            return NotFound("Comment not found");
+        }
+
         var newReact = new CommentReact()
         {
             ReactFlag = reactFlag,

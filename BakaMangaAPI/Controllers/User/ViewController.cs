@@ -1,13 +1,14 @@
-using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
+
 using BakaMangaAPI.Data;
-using Microsoft.AspNetCore.Identity;
 using BakaMangaAPI.Models;
+
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 
 namespace BakaMangaAPI.Controllers;
 
-[Route("user/view/chapters")]
 [ApiController]
 [Authorize]
 public class ViewController : ControllerBase
@@ -22,32 +23,52 @@ public class ViewController : ControllerBase
         _userManager = userManager;
     }
 
-    [HttpPost("{id}")]
+    [HttpPost("~/chapters/{chapterId}/my-view")]
     [Authorize]
-    public async Task<ActionResult> PostViewForChapter(string id)
+    public async Task<ActionResult> PostViewForChapter(string chapterId)
     {
-        var user = await _userManager.GetUserAsync(User);
-        var chapter = await _context.Chapters.FindAsync(id);
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        var chapter = await _context.Chapters.FindAsync(chapterId);
         if (chapter == null)
         {
             return NotFound("Chapter not found");
         }
 
-        ChapterView view = new()
-        {
-            Chapter = chapter,
-            User = user
-        };
+        ChapterView view = new() { ChapterId = chapterId, UserId = userId };
         _context.Views.Add(view);
 
         try
         {
             await _context.SaveChangesAsync();
+            return Ok();
         } catch (Exception)
         {
             return BadRequest();
         }
+    }
 
-        return Ok();
+    [HttpPost("~/posts/{postId}/my-view")]
+    [Authorize]
+    public async Task<ActionResult> PostViewForPost(string postId)
+    {
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        var post = await _context.Posts.FindAsync(postId);
+        if (post == null)
+        {
+            return NotFound("Chapter not found");
+        }
+
+        PostView view = new() { PostId = postId, UserId = userId };
+        _context.Views.Add(view);
+
+        try
+        {
+            await _context.SaveChangesAsync();
+            return Ok();
+        }
+        catch (Exception)
+        {
+            return BadRequest();
+        }
     }
 }
