@@ -12,7 +12,7 @@ public class React : BaseModel
 
 public enum ReactFlag
 {
-    Dislike = -1, Like = 1
+    Dislike = -1, Like = 1, None = 0
 }
 
 [Index(nameof(CommentId), nameof(UserId), IsUnique = true)]
