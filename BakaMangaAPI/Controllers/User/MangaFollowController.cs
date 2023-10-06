@@ -1,11 +1,14 @@
+using System.Security.Claims;
+
 using BakaMangaAPI.Data;
 using BakaMangaAPI.Models;
+
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-[Route("user/follow/mangas")]
+[Route("mangas/{mangaId}/my-follow")]
 [ApiController]
 [Authorize]
 public class MangaFollowController : ControllerBase
@@ -20,53 +23,49 @@ public class MangaFollowController : ControllerBase
         _userManager = userManager;
     }
 
-    // GET: /user/follow/mangas/5
-    [HttpGet("{id}")]
-    public async Task<bool> GetUserFollowForManga(string id)
+    [HttpGet]
+    public async Task<bool> GetMyFollowForManga(string mangaId)
     {
-        var currentUser = await _userManager.GetUserAsync(User);
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
         var result = await _context.Mangas
-            .AnyAsync(m => m.Id == id &&
-                m.Followers.Any(u => u == currentUser));
+            .AnyAsync(m => m.Id == mangaId &&
+                m.Followers.Select(f => f.Id).Any(id => id == userId));
         return result;
     }
 
-    // POST: /user/follow/mangas/5
-    [HttpPost("{id}")]
-    public async Task<IActionResult> PostUserFollowForManga(string id)
+    [HttpPost]
+    public async Task<IActionResult> PostMyFollowForManga(string mangaId)
     {
-        var currentUser = await _userManager.GetUserAsync(User);
-        var manga = await _context.Mangas.FindAsync(id);
-
+        var manga = await _context.Mangas.FindAsync(mangaId);
         if (manga == null)
         {
-            return BadRequest("Invalid manga id.");
+            return NotFound("Manga not found");
         }
-        if (await GetUserFollowForManga(id))
+
+        if (await GetMyFollowForManga(mangaId))
         {
             return BadRequest("User has already followed this manga.");
         }
 
+        var currentUser = await _userManager.GetUserAsync(User);
         manga.Followers.Add(currentUser);
         await _context.SaveChangesAsync();
 
-        return CreatedAtAction(nameof(GetUserFollowForManga), new { id }, true);
+        return CreatedAtAction(nameof(GetMyFollowForManga), new { mangaId }, true);
     }
 
-    // DELETE: /user/follow/mangas/5
-    [HttpDelete("{id}")]
-    public async Task<IActionResult> RemoveUserFollowForManga(string id)
+    [HttpDelete]
+    public async Task<IActionResult> RemoveMyFollowForManga(string mangaId)
     {
-        var currentUser = await _userManager.GetUserAsync(User);
         var manga = await _context.Mangas
             .Include(m => m.Followers)
-            .SingleOrDefaultAsync(m => m.Id == id);
-
+            .SingleOrDefaultAsync(m => m.Id == mangaId);
         if (manga == null)
         {
             return BadRequest("Invalid manga id.");
         }
 
+        var currentUser = await _userManager.GetUserAsync(User);
         manga.Followers.Remove(currentUser);
         await _context.SaveChangesAsync();
 
