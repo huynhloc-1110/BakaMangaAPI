@@ -78,15 +78,88 @@ public class PostController : ControllerBase
 
         for (int i = 0; i < dto.Images.Count; i++)
         {
-            var page = dto.Images[i];
-            var pageId = Guid.NewGuid().ToString();
-            var pagePath = await _mediaManager.UploadImageAsync(page, pageId, ImageType.Post);
-            post.Images.Add(new() { Id = pageId, Number = i, Path = pagePath });
+            var image = dto.Images[i];
+            var imageId = Guid.NewGuid().ToString();
+            var imagePath = await _mediaManager.UploadImageAsync(image, imageId, ImageType.Post);
+            post.Images.Add(new() { Id = imageId, Number = i, Path = imagePath });
         }
 
         _context.Posts.Add(post);
         await _context.SaveChangesAsync();
 
         return Ok(_mapper.Map<PostBasicDTO>(post));
+    }
+
+    [HttpPut("{postId}")]
+    [Authorize]
+    public async Task<IActionResult> PutPost(string postId, [FromForm] PostEditDTO dto)
+    {
+        // validate
+        var post = await _context.Posts
+            .Include(p => p.User)
+            .Include(p => p.Images)
+            .SingleOrDefaultAsync(p => p.Id == postId);
+        if (post == null)
+        {
+            return NotFound();
+        }
+
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (post.User.Id != userId)
+        {
+            return Forbid();
+        }
+
+        // change properties
+        post.Content = dto.Content;
+
+        foreach (var image in post.Images)
+        {
+            await _mediaManager.DeleteImageAsync(image.Path);
+        }
+        _context.Images.RemoveRange(post.Images);
+
+        post.Images = new();
+        for (int i = 0; i < dto.Images.Count; i++)
+        {
+            var image = dto.Images[i];
+            var imageId = Guid.NewGuid().ToString();
+            var imagePath = await _mediaManager.UploadImageAsync(image, imageId, ImageType.Post);
+            post.Images.Add(new() { Id = imageId, Number = i, Path = imagePath });
+        }
+
+        await _context.SaveChangesAsync();
+        return NoContent();
+    }
+
+    [HttpDelete("{postId}")]
+    [Authorize]
+    public async Task<IActionResult> DeletePost(string postId)
+    {
+        // validate
+        var post = await _context.Posts
+            .Include(p => p.User)
+            .Include(p => p.Images)
+            .SingleOrDefaultAsync(p => p.Id == postId);
+        if (post == null)
+        {
+            return NotFound();
+        }
+
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (post.User.Id != userId)
+        {
+            return Forbid();
+        }
+
+        foreach (var image in post.Images)
+        {
+            await _mediaManager.DeleteImageAsync(image.Path);
+        }
+
+        _context.Images.RemoveRange(post.Images);
+        _context.Posts.Remove(post);
+        await _context.SaveChangesAsync();
+        return NoContent();
     }
 }
