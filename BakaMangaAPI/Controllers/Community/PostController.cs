@@ -1,7 +1,7 @@
 ﻿using System.Security.Claims;
 
 using AutoMapper;
-
+using AutoMapper.QueryableExtensions;
 using BakaMangaAPI.Data;
 using BakaMangaAPI.DTOs;
 using BakaMangaAPI.Models;
@@ -42,26 +42,7 @@ public class PostController : ControllerBase
             .Where(p => createdAtCursor == null || p.CreatedAt < createdAtCursor)
             .OrderByDescending(p => p.CreatedAt)
             .Take(4)
-            .Select(p => new PostBasicDTO
-            {
-                Id = p.Id,
-                Content = p.Content,
-                CreatedAt = p.CreatedAt,
-                User = new UserSimpleDTO
-                {
-                    Id = p.User.Id,
-                    Name = p.User.Name,
-                    AvatarPath = p.User.AvatarPath
-                },
-                ImageUrls = p.Images.Select(i => i.Path).ToList(),
-                LikeCount = p.Reacts.Count(r => r.ReactFlag == ReactFlag.Like),
-                DislikeCount = p.Reacts.Count(r => r.ReactFlag == ReactFlag.Dislike),
-                CommentCount = p.Comments.Count,
-                UserReactFlag = p.Reacts
-                    .Where(r => r.UserId == currentUserId)
-                    .Select(r => r.ReactFlag)
-                    .SingleOrDefault()
-            })
+            .ProjectTo<PostBasicDTO>(_mapper.ConfigurationProvider, new { currentUserId })
             .ToListAsync();
 
         return Ok(posts);

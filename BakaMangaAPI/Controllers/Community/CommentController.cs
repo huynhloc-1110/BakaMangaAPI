@@ -36,12 +36,13 @@ public partial class CommentController : ControllerBase
         var comment = await _context.Comments
             .Include(c => c.User)
             .SingleOrDefaultAsync(c => c.Id == commentId);
+
+        // validate
         if (comment == null)
         {
             return NotFound("Comment not found");
         }
-
-        if (!await IsUserComment(User, comment))
+        if (!IsCommentOwner(comment, User))
         {
             return BadRequest("The comment is not owned by the current user");
         }
@@ -59,29 +60,26 @@ public partial class CommentController : ControllerBase
         var comment = await _context.Comments
             .Include(c => c.User)
             .SingleOrDefaultAsync(c => c.Id == commentId);
+
+        // validate
         if (comment == null)
         {
             return NotFound("Comment not found");
         }
-
-        if (!await IsUserComment(User, comment))
+        if (!IsCommentOwner(comment, User))
         {
             return BadRequest("The comment is not owned by the current user");
         }
 
-        comment.DeletedAt = DateTime.UtcNow;
+        _context.Comments.Remove(comment);
         await _context.SaveChangesAsync();
 
         return NoContent();
     }
 
-    private async Task<bool> IsUserComment(ClaimsPrincipal principal, Comment comment)
+    private bool IsCommentOwner(Comment comment, ClaimsPrincipal principal)
     {
-        var user = await _userManager.GetUserAsync(principal);
-        if (comment.User == user)
-        {
-            return true;
-        }
-        return false;
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        return comment.User.Id == userId;
     }
 }
