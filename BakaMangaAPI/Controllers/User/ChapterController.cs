@@ -1,8 +1,10 @@
 using AutoMapper;
+using AutoMapper.QueryableExtensions;
+
 using BakaMangaAPI.Data;
 using BakaMangaAPI.DTOs;
 using BakaMangaAPI.Models;
-using Microsoft.AspNetCore.Authorization;
+
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -23,44 +25,36 @@ public partial class ChapterController : ControllerBase
         _userManager = userManager;
     }
 
-    [HttpGet("{id}")]
-    public async Task<IActionResult> GetChapter(string id)
+    [HttpGet("{chapterId}")]
+    public async Task<IActionResult> GetChapter(string chapterId)
     {
         var chapter = await _context.Chapters
-            .Include(ch => ch.Images)
-            .Include(ch => ch.Manga)
-            .Include(ch => ch.UploadingGroup)
+            .ProjectTo<ChapterDetailDTO>(_mapper.ConfigurationProvider)
             .AsNoTracking()
-            .SingleOrDefaultAsync(ch => ch.Id == id);
+            .SingleOrDefaultAsync(ch => ch.Id == chapterId);
 
-        if (chapter == null || chapter.DeletedAt != null)
-        {
-            return NotFound("The chapter of this id does not exist");
-        }
-
-        return Ok(_mapper.Map<ChapterDetailDTO>(chapter));
+        return (chapter != null) ? Ok(chapter) : NotFound();
     }
 
-    [HttpGet("{id}/related-chapters")]
-    public async Task<IActionResult> GetRelatedChapters(string id)
+    [HttpGet("{chapterId}/related-chapters")]
+    public async Task<IActionResult> GetRelatedChapters(string chapterId)
     {
         var chapter = await _context.Chapters
             .Include(ch => ch.Manga)
-            .SingleOrDefaultAsync(ch => ch.Id == id);
-
-        if (chapter == null || chapter.DeletedAt != null)
+            .SingleOrDefaultAsync(ch => ch.Id == chapterId);
+        if (chapter == null)
         {
-            return NotFound("The chapter of this id does not exist");
+            return NotFound();
         }
 
         var relatedChapters = await _context.Chapters
             .Where(ch => ch.Manga == chapter.Manga)
             .Where(ch => ch.Language == chapter.Language)
-            .Include(ch => ch.UploadingGroup)
             .OrderByDescending(ch => ch.Number)
+            .ProjectTo<ChapterSimpleDTO>(_mapper.ConfigurationProvider)
             .AsNoTracking()
             .ToListAsync();
 
-        return Ok(_mapper.Map<List<ChapterSimpleDTO>>(relatedChapters));
+        return Ok(relatedChapters);
     }
 }

@@ -23,7 +23,6 @@ public class ApplicationDbContext : IdentityDbContext<
     public DbSet<Category> Categories { get; set; } = default!;
     public DbSet<Chapter> Chapters { get; set; } = default!;
     public DbSet<Comment> Comments { get; set; } = default!;
-    public DbSet<MangaComment> MangaComments { get; set; } = default!;
     public DbSet<Group> Groups { get; set; } = default!;
     public DbSet<GroupMember> GroupMembers { get; set; } = default!;
     public DbSet<Image> Images { get; set; } = default!;
@@ -93,6 +92,10 @@ public class ApplicationDbContext : IdentityDbContext<
 
         modelBuilder.Entity<Group>().HasQueryFilter(g => g.DeletedAt == null);
         modelBuilder.Entity<GroupMember>().HasQueryFilter(gm => gm.Group.DeletedAt == null);
+
+        modelBuilder.Entity<Chapter>().HasQueryFilter(
+            c => c.DeletedAt == null &&
+            c.Manga.DeletedAt == null);
         #endregion
     }
 }

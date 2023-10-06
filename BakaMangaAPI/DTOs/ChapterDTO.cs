@@ -20,6 +20,8 @@ public class ChapterBasicDTO
     public GroupBasicDTO UploadingGroup { get; set; } = default!;
 
     public int ViewCount { get; set; }
+
+    public bool IsViewedByUser { get; set; }
 }
 
 public class ChapterDetailDTO
