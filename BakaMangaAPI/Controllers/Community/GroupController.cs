@@ -70,14 +70,10 @@ public partial class GroupController : ControllerBase
     [Authorize]
     public async Task<IActionResult> PostGroup([FromForm] GroupEditDTO dto)
     {
-        if (await _userManager.GetUserAsync(User) is not ApplicationUser user)
-        {
-            return Forbid();
-        }
-
+        var user = await _userManager.GetUserAsync(User);
         var group = _mapper.Map<Group>(dto);
 
-        // assign the current user as owner
+        // the one who create the group is the initial owner
         group.Members = new() { new GroupMember { User = user, GroupRoles = GroupRole.Owner } };
 
         _context.Groups.Add(group);

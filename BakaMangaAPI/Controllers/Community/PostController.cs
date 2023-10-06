@@ -2,10 +2,12 @@
 
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
+
 using BakaMangaAPI.Data;
 using BakaMangaAPI.DTOs;
 using BakaMangaAPI.Models;
 using BakaMangaAPI.Services.Media;
+
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;

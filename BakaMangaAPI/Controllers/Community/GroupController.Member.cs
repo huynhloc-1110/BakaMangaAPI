@@ -43,10 +43,11 @@ public partial class GroupController
     public async Task<IActionResult> GetPaginatedGroupMembers(string groupId,
         [FromQuery] MemberFilterDTO filter)
     {
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
         var currentMember = await _context.GroupMembers
-            .SingleOrDefaultAsync(m => 
-                m.UserId == User.FindFirstValue(ClaimTypes.NameIdentifier) &&
-                m.GroupId == groupId);
+            .SingleOrDefaultAsync(m => m.UserId == userId && m.GroupId == groupId);
+
+        // forbid if user is not a member of a role higher or equal to mod
         if (currentMember == null || currentMember.GroupRoles < GroupRole.Moderator)
         {
             return Forbid();
@@ -101,7 +102,7 @@ public partial class GroupController
 
         // role permission condition to continue:
         // - current user has owner role
-        // - current user is a mod and the targetted is lower than mod
+        // - current user is a mod and the targeted is lower than mod
         var rolePermission =
             currentMember.GroupRoles.HasFlag(GroupRole.Owner) ||
             (currentMember.GroupRoles.HasFlag(GroupRole.Moderator)
@@ -117,7 +118,7 @@ public partial class GroupController
             && !groupRoles.HasFlag(GroupRole.Owner))
         {
             return BadRequest("The owner cannot drop group ownership " +
-                "without transfering it to another member");
+                "without transferring it to another member");
         }
 
         // condition to transfer ownership: the current user must has owner role
@@ -175,7 +176,7 @@ public partial class GroupController
         // role permission condition
         // - current member is not owner and he remove himself
         // - current member is owner and he does not remove himself
-        // - current member role is mod and the targetted is lower than mod
+        // - current member role is mod and the targeted is lower than mod
         var rolePermission =
             (!currentMember.GroupRoles.HasFlag(GroupRole.Owner)
                 && currentMember == targetedMember) ||
