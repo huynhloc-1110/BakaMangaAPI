@@ -15,3 +15,10 @@ public class Post : BaseModel
     public List<PostComment> Comments { get; set; } = new();
     public List<PostReport> Reports { get; set; } = new();
 }
+
+public class UserPost : Post { }
+
+public class GroupPost : Post
+{
+    public Group Group { get; set; } = default!;
+}

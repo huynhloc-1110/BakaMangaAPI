@@ -44,6 +44,9 @@ public class ApplicationDbContext : IdentityDbContext<
         base.OnModelCreating(modelBuilder);
 
         #region Declare Inheritance
+        modelBuilder.Entity<UserPost>().HasBaseType<Post>();
+        modelBuilder.Entity<GroupPost>().HasBaseType<Post>();
+
         modelBuilder.Entity<MangaComment>().HasBaseType<Comment>();
         modelBuilder.Entity<ChapterComment>().HasBaseType<Comment>();
         modelBuilder.Entity<PostComment>().HasBaseType<Comment>();

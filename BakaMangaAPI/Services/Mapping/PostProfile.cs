@@ -28,5 +28,9 @@ public class PostProfile : Profile
 
         CreateMap<PostEditDTO, Post>()
             .ForMember(dest => dest.Images, opt => opt.Ignore());
+        CreateMap<PostEditDTO, UserPost>()
+            .ForMember(dest => dest.Images, opt => opt.Ignore());
+        CreateMap<PostEditDTO, GroupPost>()
+            .ForMember(dest => dest.Images, opt => opt.Ignore());
     }
 }
