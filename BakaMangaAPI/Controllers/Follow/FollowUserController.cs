@@ -1,7 +1,7 @@
 using System.Security.Claims;
 
 using AutoMapper;
-
+using AutoMapper.QueryableExtensions;
 using BakaMangaAPI.Data;
 using BakaMangaAPI.DTOs;
 using BakaMangaAPI.Models;
@@ -15,6 +15,7 @@ namespace BakaMangaAPI.Controllers.Follow;
 
 [Route("users/{userId}/my-follow")]
 [ApiController]
+[Authorize]
 public class FollowUserController : ControllerBase
 {
     private readonly ApplicationDbContext _context;
@@ -28,6 +29,30 @@ public class FollowUserController : ControllerBase
         _context = context;
         _userManager = userManager;
         _mapper = mapper;
+    }
+
+    [HttpGet("~/followings")]
+    public async Task<IActionResult> GetMyFollowings()
+    {
+        var user = await _userManager.GetUserAsync(User);
+        var followings = await _context.ApplicationUsers
+            .Where(u => u.Followers.Contains(user))
+            .ProjectTo<UserSimpleDTO>(_mapper.ConfigurationProvider)
+            .ToListAsync();
+
+        return Ok(followings);
+    }
+
+    [HttpGet("~/followers")]
+    public async Task<IActionResult> GetMyFollowers()
+    {
+        var user = await _userManager.GetUserAsync(User);
+        var followers = await _context.ApplicationUsers
+            .Where(u => u.Followings.Contains(user))
+            .ProjectTo<UserSimpleDTO>(_mapper.ConfigurationProvider)
+            .ToListAsync();
+
+        return Ok(followers);
     }
 
     [HttpGet]

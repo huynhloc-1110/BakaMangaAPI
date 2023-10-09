@@ -4,14 +4,8 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace BakaMangaAPI.DTOs;
 
-public class UserBasicDTO
+public class UserBasicDTO : UserSimpleDTO
 {
-    public string Id { get; set; } = default!;
-
-    public string Name { get; set; } = default!;
-
-    public string? AvatarPath { get; set; }
-
     public string? BannerPath { get; set; }
 
     public string Email { get; set; } = default!;
@@ -26,8 +20,8 @@ public class UserBasicDTO
 public class UserSimpleDTO
 {
     public string Id { get; set; } = default!;
-    public string? AvatarPath { get; set; }
     public string Name { get; set; } = default!;
+    public string? AvatarPath { get; set; }
 }
 
 public class UserStatsDTO

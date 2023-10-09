@@ -15,6 +15,7 @@ namespace BakaMangaAPI.Controllers.Follow;
 
 [Route("mangas/{mangaId}/my-follow")]
 [ApiController]
+[Authorize]
 public class FollowMangaController : ControllerBase
 {
     private readonly ApplicationDbContext _context;
@@ -31,7 +32,6 @@ public class FollowMangaController : ControllerBase
     }
 
     [HttpGet("~/followed-mangas")]
-    [Authorize]
     public async Task<IActionResult> GetMyFollowedMangas([FromQuery] FilterDTO filter)
     {
         var user = await _userManager.GetUserAsync(User);
