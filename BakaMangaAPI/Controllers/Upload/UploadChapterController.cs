@@ -1,4 +1,7 @@
+using System.Security.Claims;
+
 using AutoMapper;
+using AutoMapper.QueryableExtensions;
 
 using BakaMangaAPI.Data;
 using BakaMangaAPI.DTOs;
@@ -81,28 +84,20 @@ public class UploadChapterController : ControllerBase
     public async Task<IActionResult> GetChaptersOfUploaderByManga(string uploaderId,
         [FromQuery] FilterDTO filter)
     {
-        if (await _userManager.FindByIdAsync(uploaderId) is not ApplicationUser uploader)
+        if (await _userManager.FindByIdAsync(uploaderId) is null)
         {
             return NotFound("User not found");
         }
 
-        var chapterGroupingCount = await _context.Mangas
-            .Where(m => m.Chapters.Select(c => c.Uploader).Contains(uploader))
-            .CountAsync();
+        var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-        var chapterGroupings = await _context.Chapters
-            .Include(c => c.Uploader)
-            .Include(c => c.UploadingGroup)
-            .Include(c => c.ChapterViews)
-            .Where(c => c.DeletedAt == null)
-            .Where(c => c.Uploader == uploader)
-            .GroupBy(c => c.Manga.Id)
-            .Select(g => new
-            {
-                Manga = _context.Mangas.SingleOrDefault(m => m.Id == g.Key),
-                Chapters = g.OrderByDescending(c => c.CreatedAt).Take(3).ToList(),
-                UpdatedAt = g.Max(c => c.CreatedAt)
-            })
+        var mangaQuery = _context.Mangas
+            .Where(m => m.Chapters.Select(c => c.Uploader.Id).Contains(uploaderId));
+
+        var mangaCount = await mangaQuery.CountAsync();
+
+        var mangas = await _context.Mangas
+            .ProjectTo<UploaderMangaBlockDTO>(_mapper.ConfigurationProvider, new { uploaderId, currentUserId })
             .OrderByDescending(g => g.UpdatedAt)
             .Skip((filter.Page - 1) * filter.PageSize)
             .Take(filter.PageSize)
@@ -110,15 +105,8 @@ public class UploadChapterController : ControllerBase
             .AsNoTracking()
             .ToListAsync();
 
-        var chapterGroupingList = chapterGroupings
-            .Select(g => new ChapterGroupingDTO()
-            {
-                Manga = _mapper.Map<MangaSimpleDTO>(g.Manga),
-                Chapters = _mapper.Map<List<ChapterBasicDTO>>(g.Chapters)
-            })
-            .ToList();
-        var paginatedList = new PaginatedListDTO<ChapterGroupingDTO>
-            (chapterGroupingList, chapterGroupingCount, filter.Page, filter.PageSize);
+        var paginatedList = new PaginatedListDTO<UploaderMangaBlockDTO>
+            (mangas, mangaCount, filter.Page, filter.PageSize);
 
         return Ok(paginatedList);
     }
@@ -224,7 +212,7 @@ public class UploadChapterController : ControllerBase
         }
         chapter.DeletedAt = undelete ? null : DateTime.UtcNow;
         await _context.SaveChangesAsync();
-        
+
         return NoContent();
     }
 }

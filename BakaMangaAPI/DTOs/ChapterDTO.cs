@@ -68,10 +68,3 @@ public class ChapterEditDTO
 
     public string UploadingGroupId { get; set; } = default!;
 }
-
-public class ChapterGroupingDTO
-{
-    public MangaSimpleDTO Manga { get; set; } = default!;
-
-    public List<ChapterBasicDTO> Chapters { get; set; } = new();
-}

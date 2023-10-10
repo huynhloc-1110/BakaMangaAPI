@@ -32,11 +32,5 @@ public class MangaProfile : Profile
                 .MapFrom(src => src.Ratings.Count));
 
         CreateMap<MangaEditDTO, Manga>();
-
-        CreateMap<Manga, MangaBlockDTO>()
-            .ForMember(dest => dest.Chapters, opt => opt
-                .MapFrom(src => src.Chapters.OrderByDescending(c => c.CreatedAt).Take(3)))
-            .ForMember(dest => dest.UpdatedAt, opt => opt
-                .MapFrom(src => src.Chapters.Max(c => c.CreatedAt)));
     }
 }
