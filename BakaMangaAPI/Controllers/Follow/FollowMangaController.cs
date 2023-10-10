@@ -1,7 +1,7 @@
 using System.Security.Claims;
 
 using AutoMapper;
-
+using AutoMapper.QueryableExtensions;
 using BakaMangaAPI.Data;
 using BakaMangaAPI.DTOs;
 using BakaMangaAPI.Models;
@@ -34,40 +34,23 @@ public class FollowMangaController : ControllerBase
     [HttpGet("~/followed-mangas")]
     public async Task<IActionResult> GetMyFollowedMangas([FromQuery] FilterDTO filter)
     {
-        var user = await _userManager.GetUserAsync(User);
-        var chapterGroupingCount = await _context.Mangas
-            .Where(m => m.Followers.Contains(user))
-            .CountAsync();
+        var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-        var chapterGroupings = await _context.Chapters
-            .Where(c => c.Manga.Followers.Contains(user))
-            .Include(c => c.Uploader)
-            .Include(c => c.UploadingGroup)
-            .Include(c => c.ChapterViews)
-            .GroupBy(c => c.Manga.Id)
-            .Select(g => new
-            {
-                Manga = _context.Mangas.Single(m => m.Id == g.Key),
-                Chapters = g.OrderByDescending(c => c.CreatedAt).Take(3).ToList(),
-                UpdatedAt = g.Max(c => c.CreatedAt)
-            })
+        var mangaQuery = _context.Mangas
+            .Where(m => m.Followers.Select(f => f.Id).Contains(currentUserId));
+
+        var mangaCount = await mangaQuery.CountAsync();
+
+        var mangas = await mangaQuery
+            .ProjectTo<MangaBlockDTO>(_mapper.ConfigurationProvider, new { currentUserId })
             .OrderByDescending(g => g.UpdatedAt)
             .Skip((filter.Page - 1) * filter.PageSize)
             .Take(filter.PageSize)
-            .AsSplitQuery()
             .AsNoTracking()
             .ToListAsync();
 
-        var chapterGroupingList = chapterGroupings
-            .Select(g => new ChapterGroupingDTO()
-            {
-                Manga = _mapper.Map<MangaSimpleDTO>(g.Manga),
-                Chapters = _mapper.Map<List<ChapterBasicDTO>>(g.Chapters)
-            })
-            .ToList();
-
-        var paginatedList = new PaginatedListDTO<ChapterGroupingDTO>
-            (chapterGroupingList, chapterGroupingCount, filter.Page, filter.PageSize);
+        var paginatedList = new PaginatedListDTO<MangaBlockDTO>
+            (mangas, mangaCount, filter.Page, filter.PageSize);
         return Ok(paginatedList);
     }
 

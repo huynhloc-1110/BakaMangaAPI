@@ -57,3 +57,10 @@ public class MangaEditDTO
     public string AuthorIds { get; set; } = string.Empty;
 }
 
+public class MangaBlockDTO : MangaSimpleDTO
+{
+    public List<ChapterBasicDTO> Chapters { get; set; } = new();
+
+    public DateTime UpdatedAt { get; set; }
+}
+
