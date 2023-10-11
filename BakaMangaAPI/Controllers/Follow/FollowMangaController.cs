@@ -33,26 +33,20 @@ public class FollowMangaController : ControllerBase
     }
 
     [HttpGet("~/followed-mangas")]
-    public async Task<IActionResult> GetMyFollowedMangas([FromQuery] FilterDTO filter)
+    public async Task<IActionResult> GetMyFollowedMangas([FromQuery] DateTime? updatedAtCursor)
     {
         var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-        var mangaQuery = _context.Mangas
-            .Where(m => m.Followers.Select(f => f.Id).Contains(currentUserId));
-
-        var mangaCount = await mangaQuery.CountAsync();
-
-        var mangas = await mangaQuery
+        var mangas = await _context.Mangas
+            .Where(m => m.Followers.Select(f => f.Id).Contains(currentUserId))
             .ProjectTo<MangaBlockDTO>(_mapper.ConfigurationProvider, new { currentUserId })
+            .Where(g => updatedAtCursor == null || g.UpdatedAt < updatedAtCursor)
             .OrderByDescending(g => g.UpdatedAt)
-            .Skip((filter.Page - 1) * filter.PageSize)
-            .Take(filter.PageSize)
+            .Take(4)
             .AsNoTracking()
             .ToListAsync();
 
-        var paginatedList = new PaginatedListDTO<MangaBlockDTO>
-            (mangas, mangaCount, filter.Page, filter.PageSize);
-        return Ok(paginatedList);
+        return Ok(mangas);
     }
 
     [HttpGet]

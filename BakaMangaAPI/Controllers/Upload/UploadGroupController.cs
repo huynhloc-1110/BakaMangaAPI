@@ -51,7 +51,7 @@ public class UploadGroupController : ControllerBase
 
     [HttpGet("{groupId}/chapters-by-manga")]
     public async Task<IActionResult> GetChaptersOfUploaderByManga(string groupId,
-        [FromQuery] FilterDTO filter)
+        [FromQuery] DateTime? updatedAtCursor)
     {
         if (await _context.Groups.FindAsync(groupId) is not Group group)
         {
@@ -60,23 +60,15 @@ public class UploadGroupController : ControllerBase
 
         var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-        var mangaQuery = _context.Mangas
-            .Where(m => m.Chapters.Select(c => c.UploadingGroup!.Id).Contains(groupId));
-
-        var mangaCount = await mangaQuery.CountAsync();
-
         var mangas = await _context.Mangas
+            .Where(m => m.Chapters.Select(c => c.UploadingGroup!.Id).Contains(groupId))
             .ProjectTo<GroupMangaBlockDTO>(_mapper.ConfigurationProvider, new { groupId, currentUserId })
+            .Where(g => updatedAtCursor == null || g.UpdatedAt < updatedAtCursor)
             .OrderByDescending(g => g.UpdatedAt)
-            .Skip((filter.Page - 1) * filter.PageSize)
-            .Take(filter.PageSize)
-            .AsSplitQuery()
+            .Take(4)
             .AsNoTracking()
             .ToListAsync();
 
-        var paginatedList = new PaginatedListDTO<GroupMangaBlockDTO>
-            (mangas, mangaCount, filter.Page, filter.PageSize);
-
-        return Ok(paginatedList);
+        return Ok(mangas);
     }
 }

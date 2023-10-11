@@ -82,7 +82,7 @@ public class UploadChapterController : ControllerBase
     [HttpGet("~/uploader/{uploaderId}/chaptersByManga")]
     [AllowAnonymous]
     public async Task<IActionResult> GetChaptersOfUploaderByManga(string uploaderId,
-        [FromQuery] FilterDTO filter)
+        [FromQuery] DateTime? updatedAtCursor)
     {
         if (await _userManager.FindByIdAsync(uploaderId) is null)
         {
@@ -91,24 +91,16 @@ public class UploadChapterController : ControllerBase
 
         var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-        var mangaQuery = _context.Mangas
-            .Where(m => m.Chapters.Select(c => c.Uploader.Id).Contains(uploaderId));
-
-        var mangaCount = await mangaQuery.CountAsync();
-
         var mangas = await _context.Mangas
+            .Where(m => m.Chapters.Select(c => c.Uploader.Id).Contains(uploaderId))
             .ProjectTo<UploaderMangaBlockDTO>(_mapper.ConfigurationProvider, new { uploaderId, currentUserId })
+            .Where(g => updatedAtCursor == null || g.UpdatedAt < updatedAtCursor)
             .OrderByDescending(g => g.UpdatedAt)
-            .Skip((filter.Page - 1) * filter.PageSize)
-            .Take(filter.PageSize)
-            .AsSplitQuery()
+            .Take(4)
             .AsNoTracking()
             .ToListAsync();
 
-        var paginatedList = new PaginatedListDTO<UploaderMangaBlockDTO>
-            (mangas, mangaCount, filter.Page, filter.PageSize);
-
-        return Ok(paginatedList);
+        return Ok(mangas);
     }
 
     [HttpPost("~/mangas/{mangaId}/chapters")]

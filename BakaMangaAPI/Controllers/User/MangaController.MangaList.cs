@@ -12,7 +12,8 @@ namespace BakaMangaAPI.Controllers;
 public partial class MangaController
 {
     [HttpGet("~/manga-lists/{mangaListId}/mangas/")]
-    public async Task<IActionResult> GetMangasFromList(string mangaListId)
+    public async Task<IActionResult> GetMangasFromList(string mangaListId,
+        [FromQuery] DateTime? updatedAtCursor)
     {
         var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
@@ -21,6 +22,8 @@ public partial class MangaController
             .OrderBy(i => i.Index)
             .Select(i => i.Manga)
             .ProjectTo<MangaBlockDTO>(_mapper.ConfigurationProvider, new { currentUserId })
+            .Where(g => updatedAtCursor == null || g.UpdatedAt < updatedAtCursor)
+            .Take(4)
             .AsNoTracking()
             .ToListAsync();
 
