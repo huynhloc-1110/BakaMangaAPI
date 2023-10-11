@@ -32,7 +32,7 @@ public partial class GroupController : ControllerBase
     }
 
     [HttpGet("~/users/{userId}/groups")]
-    public async Task<IActionResult> GetUserGroups(string userId)
+    public async Task<IActionResult> GetUserGroups(string userId, DateTime? joinedAtCursor)
     {
         var user = await _userManager.FindByIdAsync(userId);
         if (user == null)
@@ -42,7 +42,10 @@ public partial class GroupController : ControllerBase
 
         var groups = await _context.Groups
             .Where(g => g.Members.Select(m => m.User).Contains(user))
+            .Where(g => joinedAtCursor == null || g.Members.Single(m => m.User == user).JoinedAt < joinedAtCursor)
+            .OrderByDescending(g => g.Members.Single(m => m.User == user).JoinedAt)
             .ProjectTo<GroupBasicDTO>(_mapper.ConfigurationProvider)
+            .Take(4)
             .AsNoTracking()
             .ToListAsync();
 
