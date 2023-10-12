@@ -23,5 +23,7 @@ public class MangaListProfile : Profile
                 .MapFrom(src => src.Items.Select(i => i.MangaId).Contains(checkedMangaId)))
             .ForMember(dest => dest.AlreadyFollowed, opt => opt
                 .MapFrom(src => src.Followers.Select(f => f.UserId).Contains(currentUserId)));
+
+        CreateMap<MangaListEditDTO, MangaList>();
     }
 }

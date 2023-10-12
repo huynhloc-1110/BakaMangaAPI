@@ -1,17 +1,38 @@
-﻿using System.Security.Claims;
+using System.Security.Claims;
+
+using AutoMapper;
 using AutoMapper.QueryableExtensions;
+
+using BakaMangaAPI.Data;
 using BakaMangaAPI.DTOs;
 using BakaMangaAPI.Models;
+
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-namespace BakaMangaAPI.Controllers.User;
+namespace BakaMangaAPI.Controllers.Follow;
 
-public partial class MangaListController
+[ApiController]
+[Authorize]
+[Route("manga-lists/{mangaListId}/my-follow")]
+public class FollowMangaListController : ControllerBase
 {
+    private readonly ApplicationDbContext _context;
+    private readonly UserManager<ApplicationUser> _userManager;
+    private readonly IMapper _mapper;
+
+    public FollowMangaListController(ApplicationDbContext context,
+        UserManager<ApplicationUser> userManager,
+        IMapper mapper)
+    {
+        _context = context;
+        _userManager = userManager;
+        _mapper = mapper;
+    }
+
     [HttpGet("~/followed-manga-lists")]
-    [Authorize]
     public async Task<IActionResult> GetFollowedMangaLists([FromQuery] DateTime? updatedAtCursor)
     {
         var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -29,49 +50,41 @@ public partial class MangaListController
         return Ok(mangaLists);
     }
 
-    [HttpPost("~/user/follow/manga-lists/{mangaListId}")]
-    [Authorize]
+    [HttpPost]
     public async Task<IActionResult> PostUserFollowForMangaList(string mangaListId)
     {
         if (await _context.MangaLists.FindAsync(mangaListId) is not MangaList mangaList)
         {
-            return BadRequest("Manga list not found.");
-        }
-        if (await _userManager.GetUserAsync(User) is not ApplicationUser user)
-        {
-            return BadRequest("Token outdated or corrupted");
+            return NotFound("Manga list not found.");
         }
 
         mangaList.Followers.Add(new MangaListFollower
         {
-            User = user,
+            User = await _userManager.GetUserAsync(User),
         });
 
         await _context.SaveChangesAsync();
         return Ok();
     }
 
-    [HttpDelete("~/user/follow/manga-lists/{mangaListId}")]
-    [Authorize]
+    [HttpDelete]
     public async Task<IActionResult> DeleteUserFollowForMangaList(string mangaListId)
     {
         if (await _context.MangaLists.FindAsync(mangaListId) is not MangaList mangaList)
         {
-            return BadRequest("Manga list not found.");
-        }
-        if (await _userManager.GetUserAsync(User) is not ApplicationUser user)
-        {
-            return BadRequest("Token outdated or corrupted");
+            return NotFound("Manga list not found.");
         }
 
+        var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
         var mangaListFollower = _context.MangaListFollowers
-            .SingleOrDefault(f => f.User == user && f.MangaList == mangaList);
+            .SingleOrDefault(f => f.UserId == currentUserId && f.MangaList == mangaList);
         if (mangaListFollower != null)
         {
             _context.MangaListFollowers.Remove(mangaListFollower);
         }
-        await _context.SaveChangesAsync();
 
+        await _context.SaveChangesAsync();
         return NoContent();
     }
 }

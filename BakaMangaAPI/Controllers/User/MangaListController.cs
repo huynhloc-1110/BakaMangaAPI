@@ -75,17 +75,8 @@ public partial class MangaListController : ControllerBase
     [Authorize]
     public async Task<IActionResult> PostMangaList([FromForm] MangaListEditDTO dto)
     {
-        if (await _userManager.GetUserAsync(User) is not ApplicationUser user)
-        {
-            return BadRequest("Token outdated or corrupted");
-        }
-
-        var mangaList = new MangaList
-        {
-            Name = dto.Name,
-            Type = dto.Type,
-            Owner = user
-        };
+        var mangaList = _mapper.Map<MangaList>(dto);
+        mangaList.Owner = await _userManager.GetUserAsync(User);
 
         _context.MangaLists.Add(mangaList);
         await _context.SaveChangesAsync();
@@ -103,17 +94,19 @@ public partial class MangaListController : ControllerBase
                 .ThenInclude(i => i.Manga)
             .SingleOrDefaultAsync(ml => ml.Id == mangaListId);
 
+        // validate
         if (mangaList == null)
         {
-            return BadRequest("Manga list not found");
+            return NotFound("Manga list not found");
         }
         if (mangaList.Owner != await _userManager.GetUserAsync(User))
         {
-            return BadRequest("Current user is not the owner of this manga list");
+            return Forbid();
         }
 
-        mangaList.Name = dto.Name;
-        mangaList.Type = dto.Type;
+        mangaList = _mapper.Map(dto, mangaList);
+
+        // handle add, remove manga from list
         if (!string.IsNullOrEmpty(dto.AddedMangaId) &&
             await _context.Mangas.FindAsync(dto.AddedMangaId) is Manga addedManga)
         {
@@ -139,13 +132,14 @@ public partial class MangaListController : ControllerBase
             .Include(ml => ml.Owner)
             .SingleOrDefaultAsync(ml => ml.Id == mangaListId);
 
+        // validate
         if (mangaList == null)
         {
-            return BadRequest("Manga list not found");
+            return NotFound("Manga list not found");
         }
         if (mangaList.Owner != await _userManager.GetUserAsync(User))
         {
-            return BadRequest("Current user is not the owner of this manga list");
+            return Forbid();
         }
 
         _context.MangaLists.Remove(mangaList);
