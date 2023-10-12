@@ -44,7 +44,7 @@ public partial class GroupController : ControllerBase
             .Where(g => g.Members.Select(m => m.User).Contains(user))
             .Where(g => joinedAtCursor == null || g.Members.Single(m => m.User == user).JoinedAt < joinedAtCursor)
             .OrderByDescending(g => g.Members.Single(m => m.User == user).JoinedAt)
-            .ProjectTo<GroupBasicDTO>(_mapper.ConfigurationProvider)
+            .ProjectTo<GroupBasicDTO>(_mapper.ConfigurationProvider, new { userId })
             .Take(4)
             .AsNoTracking()
             .ToListAsync();

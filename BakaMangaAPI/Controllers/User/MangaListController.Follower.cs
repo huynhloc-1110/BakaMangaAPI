@@ -1,4 +1,6 @@
-﻿using BakaMangaAPI.DTOs;
+﻿using System.Security.Claims;
+using AutoMapper.QueryableExtensions;
+using BakaMangaAPI.DTOs;
 using BakaMangaAPI.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -10,32 +12,17 @@ public partial class MangaListController
 {
     [HttpGet("~/followed-manga-lists")]
     [Authorize]
-    public async Task<IActionResult> GetFollowedMangaLists()
+    public async Task<IActionResult> GetFollowedMangaLists([FromQuery] DateTime? updatedAtCursor)
     {
-        if (await _userManager.GetUserAsync(User) is not ApplicationUser user)
-        {
-            return BadRequest("Token outdated or corrupted");
-        }
+        var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
         var mangaLists = await _context.MangaLists
-            .Where(ml => ml.Followers.Select(f => f.User).Contains(user))
+            .Where(ml => ml.Followers.Select(f => f.UserId).Contains(currentUserId))
             .Where(ml => ml.Type == MangaListType.Public)
-            .OrderByDescending(ml => ml.Followers.Single(f => f.User == user).FollowedAt)
-            .Select(ml => new MangaListBasicDTO
-            {
-                Id = ml.Id,
-                Name = ml.Name,
-                Type = ml.Type,
-                Owner = new UserSimpleDTO { Id = ml.Owner.Id, Name = ml.Owner.Name },
-                MangaCoverUrls = ml.Items
-                    .OrderBy(i => i.Index)
-                    .Select(i => i.Manga)
-                    .Where(m => m.DeletedAt == null)
-                    .Take(3)
-                    .Select(m => m.CoverPath)
-                    .ToList(),
-                UpdatedAt = ml.Items.Any() ? ml.Items.Max(i => i.AddedAt) : ml.CreatedAt
-            })
+            .ProjectTo<MangaListBasicDTO>(_mapper.ConfigurationProvider, new { updatedAtCursor })
+            .Where(ml => updatedAtCursor == null || ml.UpdatedAt < updatedAtCursor)
+            .OrderByDescending(ml => ml.UpdatedAt)
+            .Take(4)
             .AsNoTracking()
             .ToListAsync();
 

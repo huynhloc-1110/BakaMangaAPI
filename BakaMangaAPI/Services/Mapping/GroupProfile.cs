@@ -9,9 +9,12 @@ public class GroupProfile : Profile
 {
     public GroupProfile()
     {
+        string? userId = null;
         CreateMap<Group, GroupBasicDTO>()
             .ForMember(dest => dest.MemberNumber, opt => opt
-                .MapFrom(src => src.Members.Count));
+                .MapFrom(src => src.Members.Count))
+            .ForMember(dest => dest.UserJoinedAt, opt => opt
+                .MapFrom(src => src.Members.Single(m => m.UserId == userId).JoinedAt));
 
         CreateMap<Group, GroupDetailDTO>()
             .ForMember(dest => dest.MemberNumber, opt => opt

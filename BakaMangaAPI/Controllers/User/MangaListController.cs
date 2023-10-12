@@ -1,6 +1,11 @@
-﻿using BakaMangaAPI.Data;
+﻿using System.Security.Claims;
+using AutoMapper;
+using AutoMapper.QueryableExtensions;
+
+using BakaMangaAPI.Data;
 using BakaMangaAPI.DTOs;
 using BakaMangaAPI.Models;
+
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -14,20 +19,26 @@ public partial class MangaListController : ControllerBase
 {
     private readonly ApplicationDbContext _context;
     private readonly UserManager<ApplicationUser> _userManager;
+    private readonly IMapper _mapper;
 
-    public MangaListController(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
+    public MangaListController(ApplicationDbContext context,
+        UserManager<ApplicationUser> userManager,
+        IMapper mapper)
     {
         _context = context;
         _userManager = userManager;
+        _mapper = mapper;
     }
 
     [HttpGet("~/users/{userId}/manga-lists")]
     public async Task<IActionResult> GetUserMangaLists(string userId,
-        [FromQuery] string? checkedMangaId)
+        [FromQuery] string? checkedMangaId,
+        [FromQuery] DateTime? updatedAtCursor)
     {
         var mangaListQuery = _context.MangaLists
             .Where(ml => ml.Owner.Id == userId);
 
+        // get only public list if the user is not owner
         if (User.Identity!.IsAuthenticated != true ||
             await _userManager.GetUserAsync(User) is not ApplicationUser user ||
             user.Id != userId)
@@ -36,24 +47,10 @@ public partial class MangaListController : ControllerBase
         }
 
         var mangaLists = await mangaListQuery
-            .Select(ml => new MangaListBasicDTO
-            {
-                Id = ml.Id,
-                Name = ml.Name,
-                Type = ml.Type,
-                Owner = new UserSimpleDTO { Id = ml.Owner.Id, Name = ml.Owner.Name },
-                MangaCoverUrls = ml.Items
-                    .OrderBy(i => i.Index)
-                    .Select(i => i.Manga)
-                    .Where(m => m.DeletedAt == null)
-                    .Take(3)
-                    .Select(m => m.CoverPath)
-                    .ToList(),
-                UpdatedAt = ml.Items.Any() ? ml.Items.Max(i => i.AddedAt) : ml.CreatedAt,
-                AlreadyAdded = !string.IsNullOrEmpty(checkedMangaId) &&
-                    ml.Items.Select(i => i.MangaId).Contains(checkedMangaId)
-            })
+            .ProjectTo<MangaListBasicDTO>(_mapper.ConfigurationProvider, new { checkedMangaId })
+            .Where(ml => updatedAtCursor == null || ml.UpdatedAt < updatedAtCursor)
             .OrderByDescending(ml => ml.UpdatedAt)
+            .Take(4)
             .AsNoTracking()
             .ToListAsync();
 
@@ -63,30 +60,10 @@ public partial class MangaListController : ControllerBase
     [HttpGet("{mangaListId}")]
     public async Task<IActionResult> GetMangaList(string mangaListId)
     {
-        ApplicationUser? user = null;
-        if (User.Identity!.IsAuthenticated == true)
-        {
-            user = await _userManager.GetUserAsync(User);
-        }
-
+        string currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
         var mangaList = await _context.MangaLists
             .Where(ml => ml.Id == mangaListId)
-            .Select(ml => new MangaListBasicDTO
-            {
-                Id = ml.Id,
-                Name = ml.Name,
-                Type = ml.Type,
-                Owner = new UserSimpleDTO { Id = ml.Owner.Id, Name = ml.Owner.Name },
-                MangaCoverUrls = ml.Items
-                    .OrderBy(i => i.Index)
-                    .Select(i => i.Manga)
-                    .Where(m => m.DeletedAt == null)
-                    .Take(3)
-                    .Select(m => m.CoverPath)
-                    .ToList(),
-                UpdatedAt = ml.Items.Any() ? ml.Items.Max(i => i.AddedAt) : ml.CreatedAt,
-                AlreadyFollowed = ml.Followers.Select(f => f.User).Contains(user)
-            })
+            .ProjectTo<MangaListBasicDTO>(_mapper.ConfigurationProvider, new { currentUserId })
             .OrderByDescending(ml => ml.UpdatedAt)
             .AsNoTracking()
             .SingleOrDefaultAsync();
@@ -150,7 +127,7 @@ public partial class MangaListController : ControllerBase
                 mangaList.Items.RemoveAt(removedIndex);
             }
         }
-        
+
         await _context.SaveChangesAsync();
         return NoContent();
     }

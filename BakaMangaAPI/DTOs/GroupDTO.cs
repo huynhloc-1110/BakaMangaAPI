@@ -8,9 +8,10 @@ public class GroupBasicDTO
 {
     public string Id { get; set; } = default!;
     public string Name { get; set; } = default!;
+    public string? AvatarPath { get; set; }
     public int MemberNumber { get; set; }
     public bool IsMangaGroup { get; set; }
-    public string? AvatarPath { get; set; }
+    public DateTime? UserJoinedAt { get; set; }
 }
 
 public class GroupDetailDTO : GroupBasicDTO
@@ -19,7 +20,7 @@ public class GroupDetailDTO : GroupBasicDTO
     public DateTime CreatedAt { get; set; }
     public string Biography { get; set; } = default!;
     public int UploadedChapterNumber { get; set; }
-    public int ViewGainedNumber { get; set; } 
+    public int ViewGainedNumber { get; set; }
 }
 
 public class GroupEditDTO
