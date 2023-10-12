@@ -31,6 +31,27 @@ public partial class GroupController : ControllerBase
         _mediaManager = mediaManager;
     }
 
+    [HttpGet]
+    public async Task<IActionResult> GetGroups([FromQuery] FilterDTO filter)
+    {
+        var query = _context.Groups.AsQueryable();
+
+        if (!string.IsNullOrEmpty(filter.Search))
+        {
+            query = query.Where(g => g.Name.ToLower().Contains(filter.Search.ToLower()));
+        }
+
+        var users = await query
+            .OrderBy(u => u.Name)
+            .Skip((filter.Page - 1) * filter.PageSize)
+            .Take(filter.PageSize)
+            .ProjectTo<GroupBasicDTO>(_mapper.ConfigurationProvider)
+            .AsNoTracking()
+            .ToListAsync();
+
+        return Ok(users);
+    }
+
     [HttpGet("~/users/{userId}/groups")]
     public async Task<IActionResult> GetUserGroups(string userId, DateTime? joinedAtCursor)
     {

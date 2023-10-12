@@ -1,4 +1,5 @@
 using AutoMapper;
+using AutoMapper.QueryableExtensions;
 
 using BakaMangaAPI.Data;
 using BakaMangaAPI.DTOs;
@@ -12,7 +13,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BakaMangaAPI.Controllers.Account;
 
-[Route("account")]
+[Route("users")]
 [ApiController]
 public class UserController : ControllerBase
 {
@@ -28,6 +29,27 @@ public class UserController : ControllerBase
         _userManager = userManager;
         _mapper = mapper;
         _mediaManager = mediaManager;
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> GetUsers([FromQuery] FilterDTO filter)
+    {
+        var query = _context.ApplicationUsers.AsQueryable();
+
+        if (!string.IsNullOrEmpty(filter.Search))
+        {
+            query = query.Where(u => u.Name.ToLower().Contains(filter.Search.ToLower()));
+        }
+
+        var users = await query
+            .OrderBy(u => u.Name)
+            .Skip((filter.Page - 1) * filter.PageSize)
+            .Take(filter.PageSize)
+            .ProjectTo<UserSimpleDTO>(_mapper.ConfigurationProvider)
+            .AsNoTracking()
+            .ToListAsync();
+
+        return Ok(users);
     }
 
     [HttpGet("me")]
@@ -79,7 +101,7 @@ public class UserController : ControllerBase
         return userStats != null ? Ok(userStats) : NotFound();
     }
 
-    [HttpPut("me/change-avatar")]
+    [HttpPut("me/avatar")]
     [Authorize]
     public async Task<IActionResult> ChangeAvatar(IFormFile image)
     {
@@ -101,7 +123,7 @@ public class UserController : ControllerBase
         return Ok(_mapper.Map<UserBasicDTO>(user));
     }
 
-    [HttpPut("me/change-banner")]
+    [HttpPut("me/banner")]
     [Authorize]
     public async Task<IActionResult> ChangeBanner(IFormFile image)
     {
