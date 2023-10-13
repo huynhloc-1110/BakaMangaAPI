@@ -66,6 +66,7 @@ public class ApplicationDbContext : IdentityDbContext<
         modelBuilder.Entity<PostImage>().HasBaseType<Image>();
 
         modelBuilder.Entity<PromotionRequest>().HasBaseType<Request>();
+        modelBuilder.Entity<JoinGroupRequest>().HasBaseType<Request>();
         #endregion
 
         #region Configure relationships

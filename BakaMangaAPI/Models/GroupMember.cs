@@ -11,7 +11,7 @@ public class GroupMember
     public string UserId { get; set; } = default!;
     public ApplicationUser User { get; set; } = default!;
 
-    public GroupRole GroupRoles { get; set; } = new();
+    public GroupRole GroupRoles { get; set; }
     public DateTime JoinedAt { get; set; } = DateTime.UtcNow;
 }
 
