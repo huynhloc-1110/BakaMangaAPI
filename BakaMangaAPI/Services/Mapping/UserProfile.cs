@@ -15,6 +15,7 @@ public class UserProfile : Profile
 
         CreateMap<ApplicationUser, UserSimpleDTO>();
 
-        CreateMap<ApplicationUserFollow, UserFollowDTO>();
+        CreateMap<ApplicationUserFollow, UserFollowerDTO>();
+        CreateMap<ApplicationUserFollow, UserFollowingDTO>();
     }
 }

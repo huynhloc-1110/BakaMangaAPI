@@ -41,7 +41,7 @@ public class FollowUserController : ControllerBase
             .Where(f => followedAtCursor == null || f.FollowedAt < followedAtCursor)
             .OrderByDescending(f => f.FollowedAt)
             .Take(4)
-            .ProjectTo<UserFollowDTO>(_mapper.ConfigurationProvider)
+            .ProjectTo<UserFollowingDTO>(_mapper.ConfigurationProvider)
             .AsNoTracking()
             .ToListAsync();
 
@@ -58,7 +58,7 @@ public class FollowUserController : ControllerBase
             .Where(f => followedAtCursor == null || f.FollowedAt < followedAtCursor)
             .OrderByDescending(f => f.FollowedAt)
             .Take(4)
-            .ProjectTo<UserFollowDTO>(_mapper.ConfigurationProvider)
+            .ProjectTo<UserFollowerDTO>(_mapper.ConfigurationProvider)
             .AsNoTracking()
             .ToListAsync();
 

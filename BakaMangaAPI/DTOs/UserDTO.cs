@@ -33,8 +33,14 @@ public class UserStatsDTO
     public int ViewGainedNumber { get; set; }
 }
 
-public class UserFollowDTO
+public class UserFollowerDTO
 {
     public UserSimpleDTO User { get; set; } = default!;
+    public DateTime FollowedAt { get; set; }
+}
+
+public class UserFollowingDTO
+{
+    public UserSimpleDTO FollowedUser { get; set; } = default!;
     public DateTime FollowedAt { get; set; }
 }
