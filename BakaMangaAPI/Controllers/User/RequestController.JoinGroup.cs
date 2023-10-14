@@ -76,7 +76,7 @@ public partial class RequestController
 
         var currentUser = await _userManager.GetUserAsync(User);
         var isAlreadyMember = await _context.GroupMembers
-            .AnyAsync(m => m.User == currentUser);
+            .AnyAsync(m => m.Group == group && m.User == currentUser);
         if (isAlreadyMember)
         {
             return BadRequest("The current user is already member");
