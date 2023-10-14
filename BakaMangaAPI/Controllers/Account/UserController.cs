@@ -90,8 +90,8 @@ public class UserController : ControllerBase
             .Where(u => u.Id == userId)
             .Select(u => new UserStatsDTO
             {
-                FollowerNumber = u.Followers.Where(f => f.DeletedAt == null).Count(),
-                FollowingNumber = u.Followings.Where(f => f.DeletedAt == null).Count(),
+                FollowerNumber = u.Followers.Where(f => f.User.DeletedAt == null).Count(),
+                FollowingNumber = u.Followings.Where(f => f.User.DeletedAt == null).Count(),
                 FollowedMangaNumber = u.FollowedMangas.Where(m => m.DeletedAt == null).Count(),
                 UploadedChapterNumber = u.UploadedChapters.Where(c => c.DeletedAt == null).Count(),
                 ViewGainedNumber = u.UploadedChapters.Sum(c => c.ChapterViews.Count)

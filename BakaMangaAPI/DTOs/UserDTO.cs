@@ -32,3 +32,9 @@ public class UserStatsDTO
     public int UploadedChapterNumber { get; set; }
     public int ViewGainedNumber { get; set; }
 }
+
+public class UserFollowDTO
+{
+    public UserSimpleDTO User { get; set; } = default!;
+    public DateTime FollowedAt { get; set; }
+}

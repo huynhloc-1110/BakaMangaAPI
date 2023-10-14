@@ -19,6 +19,7 @@ public class ApplicationDbContext : IdentityDbContext<
     public DbSet<ApplicationUser> ApplicationUsers { get; set; } = default!;
     public DbSet<ApplicationRole> ApplicationRoles { get; set; } = default!;
     public DbSet<ApplicationUserRole> ApplicationUserRoles { get; set; } = default!;
+    public DbSet<ApplicationUserFollow> ApplicationUserFollows { get; set; } = default!;
     public DbSet<Author> Authors { get; set; } = default!;
     public DbSet<Category> Categories { get; set; } = default!;
     public DbSet<Chapter> Chapters { get; set; } = default!;
@@ -80,6 +81,17 @@ public class ApplicationDbContext : IdentityDbContext<
                 .WithMany(u => u.UserRoles)
                 .HasForeignKey(ur => ur.UserId);
         });
+        modelBuilder.Entity<ApplicationUserFollow>(userFollow =>
+        {
+            userFollow.HasKey(f => new { f.UserId, f.FollowedUserId });
+            userFollow.HasOne(uf => uf.User)
+                .WithMany(u => u.Followings)
+                .HasForeignKey(uf => uf.UserId);
+            userFollow.HasOne(uf => uf.FollowedUser)
+                .WithMany(u => u.Followers)
+                .HasForeignKey(uf => uf.FollowedUserId);
+        });
+
         modelBuilder.Entity<GroupMember>().HasKey(gp => new { gp.GroupId, gp.UserId });
         modelBuilder.Entity<MangaListItem>().HasKey(i => new { i.MangaListId, i.MangaId });
         modelBuilder.Entity<MangaListFollower>().HasKey(f => new { f.MangaListID, f.UserId });

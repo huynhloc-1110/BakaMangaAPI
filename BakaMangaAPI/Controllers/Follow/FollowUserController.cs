@@ -32,24 +32,34 @@ public class FollowUserController : ControllerBase
     }
 
     [HttpGet("~/followings")]
-    public async Task<IActionResult> GetMyFollowings()
+    public async Task<IActionResult> GetMyFollowings([FromQuery] DateTime? followedAtCursor)
     {
-        var user = await _userManager.GetUserAsync(User);
-        var followings = await _context.ApplicationUsers
-            .Where(u => u.Followers.Contains(user))
-            .ProjectTo<UserSimpleDTO>(_mapper.ConfigurationProvider)
+        var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+        var followings = await _context.ApplicationUserFollows
+            .Where(f => f.UserId == currentUserId)
+            .Where(f => followedAtCursor == null || f.FollowedAt < followedAtCursor)
+            .OrderByDescending(f => f.FollowedAt)
+            .Take(4)
+            .ProjectTo<UserFollowDTO>(_mapper.ConfigurationProvider)
+            .AsNoTracking()
             .ToListAsync();
 
         return Ok(followings);
     }
 
     [HttpGet("~/followers")]
-    public async Task<IActionResult> GetMyFollowers()
+    public async Task<IActionResult> GetMyFollowers([FromQuery] DateTime? followedAtCursor)
     {
-        var user = await _userManager.GetUserAsync(User);
-        var followers = await _context.ApplicationUsers
-            .Where(u => u.Followings.Contains(user))
-            .ProjectTo<UserSimpleDTO>(_mapper.ConfigurationProvider)
+        var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+        var followers = await _context.ApplicationUserFollows
+            .Where(f => f.FollowedUserId == currentUserId)
+            .Where(f => followedAtCursor == null || f.FollowedAt < followedAtCursor)
+            .OrderByDescending(f => f.FollowedAt)
+            .Take(4)
+            .ProjectTo<UserFollowDTO>(_mapper.ConfigurationProvider)
+            .AsNoTracking()
             .ToListAsync();
 
         return Ok(followers);
@@ -59,14 +69,13 @@ public class FollowUserController : ControllerBase
     public async Task<bool> GetMyFollowForUser(string userId)
     {
         var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        var result = await _context.ApplicationUsers
-            .AnyAsync(m => m.Id == userId &&
-                m.Followers.Select(f => f.Id).Any(id => id == currentUserId));
+        var result = await _context.ApplicationUserFollows
+            .AnyAsync(f => f.UserId == currentUserId && f.FollowedUserId == userId);
         return result;
     }
 
     [HttpPost]
-    public async Task<IActionResult> PostMyFollowForManga(string userId)
+    public async Task<IActionResult> PostMyFollowForUser(string userId)
     {
         var targetedUser = await _context.ApplicationUsers.FindAsync(userId);
         if (targetedUser == null)
@@ -74,33 +83,39 @@ public class FollowUserController : ControllerBase
             return NotFound("User not found");
         }
 
-        if (await GetMyFollowForUser(userId))
+        var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        var newFollow = new ApplicationUserFollow
         {
-            return BadRequest("User has already followed this manga.");
+            UserId = currentUserId,
+            FollowedUserId = userId
+        };
+
+        try
+        {
+            _context.ApplicationUserFollows.Add(newFollow);
+            await _context.SaveChangesAsync();
+            return CreatedAtAction(nameof(GetMyFollowForUser), new { userId }, true);
         }
-
-        var currentUser = await _userManager.GetUserAsync(User);
-        targetedUser.Followers.Add(currentUser);
-        await _context.SaveChangesAsync();
-
-        return CreatedAtAction(nameof(GetMyFollowForUser), new { userId }, true);
+        catch (DbUpdateException)
+        {
+            return BadRequest();
+        }
     }
 
     [HttpDelete]
     public async Task<IActionResult> RemoveMyFollowForManga(string userId)
     {
-        var targetedUser = await _context.ApplicationUsers
-            .Include(m => m.Followers)
-            .SingleOrDefaultAsync(m => m.Id == userId);
-        if (targetedUser == null)
+        var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+        var follow = await _context.ApplicationUserFollows
+            .SingleOrDefaultAsync(f => f.UserId == currentUserId && f.FollowedUserId == userId);
+        if (follow == null)
         {
-            return NotFound("User not found");
+            return NotFound("Follow not found");
         }
 
-        var currentUser = await _userManager.GetUserAsync(User);
-        targetedUser.Followers.Remove(currentUser);
+        _context.ApplicationUserFollows.Remove(follow);
         await _context.SaveChangesAsync();
-
         return NoContent();
     }
 }
