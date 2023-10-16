@@ -112,10 +112,6 @@ public partial class MangaController : ControllerBase
     [HttpGet("trending")]
     public async Task<IActionResult> GetTrendingMangas()
     {
-        var topWeeklyViews = await _context.Mangas.MaxAsync(m => m.Chapters
-            .Select(c => c.ChapterViews
-            .Count(cv => DateTime.Equals(cv.CreatedAt.Date, DateTime.UtcNow.Date)))
-            .Sum());
         var trendingMangas = await _context.Mangas
             .Select(m => new
             {
