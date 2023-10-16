@@ -144,4 +144,61 @@ public class UserController : ControllerBase
 
         return Ok(_mapper.Map<UserBasicDTO>(user));
     }
+
+    [HttpPut("me/username")]
+    [Authorize]
+    public async Task<IActionResult> ChangeUsername([FromBody] ChangeUsernameDTO dto)
+    {
+        if (string.IsNullOrEmpty(dto.Name))
+        {
+            return BadRequest("New username is required.");
+        }
+
+        var user = await _userManager.GetUserAsync(User);
+        if (user == null)
+        {
+            return BadRequest("Token corrupted");
+        }
+
+        var oldUsername = user.Name;
+        user.Name = dto.Name;
+        var result = await _userManager.UpdateAsync(user);
+
+        if (!result.Succeeded)
+        {
+            // Return a more specific feedback to the user if needed
+            return BadRequest($"Failed to update username from '{oldUsername}' to '{dto.Name}'.");
+        }
+
+        return Ok(_mapper.Map<UserBasicDTO>(user));
+    }
+
+    [HttpPut("me/bio")]
+    [Authorize]
+    public async Task<IActionResult> ChangeBio([FromBody] ChangeUserBioDTO dto)
+    {
+        if (string.IsNullOrEmpty(dto.Biography))
+        {
+            return BadRequest("Biography is required.");
+        }
+
+        var user = await _userManager.GetUserAsync(User);
+        if (user == null)
+        {
+            return BadRequest("Token corrupted");
+        }
+
+        user.Biography = dto.Biography;
+        var result = await _userManager.UpdateAsync(user);
+
+        if (!result.Succeeded)
+        {
+            return BadRequest("Failed to update biography.");
+        }
+
+        return Ok(_mapper.Map<UserBasicDTO>(user));
+    }
+
+
+
 }

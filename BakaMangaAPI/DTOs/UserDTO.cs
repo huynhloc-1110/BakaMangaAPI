@@ -44,3 +44,13 @@ public class UserFollowingDTO
     public UserSimpleDTO FollowedUser { get; set; } = default!;
     public DateTime FollowedAt { get; set; }
 }
+
+public class ChangeUsernameDTO
+{
+    public string Name { get; set; } = default!;
+}
+
+public class ChangeUserBioDTO
+{
+    public string Biography { get; set; } = default!;
+}
