@@ -147,58 +147,61 @@ public class UserController : ControllerBase
 
     [HttpPut("me/username")]
     [Authorize]
-    public async Task<IActionResult> ChangeUsername([FromBody] ChangeUsernameDTO dto)
+    public async Task<IActionResult> ChangeUsername([FromForm] string newName)
     {
-        if (string.IsNullOrEmpty(dto.Name))
+        if (string.IsNullOrEmpty(newName))
         {
             return BadRequest("New username is required.");
         }
 
         var user = await _userManager.GetUserAsync(User);
-        if (user == null)
-        {
-            return BadRequest("Token corrupted");
-        }
+        user.Name = newName;
+        await _userManager.UpdateAsync(user);
 
-        var oldUsername = user.Name;
-        user.Name = dto.Name;
-        var result = await _userManager.UpdateAsync(user);
-
-        if (!result.Succeeded)
-        {
-            // Return a more specific feedback to the user if needed
-            return BadRequest($"Failed to update username from '{oldUsername}' to '{dto.Name}'.");
-        }
-
-        return Ok(_mapper.Map<UserBasicDTO>(user));
+        return NoContent();
     }
 
     [HttpPut("me/bio")]
     [Authorize]
-    public async Task<IActionResult> ChangeBio([FromBody] ChangeUserBioDTO dto)
+    public async Task<IActionResult> ChangeBio([FromForm] string newBio)
     {
-        if (string.IsNullOrEmpty(dto.Biography))
+        if (string.IsNullOrEmpty(newBio))
         {
-            return BadRequest("Biography is required.");
+            return BadRequest("New username is required.");
         }
 
         var user = await _userManager.GetUserAsync(User);
-        if (user == null)
-        {
-            return BadRequest("Token corrupted");
-        }
+        user.Biography = newBio;
+        await _userManager.UpdateAsync(user);
 
-        user.Biography = dto.Biography;
-        var result = await _userManager.UpdateAsync(user);
+        return NoContent();
+    }
+
+    [HttpPut("me/password")]
+    [Authorize]
+    public async Task<IActionResult> ChangePassword([FromForm] string oldPassword,
+        [FromForm] string newPassword)
+    {
+        var currentUser = await _userManager.GetUserAsync(User);
+
+        var result = await _userManager.ChangePasswordAsync(currentUser, oldPassword, newPassword);
 
         if (!result.Succeeded)
         {
-            return BadRequest("Failed to update biography.");
+            return BadRequest("Invalid password input");
         }
 
-        return Ok(_mapper.Map<UserBasicDTO>(user));
+        return NoContent();
     }
 
+    [HttpDelete]
+    [Authorize]
+    public async Task<IActionResult> DeleteMe()
+    {
+        var user = await _userManager.GetUserAsync(User);
+        user.DeletedAt = DateTime.UtcNow;
+        await _userManager.UpdateAsync(user);
 
-
+        return NoContent();
+    }
 }
