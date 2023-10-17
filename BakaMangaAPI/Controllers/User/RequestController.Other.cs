@@ -66,6 +66,6 @@ public partial class RequestController
         _context.Requests.Add(request);
 
         await _context.SaveChangesAsync();
-        return Ok();
+        return Ok(_mapper.Map<OtherRequestDTO>(request));
     }
 }
