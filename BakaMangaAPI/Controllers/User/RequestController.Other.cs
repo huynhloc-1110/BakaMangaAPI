@@ -60,19 +60,6 @@ public partial class RequestController
     public async Task<IActionResult> PostOtherRequest([FromForm] OtherRequestEditDTO dto)
     {
         var currentUser = await _userManager.GetUserAsync(User);
-        var isAlreadyUploader = await _userManager.IsInRoleAsync(currentUser, "Uploader");
-        if (isAlreadyUploader)
-        {
-            return BadRequest("The current user is already uploader");
-        }
-
-        var isProcessing = await _context.Requests
-            .OfType<OtherRequest>()
-            .AnyAsync(r => r.User == currentUser && r.Status == RequestStatus.Processing);
-        if (isProcessing)
-        {
-            return BadRequest("The user request is processed. Can't send any more requests");
-        }
 
         var request = _mapper.Map<OtherRequest>(dto);
         request.User = currentUser;

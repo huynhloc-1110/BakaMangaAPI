@@ -58,19 +58,6 @@ public partial class RequestController
     public async Task<IActionResult> PostMangaRequest([FromForm] MangaRequestEditDTO dto)
     {
         var currentUser = await _userManager.GetUserAsync(User);
-        var isAlreadyUploader = await _userManager.IsInRoleAsync(currentUser, "Uploader");
-        if (isAlreadyUploader)
-        {
-            return BadRequest("The current user is already uploader");
-        }
-
-        var isProcessing = await _context.Requests
-            .OfType<MangaRequest>()
-            .AnyAsync(r => r.User == currentUser && r.Status == RequestStatus.Processing);
-        if (isProcessing)
-        {
-            return BadRequest("The user request is processed. Can't send any more requests");
-        }
 
         var request = _mapper.Map<MangaRequest>(dto);
         request.User = currentUser;

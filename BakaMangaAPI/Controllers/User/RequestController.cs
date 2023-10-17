@@ -53,6 +53,7 @@ public partial class RequestController : ControllerBase
         return NoContent();
     }
 
+    [HttpPut("~/requests/{requestId}/status")]
     public async Task<ActionResult> ChangeRequestStatus(string requestId,
         [FromForm] RequestStatus status)
     {
