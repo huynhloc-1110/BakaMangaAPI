@@ -37,45 +37,31 @@ public class UploadChapterController : ControllerBase
     [HttpGet("~/uploader/me/chapters")]
     public async Task<IActionResult> GetChaptersOfUploader([FromQuery] FilterDTO filter)
     {
-        if (await _userManager.GetUserAsync(User) is not ApplicationUser uploader)
-        {
-            return BadRequest("Token outdated or corrupted.");
-        }
+        var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        var query = _context.Chapters.Where(c => c.Uploader.Id == currentUserId);
 
-        var query = _context.Chapters.Where(c => c.Uploader == uploader);
-
-        // filter exclude deleted
         if (!filter.IncludeDeleted)
         {
             query = query.Where(c => c.DeletedAt == null);
         }
 
-        // filter search
         if (!string.IsNullOrEmpty(filter.Search))
         {
             query = query.Where(c => c.Manga.OriginalTitle.ToLower()
                 .Contains(filter.Search.ToLower()));
         }
 
-        // pagination
         var chapterCount = await query.CountAsync();
         var chapters = await query
             .OrderByDescending(c => c.CreatedAt)
-            .Include(c => c.Manga)
-            .Include(c => c.UploadingGroup)
-            .Include(c => c.Images)
             .Skip((filter.Page - 1) * filter.PageSize)
             .Take(filter.PageSize)
+            .ProjectTo<ChapterDetailDTO>(_mapper.ConfigurationProvider)
             .AsNoTracking()
             .ToListAsync();
-        if (chapters.Count == 0)
-        {
-            return NotFound();
-        }
 
-        var chapterList = _mapper.Map<List<ChapterDetailDTO>>(chapters);
         var paginatedChapterList = new PaginatedListDTO<ChapterDetailDTO>
-            (chapterList, chapterCount, filter.Page, filter.PageSize);
+            (chapters, chapterCount, filter.Page, filter.PageSize);
         return Ok(paginatedChapterList);
     }
 
@@ -117,20 +103,11 @@ public class UploadChapterController : ControllerBase
             return BadRequest("Group not found");
         }
         var user = await _userManager.GetUserAsync(User);
-        if (user == null)
-        {
-            return BadRequest("JWT token outdated or corrupted");
-        }
 
-        var chapter = new Chapter()
-        {
-            Number = dto.Number,
-            Name = dto.Name,
-            Language = dto.Language,
-            Manga = manga,
-            UploadingGroup = group,
-            Uploader = user
-        };
+        var chapter = _mapper.Map<Chapter>(dto);
+        chapter.Manga = manga;
+        chapter.UploadingGroup = group;
+        chapter.Uploader = user;
 
         for (int i = 0; i < dto.Pages.Count; i++)
         {
@@ -149,7 +126,6 @@ public class UploadChapterController : ControllerBase
     [HttpPut("{chapterId}")]
     public async Task<IActionResult> PutChapter(string chapterId, [FromForm] ChapterEditDTO dto)
     {
-        // get chapter with additional info
         var chapter = await _context.Chapters
             .Include(c => c.UploadingGroup)
             .Include(c => c.Images)
@@ -159,10 +135,7 @@ public class UploadChapterController : ControllerBase
             return BadRequest("Chapter not found");
         }
 
-        // update chapter basic info
-        chapter.Number = dto.Number;
-        chapter.Name = dto.Name;
-        chapter.Language = dto.Language;
+        chapter = _mapper.Map(dto, chapter);
 
         // update chapter uploading group
         var uploadingGroup = await _context.Groups.FindAsync(dto.UploadingGroupId);

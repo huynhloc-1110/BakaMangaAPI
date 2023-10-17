@@ -22,5 +22,7 @@ public class ChapterProfile : Profile
                 .MapFrom(src => src.Images.OrderBy(p => p.Number).Select(p => p.Path).ToList()));
 
         CreateMap<Chapter, ChapterSimpleDTO>();
+
+        CreateMap<ChapterEditDTO, Chapter>();
     }
 }
