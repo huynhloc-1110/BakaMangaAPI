@@ -101,11 +101,11 @@ public partial class RequestController
     public async Task<ActionResult> ChangeJoinGroupRequestStatus(string requestId,
         [FromForm] RequestStatus status)
     {
-        var request = _context.Requests
+        var request = await _context.Requests
             .OfType<JoinGroupRequest>()
             .Include(r => r.User)
             .Include(r => r.Group)
-            .SingleOrDefault(r => r.Id == requestId);
+            .SingleOrDefaultAsync(r => r.Id == requestId);
         if (request == null)
         {
             return NotFound("Request not found");
@@ -128,31 +128,6 @@ public partial class RequestController
         }
 
         await _context.SaveChangesAsync();
-        return NoContent();
-    }
-
-    [HttpPut("~/group-requests/{requestId}/status-confirm")]
-    public async Task<ActionResult> ConfirmJoinGroupRequestStatus(string requestId)
-    {
-        var request = await _context.Requests
-            .OfType<JoinGroupRequest>()
-            .Include(r => r.User)
-            .SingleOrDefaultAsync(r => r.Id == requestId);
-
-        if (request == null)
-        {
-            return NotFound("Request not found");
-        }
-
-        var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        if (request.User.Id != currentUserId)
-        {
-            return BadRequest("The user must be the owner of the request to confirm status");
-        }
-
-        request.StatusConfirmed = true;
-        await _context.SaveChangesAsync();
-
         return NoContent();
     }
 

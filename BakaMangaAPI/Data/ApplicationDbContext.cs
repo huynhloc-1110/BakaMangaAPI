@@ -68,6 +68,8 @@ public class ApplicationDbContext : IdentityDbContext<
 
         modelBuilder.Entity<PromotionRequest>().HasBaseType<Request>();
         modelBuilder.Entity<JoinGroupRequest>().HasBaseType<Request>();
+        modelBuilder.Entity<MangaRequest>().HasBaseType<Request>();
+        modelBuilder.Entity<OtherRequest>().HasBaseType<Request>();
         #endregion
 
         #region Configure relationships
