@@ -29,11 +29,11 @@ public partial class RequestController
         var requests = await requestQuery
             .Skip((filter.Page - 1) * filter.PageSize)
             .Take(filter.PageSize)
-            .ProjectTo<JoinGroupRequestDTO>(_mapper.ConfigurationProvider)
+            .ProjectTo<PromotionRequestDTO>(_mapper.ConfigurationProvider)
             .AsNoTracking()
             .ToListAsync();
 
-        var paginatedList = new PaginatedListDTO<JoinGroupRequestDTO>
+        var paginatedList = new PaginatedListDTO<PromotionRequestDTO>
             (requests, requestCount, filter.Page, filter.PageSize);
         return Ok(paginatedList);
     }

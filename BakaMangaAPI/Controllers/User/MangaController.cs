@@ -1,4 +1,6 @@
-﻿using AutoMapper;
+﻿using System.Security.Claims;
+
+using AutoMapper;
 using AutoMapper.QueryableExtensions;
 
 using BakaMangaAPI.Data;
@@ -144,7 +146,11 @@ public partial class MangaController : ControllerBase
     [Authorize]
     public async Task<IActionResult> GetRecommendedMangas()
     {
+        var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+        // get random mangas that user have yet read
         var recommendedMangas = await _context.Mangas
+            .Where(m => !m.Followers.Select(f => f.Id).Contains(currentUserId))
             .OrderBy(m => EF.Functions.Random())
             .Take(12)
             .ProjectTo<MangaBasicDTO>(_mapper.ConfigurationProvider)
@@ -152,6 +158,17 @@ public partial class MangaController : ControllerBase
             .ToListAsync();
 
         return Ok(recommendedMangas);
+    }
+
+    [HttpGet("random-id")]
+    public async Task<IActionResult> GetRandomMangaId()
+    {
+        var randomMangaId = await _context.Mangas
+            .OrderBy(m => EF.Functions.Random())
+            .Select(m => m.Id)
+            .FirstOrDefaultAsync();
+
+        return Ok(randomMangaId);
     }
 
     [HttpGet("{mangaId}")]

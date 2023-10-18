@@ -40,9 +40,9 @@ public class UploadChapterController : ControllerBase
         var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
         var query = _context.Chapters.Where(c => c.Uploader.Id == currentUserId);
 
-        if (!filter.IncludeDeleted)
+        if (filter.IncludeDeleted)
         {
-            query = query.Where(c => c.DeletedAt == null);
+            query = query.IgnoreQueryFilters();
         }
 
         if (!string.IsNullOrEmpty(filter.Search))
@@ -171,13 +171,16 @@ public class UploadChapterController : ControllerBase
     [HttpDelete("{chapterId}")]
     public async Task<IActionResult> DeleteChapter(string chapterId, [FromQuery] bool undelete)
     {
-        if (await _context.Chapters.FindAsync(chapterId) is not Chapter chapter)
+        var chapter = await _context.Chapters
+            .IgnoreQueryFilters()
+            .SingleOrDefaultAsync(c => c.Id == chapterId);
+        if (chapter == null)
         {
             return BadRequest("Chapter not found");
         }
+
         chapter.DeletedAt = undelete ? null : DateTime.UtcNow;
         await _context.SaveChangesAsync();
-
         return NoContent();
     }
 }

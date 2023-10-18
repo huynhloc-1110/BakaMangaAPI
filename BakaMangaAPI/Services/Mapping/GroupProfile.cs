@@ -14,7 +14,7 @@ public class GroupProfile : Profile
             .ForMember(dest => dest.MemberNumber, opt => opt
                 .MapFrom(src => src.Members.Count))
             .ForMember(dest => dest.UserJoinedAt, opt => opt
-                .MapFrom(src => src.Members.Single(m => m.UserId == userId).JoinedAt));
+                .MapFrom(src => src.Members.SingleOrDefault(m => m.UserId == userId)!.JoinedAt));
 
         CreateMap<Group, GroupDetailDTO>()
             .ForMember(dest => dest.MemberNumber, opt => opt
