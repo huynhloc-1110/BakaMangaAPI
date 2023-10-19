@@ -4,7 +4,7 @@ using System.Text.Json.Serialization;
 using BakaMangaAPI.Data;
 using BakaMangaAPI.Models;
 using BakaMangaAPI.Services.Media;
-
+using BakaMangaAPI.Services.Notification;
 using DotNetEnv;
 using DotNetEnv.Configuration;
 
@@ -71,7 +71,7 @@ builder.Services.AddSwaggerGen(c =>
 builder.Services.AddCors(options =>
     options.AddDefaultPolicy(
         policy =>
-            policy.WithOrigins(reactServerUrl).AllowAnyMethod().AllowAnyHeader()));
+            policy.WithOrigins(reactServerUrl).AllowAnyMethod().AllowAnyHeader().AllowCredentials()));
 
 // JWT Authentication/Authorization
 builder.Services.AddAuthentication(options =>
@@ -92,6 +92,9 @@ builder.Services.AddAuthentication(options =>
         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWT:Secret"]))
     };
 });
+
+// SignalR for Notification
+builder.Services.AddSignalR();
 
 // Other services
 builder.Services.AddAutoMapper(typeof(Program));
@@ -135,6 +138,8 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
+app.MapHub<NotificationHub>("/notify");
 
 app.Run();
 

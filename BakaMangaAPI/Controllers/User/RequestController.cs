@@ -4,10 +4,12 @@ using AutoMapper;
 
 using BakaMangaAPI.Data;
 using BakaMangaAPI.Models;
+using BakaMangaAPI.Services.Notification;
 
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 
 namespace BakaMangaAPI.Controllers.User;
@@ -19,14 +21,17 @@ public partial class RequestController : ControllerBase
     private readonly ApplicationDbContext _context;
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly IMapper _mapper;
+    private readonly IHubContext<NotificationHub> _notificationHubContext;
 
     public RequestController(ApplicationDbContext context,
         UserManager<ApplicationUser> userManager,
-        IMapper mapper)
+        IMapper mapper,
+        IHubContext<NotificationHub> notificationHubContext)
     {
         _context = context;
         _userManager = userManager;
         _mapper = mapper;
+        _notificationHubContext = notificationHubContext;
     }
 
     [HttpPut("~/requests/{requestId}/status-confirm")]
@@ -69,7 +74,9 @@ public partial class RequestController : ControllerBase
         }
 
         request.Status = status;
+
         await _context.SaveChangesAsync();
+        await _notificationHubContext.Clients.All.SendAsync("ReceiveNotification", "Request - " + status);
         return NoContent();
     }
 }
