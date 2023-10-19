@@ -22,16 +22,19 @@ public partial class RequestController : ControllerBase
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly IMapper _mapper;
     private readonly IHubContext<NotificationHub> _notificationHubContext;
+    private readonly IUserConnectionManager _userConnectionManager;
 
     public RequestController(ApplicationDbContext context,
         UserManager<ApplicationUser> userManager,
         IMapper mapper,
-        IHubContext<NotificationHub> notificationHubContext)
+        IHubContext<NotificationHub> notificationHubContext,
+        IUserConnectionManager userConnectionManager)
     {
         _context = context;
         _userManager = userManager;
         _mapper = mapper;
         _notificationHubContext = notificationHubContext;
+        _userConnectionManager = userConnectionManager;
     }
 
     [HttpPut("~/requests/{requestId}/status-confirm")]
@@ -62,7 +65,9 @@ public partial class RequestController : ControllerBase
     public async Task<ActionResult> ChangeRequestStatus(string requestId,
         [FromForm] RequestStatus status)
     {
-        var request = await _context.Requests.FindAsync(requestId);
+        var request = await _context.Requests
+            .Include(r => r.User)
+            .SingleOrDefaultAsync(r => r.Id == requestId);
         if (request == null)
         {
             return NotFound("Request not found");
@@ -76,7 +81,19 @@ public partial class RequestController : ControllerBase
         request.Status = status;
 
         await _context.SaveChangesAsync();
-        await _notificationHubContext.Clients.All.SendAsync("ReceiveNotification", "Request - " + status);
+        await SendToUserAsync(request.User.Id, $"Request - {status}!");
         return NoContent();
+    }
+
+    private async Task SendToUserAsync(string userId, string message)
+    {
+        var connections = _userConnectionManager.GetUserConnections(userId);
+        if (connections != null && connections.Count > 0)
+        {
+            foreach (var connectionId in connections)
+            {
+                await _notificationHubContext.Clients.Client(connectionId).SendAsync("ReceiveNotification", message);
+            }
+        }
     }
 }
