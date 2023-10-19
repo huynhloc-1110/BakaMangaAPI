@@ -3,6 +3,7 @@ using System.Security.Claims;
 using AutoMapper;
 
 using BakaMangaAPI.Data;
+using BakaMangaAPI.DTOs;
 using BakaMangaAPI.Models;
 using BakaMangaAPI.Services.Notification;
 
@@ -21,20 +22,17 @@ public partial class RequestController : ControllerBase
     private readonly ApplicationDbContext _context;
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly IMapper _mapper;
-    private readonly IHubContext<NotificationHub> _notificationHubContext;
-    private readonly IUserConnectionManager _userConnectionManager;
+    private readonly INotificationManager _notificationManager;
 
     public RequestController(ApplicationDbContext context,
         UserManager<ApplicationUser> userManager,
         IMapper mapper,
-        IHubContext<NotificationHub> notificationHubContext,
-        IUserConnectionManager userConnectionManager)
+        INotificationManager notificationManager)
     {
         _context = context;
         _userManager = userManager;
         _mapper = mapper;
-        _notificationHubContext = notificationHubContext;
-        _userConnectionManager = userConnectionManager;
+        _notificationManager = notificationManager;
     }
 
     [HttpPut("~/requests/{requestId}/status-confirm")]
@@ -81,19 +79,7 @@ public partial class RequestController : ControllerBase
         request.Status = status;
 
         await _context.SaveChangesAsync();
-        await SendToUserAsync(request.User.Id, $"Request - {status}!");
+        await _notificationManager.SendToUserAsync(request.User.Id, new TestNotificationDTO());
         return NoContent();
-    }
-
-    private async Task SendToUserAsync(string userId, string message)
-    {
-        var connections = _userConnectionManager.GetUserConnections(userId);
-        if (connections != null && connections.Count > 0)
-        {
-            foreach (var connectionId in connections)
-            {
-                await _notificationHubContext.Clients.Client(connectionId).SendAsync("ReceiveNotification", message);
-            }
-        }
     }
 }

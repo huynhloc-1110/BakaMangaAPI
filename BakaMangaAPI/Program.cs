@@ -96,6 +96,7 @@ builder.Services.AddAuthentication(options =>
 // SignalR for Notification
 builder.Services.AddSignalR();
 builder.Services.AddSingleton<IUserConnectionManager, UserConnectionManager>();
+builder.Services.AddTransient<INotificationManager, NotificationManager>();
 
 // Other services
 builder.Services.AddAutoMapper(typeof(Program));

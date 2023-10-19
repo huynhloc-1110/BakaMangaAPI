@@ -3,7 +3,7 @@ using BakaMangaAPI.Models;
 
 namespace BakaMangaAPI.DTOs;
 
-public class GroupRequestDTO
+public class RequestDTO
 {
     public string Id { get; set; } = default!;
     public UserSimpleDTO User { get; set; } = default!;
@@ -12,25 +12,25 @@ public class GroupRequestDTO
     public DateTime CreatedAt { get; set; }
 }
 
-public class JoinGroupRequestDTO : GroupRequestDTO
+public class JoinGroupRequestDTO : RequestDTO
 {
     public GroupBasicDTO Group { get; set; } = default!;
 }
 
-public class PromotionRequestDTO : GroupRequestDTO
+public class PromotionRequestDTO : RequestDTO
 {
     public string Reason { get; set; } = default!;
     public string EvidenceLink { get; set; } = default!;
 }
 
-public class MangaRequestDTO : GroupRequestDTO
+public class MangaRequestDTO : RequestDTO
 {
     public string MangaTitle { get; set; } = default!;
     public string MangaAuthor { get; set; } = default!;
     public string MangaSource { get; set; } = default!;
 }
 
-public class OtherRequestDTO : GroupRequestDTO
+public class OtherRequestDTO : RequestDTO
 {
     public string Title { get; set; } = default!;
     public string Content { get; set; } = default!;
