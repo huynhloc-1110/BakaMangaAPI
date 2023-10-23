@@ -12,6 +12,7 @@ using Microsoft.EntityFrameworkCore;
 namespace BakaMangaAPI.Controllers.User;
 
 [ApiController]
+[Authorize]
 [Route("my-notifications")]
 public class NotificationController : ControllerBase
 {
@@ -104,5 +105,23 @@ public class NotificationController : ControllerBase
             default:
                 return BadRequest("Invalid notification type");
         }
+    }
+
+    [HttpPut("{notificationId}/view")]
+    public async Task<IActionResult> ViewNotification(string notificationId)
+    {
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        var notification = await _context.Notifications
+            .SingleOrDefaultAsync(n => n.Id == notificationId && n.User.Id == userId);
+
+        if (notification == null)
+        {
+            return NotFound("Notification not found");
+        }
+
+        notification.IsViewed = true;
+        await _context.SaveChangesAsync();
+
+        return NoContent();
     }
 }
