@@ -11,7 +11,11 @@ public class UserConnectionManager : IUserConnectionManager
         var conn = new List<string>();
         lock (_userConnectionMapLocker)
         {
-            conn = _userConnectionMap[userId];
+            var succeed = _userConnectionMap.TryGetValue(userId, out var singleUserConn);
+            if (succeed)
+            {
+                conn = singleUserConn!;
+            }
         }
         return conn;
     }
@@ -23,8 +27,8 @@ public class UserConnectionManager : IUserConnectionManager
         {
             foreach (var userId in userIds)
             {
-                var result = _userConnectionMap.TryGetValue(userId, out var singleUserConn);
-                if (result)
+                var succeed = _userConnectionMap.TryGetValue(userId, out var singleUserConn);
+                if (succeed)
                 {
                     conn.AddRange(singleUserConn!);
                 }

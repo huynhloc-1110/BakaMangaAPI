@@ -37,10 +37,10 @@ public partial class PostController
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
         var user = await _context.ApplicationUsers
             .Include(u => u.Followers)
-            .SingleOrDefaultAsync(u => u.Id == userId)!;
+            .SingleOrDefaultAsync(u => u.Id == userId);
 
         var post = _mapper.Map<UserPost>(dto);
-        post.User = user;
+        post.User = user!;
 
         for (int i = 0; i < dto.Images.Count; i++)
         {
@@ -53,7 +53,7 @@ public partial class PostController
         _context.Posts.Add(post);
         await _context.SaveChangesAsync();
 
-        await _notificationManager.HandleFollowerNotificationAsync(user);
+        await _notificationManager.HandleFollowerNotificationAsync(user!);
         return Ok(_mapper.Map<PostBasicDTO>(post));
     }
 }

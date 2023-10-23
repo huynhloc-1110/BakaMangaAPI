@@ -12,6 +12,7 @@ using Microsoft.EntityFrameworkCore;
 namespace BakaMangaAPI.Controllers.User;
 
 [ApiController]
+[Route("my-notifications")]
 public class NotificationController : ControllerBase
 {
     private readonly ApplicationDbContext _context;
@@ -27,8 +28,26 @@ public class NotificationController : ControllerBase
         _mapper = mapper;
     }
 
+    [HttpGet("counts")]
+    public async Task<IActionResult> GetMyNotificationCounts()
+    {
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        var notificationCounts = await _context.Users
+            .Where(u => u.Id == userId)
+            .Select(u => new
+            {
+                Request = u.Notifications.OfType<RequestNotification>().Count(),
+                Chapter = u.Notifications.OfType<ChapterNotification>().Count(),
+                Group = u.Notifications.OfType<GroupNotification>().Count(),
+                Follower = u.Notifications.OfType<FollowerNotification>().Count(),
+            })
+            .SingleOrDefaultAsync();
+
+        return Ok(notificationCounts);
+    }
+
+
     [HttpGet("my-request-notifications")]
-    [Authorize]
     public async Task<IActionResult> GetMyRequestNotifications()
     {
         var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -45,7 +64,6 @@ public class NotificationController : ControllerBase
     }
 
     [HttpGet("my-chapter-notifications")]
-    [Authorize]
     public async Task<IActionResult> GetMyChapterNotifications()
     {
         var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
