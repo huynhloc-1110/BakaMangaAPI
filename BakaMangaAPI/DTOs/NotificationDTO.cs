@@ -1,11 +1,33 @@
+using BakaMangaAPI.Models;
+
 namespace BakaMangaAPI.DTOs;
 
 public class NotificationDTO
 {
-    public string Type { get; set; } = "OtherRequest";
+    public DateTime CreatedAt { get; set; }
+    public bool IsViewed { get; set; }
 }
 
-public class TestNotificationDTO : NotificationDTO
+public class RequestNotificationDTO : NotificationDTO
 {
-    public string Test { get; set; } = "This is a test property";
+    public string Type { get; set; } = nameof(RequestNotification);
+    public string RequestType { get; set; } = default!;
+}
+
+public class ChapterNotificationDTO : NotificationDTO
+{
+    public string Type { get; set; } = nameof(ChapterNotification);
+    public ChapterSimpleDTO Chapter { get; set; } = default!;
+}
+
+public class GroupNotificationDTO : NotificationDTO
+{
+    public string Type { get; set; } = nameof(GroupNotification);
+    public GroupBasicDTO Group { get; set; } = default!;
+}
+
+public class FollowerNotificationDTO : NotificationDTO
+{
+    public string Type { get; set; } = nameof(FollowerNotification);
+    public UserSimpleDTO User { get; set; } = default!;
 }

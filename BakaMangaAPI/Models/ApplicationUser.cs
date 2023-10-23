@@ -39,4 +39,5 @@ public class ApplicationUser : IdentityUser
     public List<Post> Posts { get; set; } = new();
     public List<Request> Requests { get; set; } = new();
     public List<Report> Reports { get; set; } = new();
+    public List<Notification> Notifications { get; set; } = new();
 }

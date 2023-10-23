@@ -3,14 +3,12 @@ using System.Security.Claims;
 using AutoMapper;
 
 using BakaMangaAPI.Data;
-using BakaMangaAPI.DTOs;
 using BakaMangaAPI.Models;
 using BakaMangaAPI.Services.Notification;
 
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 
 namespace BakaMangaAPI.Controllers.User;
@@ -79,7 +77,8 @@ public partial class RequestController : ControllerBase
         request.Status = status;
 
         await _context.SaveChangesAsync();
-        await _notificationManager.SendToUserAsync(request.User.Id, new TestNotificationDTO());
+
+        await _notificationManager.HandleRequestNotificationAsync(request);
         return NoContent();
     }
 }

@@ -52,6 +52,8 @@ public class ChapterSimpleDTO
     public string Name { get; set; } = default!;
 
     public GroupBasicDTO UploadingGroup { get; set; } = default!;
+
+    public MangaSimpleDTO Manga { get; set; } = default!;
 }
 
 public class ChapterEditDTO

@@ -16,6 +16,23 @@ public class UserConnectionManager : IUserConnectionManager
         return conn;
     }
 
+    public List<string> GetManyUsersConnections(string[] userIds)
+    {
+        var conn = new List<string>();
+        lock (_userConnectionMapLocker)
+        {
+            foreach (var userId in userIds)
+            {
+                var result = _userConnectionMap.TryGetValue(userId, out var singleUserConn);
+                if (result)
+                {
+                    conn.AddRange(singleUserConn!);
+                }
+            }
+        }
+        return conn;
+    }
+
     public void KeepUserConnection(string userId, string connectionId)
     {
         lock (_userConnectionMapLocker)

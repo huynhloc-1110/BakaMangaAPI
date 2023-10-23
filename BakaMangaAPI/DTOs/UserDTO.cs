@@ -1,7 +1,3 @@
-using BakaMangaAPI.Models;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc.Rendering;
-
 namespace BakaMangaAPI.DTOs;
 
 public class UserBasicDTO : UserSimpleDTO

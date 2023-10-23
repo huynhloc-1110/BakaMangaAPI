@@ -37,6 +37,7 @@ public class ApplicationDbContext : IdentityDbContext<
     public DbSet<Report> Reports { get; set; } = default!;
     public DbSet<Request> Requests { get; set; } = default!;
     public DbSet<View> Views { get; set; } = default!;
+    public DbSet<Notification> Notifications { get; set; } = default!;
     #endregion
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -70,6 +71,11 @@ public class ApplicationDbContext : IdentityDbContext<
         modelBuilder.Entity<JoinGroupRequest>().HasBaseType<Request>();
         modelBuilder.Entity<MangaRequest>().HasBaseType<Request>();
         modelBuilder.Entity<OtherRequest>().HasBaseType<Request>();
+
+        modelBuilder.Entity<RequestNotification>().HasBaseType<Notification>();
+        modelBuilder.Entity<ChapterNotification>().HasBaseType<Notification>();
+        modelBuilder.Entity<GroupNotification>().HasBaseType<Notification>();
+        modelBuilder.Entity<FollowerNotification>().HasBaseType<Notification>();
         #endregion
 
         #region Configure relationships

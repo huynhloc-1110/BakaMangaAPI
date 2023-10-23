@@ -7,6 +7,7 @@ using BakaMangaAPI.Data;
 using BakaMangaAPI.DTOs;
 using BakaMangaAPI.Models;
 using BakaMangaAPI.Services.Media;
+using BakaMangaAPI.Services.Notification;
 
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -24,14 +25,18 @@ public class UploadChapterController : ControllerBase
     private readonly IMediaManager _mediaManager;
     private readonly IMapper _mapper;
     private readonly UserManager<ApplicationUser> _userManager;
+    private readonly INotificationManager _notificationManager;
 
-    public UploadChapterController(ApplicationDbContext context, IMediaManager mediaManager,
-        IMapper mapper, UserManager<ApplicationUser> userManager)
+    public UploadChapterController(ApplicationDbContext context,
+        IMediaManager mediaManager,
+        IMapper mapper, UserManager<ApplicationUser> userManager,
+        INotificationManager notificationManager)
     {
         _context = context;
         _mediaManager = mediaManager;
         _mapper = mapper;
         _userManager = userManager;
+        _notificationManager = notificationManager;
     }
 
     [HttpGet("~/uploader/me/chapters")]
@@ -92,7 +97,9 @@ public class UploadChapterController : ControllerBase
     [HttpPost("~/mangas/{mangaId}/chapters")]
     public async Task<IActionResult> PostChapter(string mangaId, [FromForm] ChapterEditDTO dto)
     {
-        var manga = await _context.Mangas.FindAsync(mangaId);
+        var manga = await _context.Mangas
+            .Include(m => m.Followers)
+            .SingleOrDefaultAsync(m => m.Id == mangaId);
         if (manga == null)
         {
             return BadRequest("Manga not found");
@@ -119,6 +126,8 @@ public class UploadChapterController : ControllerBase
 
         _context.Chapters.Add(chapter);
         await _context.SaveChangesAsync();
+
+        await _notificationManager.HandleChapterNotificationAsync(chapter);
 
         return Ok(_mapper.Map<ChapterDetailDTO>(chapter));
     }
