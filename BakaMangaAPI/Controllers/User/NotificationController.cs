@@ -47,35 +47,62 @@ public class NotificationController : ControllerBase
     }
 
 
-    [HttpGet("my-request-notifications")]
-    public async Task<IActionResult> GetMyRequestNotifications()
+    [HttpGet]
+    public async Task<IActionResult> GetMyNotifications(
+        [FromQuery] string type,
+        [FromQuery] DateTime? createdAtCursor)
     {
         var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-        var notifications = await _context.Notifications
-            .OfType<RequestNotification>()
+        var notificationQuery = _context.Notifications
             .Where(n => n.User.Id == currentUserId)
-            .OrderByDescending(n => n.CreatedAt)
-            .ProjectTo<RequestNotificationDTO>(_mapper.ConfigurationProvider)
-            .AsNoTracking()
-            .ToListAsync();
+            .Where(n => createdAtCursor == null || n.CreatedAt < createdAtCursor)
+            .OrderByDescending(n => n.CreatedAt);
 
-        return Ok(notifications);
-    }
-
-    [HttpGet("my-chapter-notifications")]
-    public async Task<IActionResult> GetMyChapterNotifications()
-    {
-        var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-
-        var notifications = await _context.Notifications
-            .OfType<ChapterNotification>()
-            .Where(n => n.User.Id == currentUserId)
-            .OrderByDescending(n => n.CreatedAt)
-            .ProjectTo<ChapterNotificationDTO>(_mapper.ConfigurationProvider)
-            .AsNoTracking()
-            .ToListAsync();
-
-        return Ok(notifications);
+        switch (type)
+        {
+            case "Request":
+                {
+                    var notifications = await notificationQuery
+                        .OfType<RequestNotification>()
+                        .ProjectTo<RequestNotificationDTO>(_mapper.ConfigurationProvider)
+                        .Take(4)
+                        .AsNoTracking()
+                        .ToListAsync();
+                    return Ok(notifications);
+                }
+            case "Chapter":
+                {
+                    var notifications = await notificationQuery
+                        .OfType<ChapterNotification>()
+                        .ProjectTo<ChapterNotificationDTO>(_mapper.ConfigurationProvider)
+                        .Take(4)
+                        .AsNoTracking()
+                        .ToListAsync();
+                    return Ok(notifications);
+                }
+            case "Group":
+                {
+                    var notifications = await notificationQuery
+                        .OfType<GroupNotification>()
+                        .ProjectTo<GroupNotificationDTO>(_mapper.ConfigurationProvider)
+                        .Take(4)
+                        .AsNoTracking()
+                        .ToListAsync();
+                    return Ok(notifications);
+                }
+            case "Follower":
+                {
+                    var notifications = await notificationQuery
+                        .OfType<FollowerNotification>()
+                        .ProjectTo<FollowerNotificationDTO>(_mapper.ConfigurationProvider)
+                        .Take(4)
+                        .AsNoTracking()
+                        .ToListAsync();
+                    return Ok(notifications);
+                }
+            default:
+                return BadRequest("Invalid notification type");
+        }
     }
 }
