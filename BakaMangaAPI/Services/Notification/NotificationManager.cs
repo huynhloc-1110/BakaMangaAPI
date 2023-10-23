@@ -24,6 +24,32 @@ public class NotificationManager : INotificationManager
         _mapper = mapper;
     }
 
+    private async Task SendToUserAsync(string userId, NotificationDTO notification)
+    {
+        var connections = _userConnectionManager.GetUserConnections(userId);
+        if (connections != null && connections.Count > 0)
+        {
+            foreach (var connectionId in connections)
+            {
+                await _notificationHubContext.Clients.Client(connectionId)
+                    .SendAsync("ReceiveNotification", notification);
+            }
+        }
+    }
+
+    private async Task SendToManyUsersAsync(string[] userIds, NotificationDTO notification)
+    {
+        var connections = _userConnectionManager.GetManyUsersConnections(userIds);
+        if (connections != null && connections.Count > 0)
+        {
+            foreach (var connectionId in connections)
+            {
+                await _notificationHubContext.Clients.Client(connectionId)
+                    .SendAsync("ReceiveNotification", notification);
+            }
+        }
+    }
+
     public async Task HandleRequestNotificationAsync(Request request)
     {
         var notification = new RequestNotification
@@ -58,29 +84,43 @@ public class NotificationManager : INotificationManager
             notificationDto);
     }
 
-    private async Task SendToUserAsync(string userId, NotificationDTO notification)
+    public async Task HandleFollowerNotificationAsync(ApplicationUser user)
     {
-        var connections = _userConnectionManager.GetUserConnections(userId);
-        if (connections != null && connections.Count > 0)
+        var notifications = new List<FollowerNotification>();
+        foreach (var follower in user.Followers.Select(f => f.User))
         {
-            foreach (var connectionId in connections)
+            notifications.Add(new FollowerNotification
             {
-                await _notificationHubContext.Clients.Client(connectionId)
-                    .SendAsync("ReceiveNotification", notification);
-            }
+                User = user,
+                FollowedPerson = follower,
+            });
         }
+
+        _context.Notifications.AddRange(notifications);
+        await _context.SaveChangesAsync();
+
+        var notificationDto = _mapper.Map<FollowerNotificationDTO>(notifications[0]);
+        await SendToManyUsersAsync(user.Followers.Select(f => f.UserId).ToArray(),
+            notificationDto);
     }
 
-    private async Task SendToManyUsersAsync(string[] userIds, NotificationDTO notification)
+    public async Task HandleGroupNotificationAsync(Group group)
     {
-        var connections = _userConnectionManager.GetManyUsersConnections(userIds);
-        if (connections != null && connections.Count > 0)
+        var notifications = new List<GroupNotification>();
+        foreach (var member in group.Members.Select(m => m.User))
         {
-            foreach (var connectionId in connections)
+            notifications.Add(new GroupNotification
             {
-                await _notificationHubContext.Clients.Client(connectionId)
-                    .SendAsync("ReceiveNotification", notification);
-            }
+                User = member,
+                Group = group,
+            });
         }
+
+        _context.Notifications.AddRange(notifications);
+        await _context.SaveChangesAsync();
+
+        var notificationDto = _mapper.Map<GroupNotificationDTO>(notifications[0]);
+        await SendToManyUsersAsync(group.Members.Select(f => f.UserId).ToArray(),
+            notificationDto);
     }
 }

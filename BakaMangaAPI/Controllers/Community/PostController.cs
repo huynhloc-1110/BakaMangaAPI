@@ -7,7 +7,7 @@ using BakaMangaAPI.Data;
 using BakaMangaAPI.DTOs;
 using BakaMangaAPI.Models;
 using BakaMangaAPI.Services.Media;
-
+using BakaMangaAPI.Services.Notification;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -23,16 +23,19 @@ public partial class PostController : ControllerBase
     private readonly IMapper _mapper;
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly IMediaManager _mediaManager;
+    private readonly INotificationManager _notificationManager;
 
     public PostController(ApplicationDbContext context,
         IMapper mapper,
         UserManager<ApplicationUser> userManager,
-        IMediaManager mediaManager)
+        IMediaManager mediaManager,
+        INotificationManager notificationManager)
     {
         _context = context;
         _mapper = mapper;
         _userManager = userManager;
         _mediaManager = mediaManager;
+        _notificationManager = notificationManager;
     }
 
     [HttpPut("{postId}")]

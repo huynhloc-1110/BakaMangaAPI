@@ -35,7 +35,10 @@ public partial class PostController
     [Authorize]
     public async Task<IActionResult> PostGroupPost(string groupId, [FromForm] PostEditDTO dto)
     {
-        var group = await _context.Groups.FindAsync(groupId);
+        var group = await _context.Groups
+            .Include(g => g.Members)
+                .ThenInclude(m => m.User)
+            .SingleOrDefaultAsync(g => g.Id == groupId);
         if (group == null)
         {
             return NotFound("Group not found");
@@ -65,6 +68,7 @@ public partial class PostController
         _context.Posts.Add(post);
         await _context.SaveChangesAsync();
 
+        await _notificationManager.HandleGroupNotificationAsync(group);
         return Ok(_mapper.Map<PostBasicDTO>(post));
     }
 }
