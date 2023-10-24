@@ -37,15 +37,16 @@ public class NotificationController : ControllerBase
             .Where(u => u.Id == userId)
             .Select(u => new
             {
-                Request = u.Notifications.OfType<RequestNotification>().Count(),
-                Chapter = u.Notifications.OfType<ChapterNotification>().Count(),
-                Group = u.Notifications.OfType<GroupNotification>().Count(),
-                Follower = u.Notifications.OfType<FollowerNotification>().Count(),
+                Request = u.Notifications.OfType<RequestNotification>().Where(n => !n.IsViewed).Count(),
+                Chapter = u.Notifications.OfType<ChapterNotification>().Where(n => !n.IsViewed).Count(),
+                Group = u.Notifications.OfType<GroupNotification>().Where(n => !n.IsViewed).Count(),
+                Follower = u.Notifications.OfType<FollowerNotification>().Where(n => !n.IsViewed).Count(),
             })
             .SingleOrDefaultAsync();
 
         return Ok(notificationCounts);
     }
+
 
 
     [HttpGet]
