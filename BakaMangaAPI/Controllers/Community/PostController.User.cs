@@ -37,6 +37,7 @@ public partial class PostController
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
         var user = await _context.ApplicationUsers
             .Include(u => u.Followers)
+                .ThenInclude(f => f.User)
             .SingleOrDefaultAsync(u => u.Id == userId);
 
         var post = _mapper.Map<UserPost>(dto);

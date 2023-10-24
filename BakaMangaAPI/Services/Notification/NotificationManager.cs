@@ -66,6 +66,11 @@ public class NotificationManager : INotificationManager
 
     public async Task HandleChapterNotificationAsync(Chapter chapter)
     {
+        if (chapter.Manga.Followers.Count == 0)
+        {
+            return;
+        }
+
         var notifications = new List<ChapterNotification>();
         foreach (var follower in chapter.Manga.Followers)
         {
@@ -86,13 +91,18 @@ public class NotificationManager : INotificationManager
 
     public async Task HandleFollowerNotificationAsync(ApplicationUser user)
     {
+        if (user.Followers.Count == 0)
+        {
+            return;
+        }
+
         var notifications = new List<FollowerNotification>();
         foreach (var follower in user.Followers.Select(f => f.User))
         {
             notifications.Add(new FollowerNotification
             {
-                User = user,
-                FollowedPerson = follower,
+                User = follower,
+                FollowedPerson = user,
             });
         }
 

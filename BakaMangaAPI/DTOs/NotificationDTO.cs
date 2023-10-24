@@ -30,5 +30,5 @@ public class GroupNotificationDTO : NotificationDTO
 public class FollowerNotificationDTO : NotificationDTO
 {
     public string Type { get; set; } = nameof(FollowerNotification);
-    public UserSimpleDTO User { get; set; } = default!;
+    public UserSimpleDTO FollowedPerson { get; set; } = default!;
 }

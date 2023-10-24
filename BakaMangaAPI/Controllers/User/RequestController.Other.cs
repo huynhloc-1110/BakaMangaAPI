@@ -29,6 +29,7 @@ public partial class RequestController
 
         var requestCount = await requestQuery.CountAsync();
         var requests = await requestQuery
+            .OrderByDescending(r => r.CreatedAt)
             .Skip((filter.Page - 1) * filter.PageSize)
             .Take(filter.PageSize)
             .ProjectTo<OtherRequestDTO>(_mapper.ConfigurationProvider)
