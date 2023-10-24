@@ -128,6 +128,7 @@ public partial class RequestController
         }
 
         await _context.SaveChangesAsync();
+        await _notificationManager.HandleRequestNotificationAsync(request);
         return NoContent();
     }
 
