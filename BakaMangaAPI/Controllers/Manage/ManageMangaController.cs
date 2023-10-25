@@ -14,7 +14,7 @@ namespace BakaMangaAPI.Controllers.Manage;
 
 [Route("manage/mangas")]
 [ApiController]
-[Authorize(Roles = "Admin")]
+[Authorize(Roles = "Manager,Admin")]
 public class ManageMangaController : ControllerBase
 {
     private readonly ApplicationDbContext _context;

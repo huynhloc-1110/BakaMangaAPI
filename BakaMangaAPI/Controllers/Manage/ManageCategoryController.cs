@@ -13,7 +13,7 @@ namespace BakaMangaAPI.Controllers.Manage;
 
 [Route("manage/categories")]
 [ApiController]
-[Authorize(Roles = "Admin")]
+[Authorize(Roles = "Manager,Admin")]
 public class ManageCategoryController : ControllerBase
 {
     private readonly ApplicationDbContext _context;
