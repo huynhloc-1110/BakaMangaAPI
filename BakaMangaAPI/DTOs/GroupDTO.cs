@@ -41,4 +41,5 @@ public class GroupMemberDTO
     public string? AvatarPath { get; set; }
     public GroupRole GroupRoles { get; set; }
     public DateTime JoinedAt { get; set; }
+    public DateTime? DeletedAt { get; set; }
 }

@@ -32,6 +32,8 @@ public class GroupProfile : Profile
             .ForMember(dest => dest.Name, opt => opt
                 .MapFrom(src => src.User.Name))
             .ForMember(dest => dest.AvatarPath, opt => opt
-                .MapFrom(src => src.User.AvatarPath));
+                .MapFrom(src => src.User.AvatarPath))
+            .ForMember(dest => dest.DeletedAt, opt => opt
+                .MapFrom(src => src.User.DeletedAt));
     }
 }
