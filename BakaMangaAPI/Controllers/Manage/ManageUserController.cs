@@ -29,11 +29,6 @@ public class ManageUserController : ControllerBase
     {
         var query = _context.ApplicationUsers.AsQueryable();
 
-        if (!filter.IncludeDeleted)
-        {
-            query = query.Where(u => u.DeletedAt == null);
-        }
-
         if (!string.IsNullOrEmpty(filter.Search))
         {
             query = query
@@ -84,6 +79,25 @@ public class ManageUserController : ControllerBase
             });
         }
 
+        await _context.SaveChangesAsync();
+        return NoContent();
+    }
+
+    [HttpPut("{userId}/restore")]
+    public async Task<IActionResult> RestoreUser(string userId)
+    {
+        var user = await _context.ApplicationUsers.FindAsync(userId);
+
+        if (user == null)
+        {
+            return BadRequest("User does not exist");
+        }
+        if (user.DeletedAt == null)
+        {
+            return BadRequest("User is not deleted");
+        }
+
+        user.DeletedAt = null;
         await _context.SaveChangesAsync();
         return NoContent();
     }

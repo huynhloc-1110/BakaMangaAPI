@@ -34,7 +34,7 @@ public class UserController : ControllerBase
     [HttpGet]
     public async Task<IActionResult> GetUsers([FromQuery] FilterDTO filter)
     {
-        var query = _context.ApplicationUsers.AsQueryable();
+        var query = _context.ApplicationUsers.Where(u => u.DeletedAt == null);
 
         if (!string.IsNullOrEmpty(filter.Search))
         {
@@ -69,7 +69,7 @@ public class UserController : ControllerBase
     public async Task<IActionResult> GetUserBasicInfo(string userId)
     {
         var user = await _userManager.FindByIdAsync(userId);
-        if (user == null)
+        if (user == null || user.DeletedAt != null)
         {
             return NotFound();
         }
@@ -87,7 +87,7 @@ public class UserController : ControllerBase
         // get user followers, following number, followed manga number,...
         // number of uploaded chapters, number of views
         var userStats = await _context.ApplicationUsers
-            .Where(u => u.Id == userId)
+            .Where(u => u.Id == userId && u.DeletedAt == null)
             .Select(u => new UserStatsDTO
             {
                 FollowerNumber = u.Followers.Where(f => f.User.DeletedAt == null).Count(),

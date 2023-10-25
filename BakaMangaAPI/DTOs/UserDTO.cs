@@ -18,6 +18,7 @@ public class UserSimpleDTO
     public string Id { get; set; } = default!;
     public string Name { get; set; } = default!;
     public string? AvatarPath { get; set; }
+    public DateTime? DeletedAt { get; set; }
 }
 
 public class UserStatsDTO

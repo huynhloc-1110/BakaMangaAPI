@@ -83,6 +83,12 @@ public class AuthenticateController : ControllerBase
     public async Task<IActionResult> SignInAsync(SignInDTO dto)
     {
         var user = await _userManager.FindByEmailAsync(dto.Email);
+
+        if (user.DeletedAt != null)
+        {
+            return BadRequest("This user has been deleted");
+        }
+
         if (user != null && await _userManager.CheckPasswordAsync(user, dto.Password))
         {
             var userRoles = await _userManager.GetRolesAsync(user);
