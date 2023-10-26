@@ -16,21 +16,6 @@ public enum ReportStatus
     Pending, Resolved, Omitted
 }
 
-public class ChapterReport : Report
-{
-    public Chapter Chapter { get; set; } = default!;
-}
-
-public class CommentReport : Report
-{
-    public Comment Comment { get; set; } = default!;
-}
-
-public class PostReport : Report
-{
-    public Post Post { get; set; } = default!;
-}
-
 public class UserReport : Report
 {
     public ApplicationUser Reportee { get; set; } = default!;

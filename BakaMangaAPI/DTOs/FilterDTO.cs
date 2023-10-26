@@ -29,6 +29,11 @@ public class MangaFilterDTO : FilterDTO
     public string? SelectedAuthorId { get; set; }
 }
 
+public class ReportFilterDTO : FilterDTO
+{
+    public ReportStatus? Status { get; set; }
+}
+
 public enum RoleOption
 {
     All, User, Uploader, Manager, Admin

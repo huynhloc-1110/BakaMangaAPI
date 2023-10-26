@@ -11,6 +11,8 @@ public class UserBasicDTO : UserSimpleDTO
     public string Biography { get; set; } = default!;
 
     public DateTime CreatedAt { get; set; }
+
+    public DateTime? BannedUntil { get; set; }
 }
 
 public class UserSimpleDTO

@@ -4,7 +4,6 @@ using System.Text;
 
 using BakaMangaAPI.DTOs;
 using BakaMangaAPI.Models;
-
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -87,6 +86,10 @@ public class AuthenticateController : ControllerBase
         if (user.DeletedAt != null)
         {
             return BadRequest("This user has been deleted");
+        }
+        if (user.BannedUntil > DateTime.UtcNow)
+        {
+            return BadRequest($"This user is banned until {user.BannedUntil}");
         }
 
         if (user != null && await _userManager.CheckPasswordAsync(user, dto.Password))

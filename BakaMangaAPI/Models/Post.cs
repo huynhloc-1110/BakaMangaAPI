@@ -13,7 +13,6 @@ public class Post : BaseModel
     public List<PostView> Views { get; set; } = new();
     public List<PostReact> Reacts { get; set; } = new();
     public List<PostComment> Comments { get; set; } = new();
-    public List<PostReport> Reports { get; set; } = new();
 }
 
 public class UserPost : Post { }

@@ -12,7 +12,6 @@ public class Comment : BaseModel
     public Comment? ParentComment { get; set; }
 
     public List<CommentReact> Reacts { get; set; } = new();
-    public List<CommentReport> Reports { get; set; } = new();
     public List<Comment> ChildComments { get; set; } = new();
 }
 

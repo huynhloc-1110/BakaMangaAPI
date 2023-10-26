@@ -18,6 +18,5 @@ public class Chapter : BaseModel
 
     public List<ChapterImage> Images { get; set; } = new();
     public List<ChapterComment> Comments { get; set; } = new();
-    public List<ChapterReport> Reports { get; set; } = new();
     public List<ChapterView> ChapterViews { get; set; } = new();
 }

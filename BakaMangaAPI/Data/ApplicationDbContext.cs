@@ -56,9 +56,6 @@ public class ApplicationDbContext : IdentityDbContext<
         modelBuilder.Entity<CommentReact>().HasBaseType<React>();
         modelBuilder.Entity<PostReact>().HasBaseType<React>();
 
-        modelBuilder.Entity<ChapterReport>().HasBaseType<Report>();
-        modelBuilder.Entity<CommentReport>().HasBaseType<Report>();
-        modelBuilder.Entity<PostReport>().HasBaseType<Report>();
         modelBuilder.Entity<UserReport>().HasBaseType<Report>();
 
         modelBuilder.Entity<ChapterView>().HasBaseType<View>();

@@ -67,7 +67,7 @@ public class ManageUserController : ControllerBase
 
         if (user == null)
         {
-            return BadRequest();
+            return NotFound("User not found");
         }
 
         user.UserRoles = new();
@@ -90,7 +90,7 @@ public class ManageUserController : ControllerBase
 
         if (user == null)
         {
-            return BadRequest("User does not exist");
+            return NotFound("User does not exist");
         }
         if (user.DeletedAt == null)
         {
@@ -99,6 +99,36 @@ public class ManageUserController : ControllerBase
 
         user.DeletedAt = null;
         await _context.SaveChangesAsync();
+        return NoContent();
+    }
+
+    [HttpPut("{userId}/ban")]
+    public async Task<IActionResult> BanUser(string userId, [FromForm] int bannedDayNum)
+    {
+        var user = await _context.ApplicationUsers.FindAsync(userId);
+        if (user == null)
+        {
+            return NotFound("User does not exist");
+        }
+
+        user.BannedUntil = DateTime.UtcNow.AddDays(bannedDayNum);
+        await _context.SaveChangesAsync();
+
+        return NoContent();
+    }
+
+    [HttpPut("{userId}/unban")]
+    public async Task<IActionResult> UnbanUser(string userId)
+    {
+        var user = await _context.ApplicationUsers.FindAsync(userId);
+        if (user == null)
+        {
+            return NotFound("User does not exist");
+        }
+
+        user.BannedUntil = null;
+        await _context.SaveChangesAsync();
+
         return NoContent();
     }
 }

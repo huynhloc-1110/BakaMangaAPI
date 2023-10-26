@@ -24,6 +24,9 @@ public class ApplicationUser : IdentityUser
     [DataType(DataType.DateTime)]
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
+    [DataType(DataType.DateTime)]
+    public DateTime? BannedUntil { get; set; }
+
     public List<ApplicationUserRole> UserRoles { get; set; } = new();
     public List<View> Views { get; set; } = new();
     public List<Manga> FollowedMangas { get; set; } = new();
