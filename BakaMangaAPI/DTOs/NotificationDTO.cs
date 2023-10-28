@@ -24,7 +24,7 @@ public class ChapterNotificationDTO : NotificationDTO
 public class GroupNotificationDTO : NotificationDTO
 {
     public string Type { get; set; } = nameof(GroupNotification);
-    public GroupBasicDTO Group { get; set; } = default!;
+    public GroupSimpleDTO Group { get; set; } = default!;
 }
 
 public class FollowerNotificationDTO : NotificationDTO

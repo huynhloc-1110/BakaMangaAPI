@@ -15,6 +15,7 @@ public class PostBasicDTO
     public ReactFlag UserReactFlag { get; set; }
     public int CommentCount { get; set; }
     public DateTime CreatedAt { get; set; }
+    public GroupSimpleDTO? Group { get; set; }
 }
 
 public class PostEditDTO

@@ -14,7 +14,7 @@ public class RequestDTO
 
 public class JoinGroupRequestDTO : RequestDTO
 {
-    public GroupBasicDTO Group { get; set; } = default!;
+    public GroupSimpleDTO Group { get; set; } = default!;
 }
 
 public class PromotionRequestDTO : RequestDTO

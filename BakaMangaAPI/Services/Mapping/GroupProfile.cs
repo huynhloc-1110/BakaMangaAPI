@@ -9,6 +9,8 @@ public class GroupProfile : Profile
 {
     public GroupProfile()
     {
+        CreateMap<Group, GroupSimpleDTO>();
+
         string? userId = null;
         CreateMap<Group, GroupBasicDTO>()
             .ForMember(dest => dest.MemberNumber, opt => opt

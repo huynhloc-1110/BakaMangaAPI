@@ -4,11 +4,15 @@ using BakaMangaAPI.Models;
 
 namespace BakaMangaAPI.DTOs;
 
-public class GroupBasicDTO
+public class GroupSimpleDTO
 {
     public string Id { get; set; } = default!;
     public string Name { get; set; } = default!;
     public string? AvatarPath { get; set; }
+}
+
+public class GroupBasicDTO : GroupSimpleDTO
+{
     public int MemberNumber { get; set; }
     public bool IsMangaGroup { get; set; }
     public DateTime? UserJoinedAt { get; set; }
