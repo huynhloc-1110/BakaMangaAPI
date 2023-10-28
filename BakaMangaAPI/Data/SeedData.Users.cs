@@ -11,6 +11,7 @@ public partial class SeedData
         {
             await _roleManager.CreateAsync(new(role));
         }
+        var avatarUrl = _configuration["JWT:ValidIssuer"] + "/img/avatars/";
 
         List<ApplicationUser> users = new()
         {
@@ -18,7 +19,7 @@ public partial class SeedData
                 Name = "Huy Nguyen",
                 Email = "HuyNguyen123@example.com",
                 UserName = "HuyNguyen123@example.com",
-                AvatarPath = "https://res.cloudinary.com/diprbtdq4/image/upload/v1698376050/avatars/huy.jpg",
+                AvatarPath = avatarUrl + "huy.jpg",
                 Biography = "Huy Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
 
             },
@@ -26,35 +27,35 @@ public partial class SeedData
                 Name = "Loc Le",
                 Email = "LocLe345@example.com",
                 UserName = "LocLe345@example.com",
-                AvatarPath = "https://res.cloudinary.com/diprbtdq4/image/upload/v1698376053/avatars/loc.jpg",
+                AvatarPath = avatarUrl + "loc.jpg",
                 Biography = "Loc Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
             },
             new() {
                 Name = "Tri Tat",
                 Email = "TriTat567@example.com",
                 UserName = "TriTat567@example.com",
-                AvatarPath = "https://res.cloudinary.com/diprbtdq4/image/upload/v1698376051/avatars/tri.jpg",
+                AvatarPath = avatarUrl + "tri.jpg",
                 Biography = "Tri Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
             },
             new() {
                 Name = "Khoa Le",
                 Email = "KhoaLe789@example.com",
                 UserName = "KhoaLe789@example.com",
-                AvatarPath = "https://res.cloudinary.com/diprbtdq4/image/upload/v1698376050/avatars/khoa.jpg",
+                AvatarPath = avatarUrl + "khoa.jpg",
                 Biography = "Khoa Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
             },
             new() {
                 Name = "Admin",
                 Email = "Admin1@example.com",
                 UserName = "Admin1@example.com",
-                AvatarPath = "https://res.cloudinary.com/diprbtdq4/image/upload/v1698376049/avatars/admin.jpg",
+                AvatarPath = avatarUrl + "admin.jpg",
                 Biography = "Admin Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
             },
              new() {
                 Name = "Uploader",
                 Email = "Uploader1@example.com",
                 UserName = "Uploader1@example.com",
-                AvatarPath = "https://res.cloudinary.com/diprbtdq4/image/upload/v1698376050/avatars/uploader.jpg",
+                AvatarPath = avatarUrl + "uploader.jpg",
                 Biography = "Uploader Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
             },
         };

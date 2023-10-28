@@ -10,6 +10,8 @@ public partial class SeedData
         Dictionary<string, Group> groups
     )
     {
+        var coverBaseUrl = _configuration["JWT:ValidIssuer"] + "/img/covers/";
+        var pageUrl = _configuration["JWT:ValidIssuer"] + "/img/chapters/";
         List<Manga> mangas = new();
 
         var uploader1 = _userManager.FindByEmailAsync("LocLe345@example.com").Result;
@@ -51,9 +53,9 @@ public partial class SeedData
                         },
                         Images = new()
                         {
-                            new () { Number = 1, Path = "https://res.cloudinary.com/diprbtdq4/image/upload/v1698372240/chapters/doraemon-chapter-1.1.png" },
-                            new () { Number = 2, Path = "https://res.cloudinary.com/diprbtdq4/image/upload/v1698372241/chapters/doraemon-chapter-1.2.png" },
-                            new () { Number = 3, Path = "https://res.cloudinary.com/diprbtdq4/image/upload/v1698372242/chapters/doraemon-chapter-1.3.png" }
+                            new () { Number = 1, Path = pageUrl + "doraemon-chapter-1.1.png" },
+                            new () { Number = 2, Path = pageUrl + "doraemon-chapter-1.2.png" },
+                            new () { Number = 3, Path = pageUrl + "doraemon-chapter-1.3.png" }
                         }
                     },
                     new Chapter()
@@ -81,9 +83,9 @@ public partial class SeedData
                         UploadingGroup = groups["English Group"],
                         Images = new()
                         {
-                            new () { Number = 1, Path = "https://res.cloudinary.com/diprbtdq4/image/upload/v1698372241/chapters/doraemon-chapter-2.1.png" },
-                            new () { Number = 2, Path = "https://res.cloudinary.com/diprbtdq4/image/upload/v1698372242/chapters/doraemon-chapter-2.2.png" },
-                            new () { Number = 3, Path = "https://res.cloudinary.com/diprbtdq4/image/upload/v1698372242/chapters/doraemon-chapter-2.3.png" }
+                            new () { Number = 1, Path = pageUrl + "doraemon-chapter-2.1.png" },
+                            new () { Number = 2, Path = pageUrl + "doraemon-chapter-2.2.png" },
+                            new () { Number = 3, Path = pageUrl + "doraemon-chapter-2.3.png" }
                         }
                     },
                     new Chapter()
@@ -111,9 +113,9 @@ public partial class SeedData
                         UploadingGroup = groups["English Group"],
                         Images = new()
                         {
-                            new () { Number = 1, Path = "https://res.cloudinary.com/diprbtdq4/image/upload/v1698372242/chapters/doraemon-chapter-3.1.png" },
-                            new () { Number = 2, Path = "https://res.cloudinary.com/diprbtdq4/image/upload/v1698372244/chapters/doraemon-chapter-3.2.png" },
-                            new () { Number = 3, Path = "https://res.cloudinary.com/diprbtdq4/image/upload/v1698372241/chapters/doraemon-chapter-3.3.png" }
+                            new () { Number = 1, Path = pageUrl + "doraemon-chapter-3.1.png" },
+                            new () { Number = 2, Path = pageUrl + "doraemon-chapter-3.2.png" },
+                            new () { Number = 3, Path = pageUrl + "doraemon-chapter-3.3.png" }
                         }
                     },
                     new Chapter()
@@ -141,9 +143,9 @@ public partial class SeedData
                         UploadingGroup = groups["English Group"],
                         Images = new()
                         {
-                            new () { Number = 1, Path = "https://res.cloudinary.com/diprbtdq4/image/upload/v1698372240/chapters/doraemon-chapter-4.1.png" },
-                            new () { Number = 2, Path = "https://res.cloudinary.com/diprbtdq4/image/upload/v1698372242/chapters/doraemon-chapter-4.2.png" },
-                            new () { Number = 3, Path = "https://res.cloudinary.com/diprbtdq4/image/upload/v1698372242/chapters/doraemon-chapter-4.3.png" }
+                            new () { Number = 1, Path = pageUrl + "doraemon-chapter-4.1.png" },
+                            new () { Number = 2, Path = pageUrl + "doraemon-chapter-4.2.png" },
+                            new () { Number = 3, Path = pageUrl + "doraemon-chapter-4.3.png" }
                         }
                     },
                     new Chapter()
@@ -171,9 +173,9 @@ public partial class SeedData
                         UploadingGroup = groups["English Group"],
                         Images = new()
                         {
-                            new () { Number = 1, Path = "https://res.cloudinary.com/diprbtdq4/image/upload/v1698372242/chapters/doraemon-chapter-5.1.png" },
-                            new () { Number = 2, Path = "https://res.cloudinary.com/diprbtdq4/image/upload/v1698372244/chapters/doraemon-chapter-5.2.png" },
-                            new () { Number = 3, Path = "https://res.cloudinary.com/diprbtdq4/image/upload/v1698372243/chapters/doraemon-chapter-5.3.png" }
+                            new () { Number = 1, Path = pageUrl + "doraemon-chapter-5.1.png" },
+                            new () { Number = 2, Path = pageUrl + "doraemon-chapter-5.2.png" },
+                            new () { Number = 3, Path = pageUrl + "doraemon-chapter-5.3.png" }
                         }
                     },
                     new Chapter()
@@ -217,7 +219,7 @@ public partial class SeedData
                         UploadingGroup = groups["VietNam Group"],
                     },
                 },
-                CoverPath = "https://res.cloudinary.com/diprbtdq4/image/upload/v1698376488/covers/doraemon.png", 
+                CoverPath = coverBaseUrl + "doraemon.png",
                 Ratings = new()
                 {
                     new() { Value = 5, User = uploader1 },
@@ -327,7 +329,7 @@ public partial class SeedData
                         UploadingGroup = groups["VietNam Group"],
                     },
                 },
-                CoverPath = "https://res.cloudinary.com/diprbtdq4/image/upload/v1698376485/covers/naruto.png",
+                CoverPath = coverBaseUrl + "naruto.png",
             }
         );
 
@@ -376,7 +378,7 @@ public partial class SeedData
                         UploadingGroup = groups["VietNam Group"],
                     },
                 },
-                CoverPath = "https://res.cloudinary.com/diprbtdq4/image/upload/v1698376492/covers/komi.png",
+                CoverPath = coverBaseUrl + "komi.png",
             }
         );
 
@@ -428,7 +430,7 @@ public partial class SeedData
                         UploadingGroup = groups["VietNam Group"],
                     },
                 },
-                CoverPath = "https://res.cloudinary.com/diprbtdq4/image/upload/v1698376484/covers/the.png",
+                CoverPath = coverBaseUrl + "the.png",
             }
         );
 
@@ -479,7 +481,7 @@ public partial class SeedData
                         UploadingGroup = groups["VietNam Group"],
                     },
                 },
-                CoverPath = "https://res.cloudinary.com/diprbtdq4/image/upload/v1698376492/covers/itou.png",     
+                CoverPath = coverBaseUrl + "itou.png",
             }
         );
 
@@ -527,7 +529,7 @@ public partial class SeedData
                         UploadingGroup = groups["VietNam Group"],
                     },
                 },
-                CoverPath = "https://res.cloudinary.com/diprbtdq4/image/upload/v1698376488/covers/heroine.png",
+                CoverPath = coverBaseUrl + "heroine.png",
             }
         );
 
@@ -577,7 +579,7 @@ public partial class SeedData
                         UploadingGroup = groups["VietNam Group"],
                     },
                 },
-                CoverPath = "https://res.cloudinary.com/diprbtdq4/image/upload/v1698376487/covers/tsui.jpg",
+                CoverPath = coverBaseUrl + "tsui.jpg",
             }
         );
 
@@ -628,7 +630,7 @@ public partial class SeedData
                         UploadingGroup = groups["VietNam Group"],
                     },
                 },
-                CoverPath = "https://res.cloudinary.com/diprbtdq4/image/upload/v1698376487/covers/conan.png",
+                CoverPath = coverBaseUrl + "conan.png",
             }
         );
 
@@ -675,7 +677,7 @@ public partial class SeedData
                         UploadingGroup = groups["VietNam Group"],
                     },
                 },
-                CoverPath ="https://res.cloudinary.com/diprbtdq4/image/upload/v1698376526/covers/yaiteru.png",
+                CoverPath = coverBaseUrl + "yaiteru.png",
             }
         );
 
@@ -722,7 +724,7 @@ public partial class SeedData
                         UploadingGroup = groups["VietNam Group"],
                     },
                 },
-                CoverPath = "https://res.cloudinary.com/diprbtdq4/image/upload/v1698376504/covers/one.png",
+                CoverPath = coverBaseUrl + "one.png",
             }
         );
 
@@ -769,7 +771,7 @@ public partial class SeedData
                         UploadingGroup = groups["VietNam Group"],
                     },
                 },
-                CoverPath = "https://res.cloudinary.com/diprbtdq4/image/upload/v1698376486/covers/black.png",
+                CoverPath = coverBaseUrl + "black.png",
             }
         );
 
@@ -816,7 +818,7 @@ public partial class SeedData
                         UploadingGroup = groups["VietNam Group"],
                     },
                },
-               CoverPath = "https://res.cloudinary.com/diprbtdq4/image/upload/v1698376499/covers/drifters.png",
+               CoverPath = coverBaseUrl + "drifters.png",
            }
        );
 
@@ -863,7 +865,7 @@ public partial class SeedData
                         UploadingGroup = groups["VietNam Group"],
                     },
                },
-               CoverPath = "https://res.cloudinary.com/diprbtdq4/image/upload/v1698376487/covers/bleach.png",
+               CoverPath = coverBaseUrl + "bleach.png",
            }
        );
 
