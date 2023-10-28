@@ -67,7 +67,10 @@ public partial class MangaListController : ControllerBase
             .OrderByDescending(ml => ml.UpdatedAt)
             .AsNoTracking()
             .SingleOrDefaultAsync();
-
+        if (mangaList == null)
+        {
+            return NotFound("Manga list not found");
+        }
         return Ok(mangaList);
     }
 
