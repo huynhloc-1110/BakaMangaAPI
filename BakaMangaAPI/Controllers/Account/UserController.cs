@@ -188,7 +188,7 @@ public class UserController : ControllerBase
 
         if (!result.Succeeded)
         {
-            return BadRequest("Invalid password input");
+            return BadRequest(result.Errors.First().Description);
         }
 
         return NoContent();
