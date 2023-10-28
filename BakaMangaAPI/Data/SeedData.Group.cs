@@ -12,14 +12,12 @@ public partial class SeedData
         var user1 = _userManager.FindByEmailAsync("KhoaLe789@example.com").Result;
         var user2 = _userManager.FindByEmailAsync("HuyNguyen123@example.com").Result;
 
-        var groupAvatarUrl = _configuration["JWT:ValidIssuer"] + "/img/avatars/";
-
         Dictionary<string, Group> groups = new()
         {
             ["English Group"] = new()
             {
                 Name = "Tengoku Team",
-                AvatarPath = groupAvatarUrl + "tengoku.png",
+                AvatarPath = "https://res.cloudinary.com/diprbtdq4/image/upload/v1698376050/avatars/tengoku.png",
                 IsMangaGroup = true,
                 Biography = "Please consider visiting our main site: https://lhtranslation.net/\r\nWE NEED MORE JAPANESE TRANSLATOR, PLS CONTACT DISCORD: malsi#3621 OR tagomisugi2@gmail.com",
                 Members = new()
@@ -34,7 +32,7 @@ public partial class SeedData
             ["Japan Group"] = new()
             {
                 Name = "Yannu no Mahou",
-                AvatarPath = groupAvatarUrl + "yannu.png",
+                AvatarPath = "https://res.cloudinary.com/diprbtdq4/image/upload/v1698376051/avatars/yannu.jpg",
                 Biography = "私たちはマンガの日本語翻訳を専門とするファンサブです。",
                 IsMangaGroup = true,
                 Members = new()
@@ -45,7 +43,7 @@ public partial class SeedData
             ["VietNam Group"] = new()
             {
                 Name = "Tiệm đồ ngọt",
-                AvatarPath = groupAvatarUrl + "tiemdongot.png",
+                AvatarPath = "https://res.cloudinary.com/diprbtdq4/image/upload/v1698376051/avatars/tiemdongot.jpg",
                 Biography = "Tụi mình chuyên dịch thể loại rom-com.",
                 IsMangaGroup = true,
                 Members = new()

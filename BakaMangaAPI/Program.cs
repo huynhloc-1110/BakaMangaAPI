@@ -100,7 +100,7 @@ builder.Services.AddTransient<INotificationManager, NotificationManager>();
 
 // Other services
 builder.Services.AddAutoMapper(typeof(Program));
-builder.Services.AddScoped<IMediaManager, LocalMediaManager>();
+builder.Services.AddScoped<IMediaManager, CloudinaryMediaManager>();
 
 var app = builder.Build();
 
