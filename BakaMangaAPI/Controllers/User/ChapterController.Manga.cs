@@ -13,8 +13,7 @@ public partial class ChapterController
         FilterDTO filter)
     {
         var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        var query = _context.Chapters.Where(
-            c => c.DeletedAt == null && c.Manga.Id == mangaId);
+        var query = _context.Chapters.Where(c => c.Manga.Id == mangaId);
 
         // filter search
         if (!string.IsNullOrEmpty(filter.Search))
@@ -56,5 +55,27 @@ public partial class ChapterController
         var paginatedChapterList = new PaginatedListDTO<ChapterBasicDTO>
             (chapters, chapterNumberCount, filter.Page, filter.PageSize);
         return Ok(paginatedChapterList);
+    }
+
+    [HttpGet("~/mangas/{mangaId}/first-chapters")]
+    public async Task<IActionResult> GetFirstChapterForManga(string mangaId)
+    {
+        var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        var query = _context.Chapters.Where(c => c.Manga.Id == mangaId);
+
+        var firstChapterNumber = await query
+            .OrderBy(c => c.Number)
+            .Select(c => c.Number)
+            .FirstOrDefaultAsync();
+
+        var firstChapters = await _context.Chapters
+            .Where(c => c.Manga.Id == mangaId && c.Number == firstChapterNumber)
+            .OrderBy(c => c.Language)
+                .ThenByDescending(c => c.CreatedAt)
+            .ProjectTo<ChapterBasicDTO>(_mapper.ConfigurationProvider, new { currentUserId })
+            .AsNoTracking()
+            .ToListAsync();
+
+        return Ok(firstChapters);
     }
 }
