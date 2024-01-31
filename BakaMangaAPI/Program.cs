@@ -5,8 +5,6 @@ using BakaMangaAPI.Data;
 using BakaMangaAPI.Models;
 using BakaMangaAPI.Services.Media;
 using BakaMangaAPI.Services.Notification;
-using DotNetEnv;
-using DotNetEnv.Configuration;
 
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
@@ -18,7 +16,6 @@ var builder = WebApplication.CreateBuilder(args);
 
 #region Configuration
 
-builder.Configuration.AddDotNetEnv(".env", LoadOptions.TraversePath());
 var configuration = builder.Configuration.GetConnectionString("DefaultConnection");
 var reactServerUrl = builder.Configuration["ReactServerUrl"];
 
@@ -100,7 +97,14 @@ builder.Services.AddTransient<INotificationManager, NotificationManager>();
 
 // Other services
 builder.Services.AddAutoMapper(typeof(Program));
-builder.Services.AddScoped<IMediaManager, CloudinaryMediaManager>();
+if (builder.Environment.IsProduction())
+{
+    builder.Services.AddScoped<IMediaManager, CloudinaryMediaManager>();
+}
+else
+{
+    builder.Services.AddScoped<IMediaManager, LocalMediaManager>();
+}
 
 var app = builder.Build();
 
@@ -130,7 +134,7 @@ app.UseHttpsRedirection();
 
 app.UseCors();
 
-if (app.Environment.IsDevelopment())
+if (!app.Environment.IsProduction())
 {
     app.UseStaticFiles();
 }
